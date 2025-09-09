@@ -8,368 +8,368 @@
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
 <style>
 :root {
-      --primary: #59a68a;
-      --primary-light: #8dc2af;
-      --secondary: #e2f4ea;
-      --card: #ffffff;
-      --bg: #f9fbf8;
-      --muted: #888;
-      --border: #e6e9ef;
-      --dark-text: #2c3e50;
-      --red: #e74c3c;
-      --green: #2ecc71;
+            --primary: #59a68a;
+            --primary-light: #8dc2af;
+            --secondary: #e2f4ea;
+            --card: #ffffff;
+            --bg: #f9fbf8;
+            --muted: #888;
+            --border: #e6e9ef;
+            --dark-text: #2c3e50;
+            --red: #e74c3c;
+            --green: #2ecc71;
 }
 body {
-      font-family: 'Roboto', sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: var(--bg);
-      color: var(--dark-text);
-      overflow-x: hidden;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg);
+            color: var(--dark-text);
+            overflow-x: hidden;
 }
 h1, h2, h3 {
-      text-align: center;
-      color: var(--primary);
-      margin-top: 0;
+            text-align: center;
+            color: var(--primary);
+            margin-top: 0;
 }
 .container {
-      max-width: 600px;
-      margin: 0 auto;
+            max-width: 600px;
+            margin: 0 auto;
 }
 .tabs {
-      display: flex;
-      justify-content: space-around;
-      background-color: var(--card);
-      border-radius: 10px;
-      margin-bottom: 20px;
-      padding: 5px;
-      flex-wrap: wrap;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-around;
+            background-color: var(--card);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            padding: 5px;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
 .tab-button {
-      flex: 1;
-      padding: 12px;
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      font-weight: 500;
-      color: var(--muted);
-      border-radius: 8px;
-      transition: 0.3s;
-      min-width: 80px;
-      white-space: nowrap;
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--muted);
+            border-radius: 8px;
+            transition: 0.3s;
+            min-width: 80px;
+            white-space: nowrap;
 }
 .tab-button.active {
-      background-color: var(--primary);
-      color: var(--card);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background-color: var(--primary);
+            color: var(--card);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 .tab-content {
-      display: none;
-      background-color: var(--card);
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: none;
+            background-color: var(--card);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
 .tab-content.visible {
-      display: block;
+            display: block;
 }
 .form-group {
-      margin-bottom: 15px;
+            margin-bottom: 15px;
 }
 label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: 500;
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
 }
 input, button {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 1rem;
-      box-sizing: border-box;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box;
 }
 button {
-      cursor: pointer;
-      font-weight: 700;
-      margin-top: 5px;
+            cursor: pointer;
+            font-weight: 700;
+            margin-top: 5px;
 }
 .btn-primary {
-      background-color: var(--primary);
-      color: var(--card);
-      border: none;
-      transition: background-color 0.3s;
+            background-color: var(--primary);
+            color: var(--card);
+            border: none;
+            transition: background-color 0.3s;
 }
 .btn-primary:hover {
-      background-color: var(--primary-light);
+            background-color: var(--primary-light);
 }
 .suggestions {
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      max-height: 150px;
-      overflow-y: auto;
-      position: absolute;
-      width: calc(100% - 40px);
-      z-index: 100;
-      background-color: var(--card);
-      display: none;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            max-height: 150px;
+            overflow-y: auto;
+            position: absolute;
+            width: calc(100% - 40px);
+            z-index: 100;
+            background-color: var(--card);
+            display: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
 .suggestions div {
-      padding: 10px;
-      cursor: pointer;
-      border-bottom: 1px solid var(--border);
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
 }
 .suggestions div:last-child {
-      border-bottom: none;
+            border-bottom: none;
 }
 .suggestions div:hover {
-      background-color: var(--secondary);
+            background-color: var(--secondary);
 }
 .customer-card {
-      background-color: var(--secondary);
-      padding: 15px;
-      margin-bottom: 15px;
-      border-radius: 10px;
-      text-align: center;
-      word-wrap: break-word;
+            background-color: var(--secondary);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            text-align: center;
+            word-wrap: break-word;
 }
 .qr-box {
-      display: flex;
-      justify-content: center;
-      margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
 }
 .qr-link {
-      margin-top: 5px;
-      word-break: break-all;
-      font-size: 0.8rem;
-      color: var(--muted);
+            margin-top: 5px;
+            word-break: break-all;
+            font-size: 0.8rem;
+            color: var(--muted);
 }
 .pos-customer-info {
-      background-color: var(--secondary);
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 15px;
+            background-color: var(--secondary);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
 }
 .accordion {
-      background-color: var(--primary);
-      color: white;
-      cursor: pointer;
-      padding: 12px;
-      width: 100%;
-      border: none;
-      text-align: left;
-      outline: none;
-      font-size: 1rem;
-      border-radius: 8px;
-      margin-bottom: 5px;
-      transition: 0.3s;
+            background-color: var(--primary);
+            color: white;
+            cursor: pointer;
+            padding: 12px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1rem;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: 0.3s;
 }
 .accordion.active, .accordion:hover {
-      background-color: var(--primary-light);
+            background-color: var(--primary-light);
 }
 .panel {
-      padding: 0 10px;
-      display: none;
-      background-color: var(--secondary);
-      overflow: hidden;
-      border-radius: 8px;
-      margin-bottom: 10px;
+            padding: 0 10px;
+            display: none;
+            background-color: var(--secondary);
+            overflow: hidden;
+            border-radius: 8px;
+            margin-bottom: 10px;
 }
 .product-card {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 5px 0;
-      flex-wrap: wrap;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 0;
+            flex-wrap: wrap;
 }
 .product-card span {
-      flex-grow: 1;
-      margin: 0 10px;
-      word-break: break-all;
+            flex-grow: 1;
+            margin: 0 10px;
+            word-break: break-all;
 }
 .product-card > div {
-      display: flex;
-      align-items: center;
-      flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
 }
 .product-card button {
-      width: 40px;
-      height: 40px;
-      padding: 0;
-      font-size: 1.5rem;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: var(--primary);
-      color: var(--card);
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            font-size: 1.5rem;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--primary);
+            color: var(--card);
 }
 .product-card span[id^="qty-"] {
-      min-width: 20px;
-      text-align: center;
+            min-width: 20px;
+            text-align: center;
 }
 .total {
-      font-weight: 700;
-      font-size: 1.2rem;
-      margin-top: 10px;
-      text-align: right;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-top: 10px;
+            text-align: right;
 }
 .history {
-      margin-top: 15px;
+            margin-top: 15px;
 }
 .history-item {
-      background: #f1f1f1;
-      padding: 10px;
-      border-radius: 8px;
-      margin-bottom: 10px;
+            background: #f1f1f1;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
 }
 .history-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
 }
 .history-details {
-      margin-top: 10px;
-      display: none;
-      padding-left: 10px;
-      border-left: 2px solid var(--primary);
+            margin-top: 10px;
+            display: none;
+            padding-left: 10px;
+            border-left: 2px solid var(--primary);
 }
 .pos-content-hidden {
-      display: none;
+            display: none;
 }
 /* New Styles for Product Menu and Payment Modal */
 .product-menu {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-      gap: 15px;
-      margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
 }
 .product-item {
-      background-color: var(--secondary);
-      border-radius: 10px;
-      padding: 10px;
-      text-align: center;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
+            background-color: var(--secondary);
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
 }
 .product-item:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 .product-item p {
-      margin: 5px 0;
-      font-weight: 500;
+            margin: 5px 0;
+            font-weight: 500;
 }
 .product-item .price {
-      font-weight: 700;
-      color: var(--primary);
+            font-weight: 700;
+            color: var(--primary);
 }
 .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.4);
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
-      justify-content: center;
-      align-items: center;
-      animation: fadeIn 0.3s ease-out;
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease-out;
 }
 .modal.visible {
-      display: flex;
+            display: flex;
 }
 .modal-content {
-      background-color: var(--card);
-      padding: 30px;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 400px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-      position: relative;
-      animation: slideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            background-color: var(--card);
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
+            animation: slideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 .modal-content.history-detail {
-      max-width: 500px;
+            max-width: 500px;
 }
 @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+            from { opacity: 0; }
+            to { opacity: 1; }
 }
 @keyframes slideIn {
-      from { transform: translateY(-50px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
 }
 .close-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      color: var(--muted);
-      font-size: 24px;
-      font-weight: bold;
-      cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: var(--muted);
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
 }
 .modal-header {
-      text-align: center;
-      margin-bottom: 20px;
-      font-size: 1.5rem;
-      font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            font-weight: 700;
 }
 .modal-body ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
+            list-style: none;
+            padding: 0;
+            margin: 0;
 }
 .modal-body li {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px dashed var(--border);
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--border);
 }
 .modal-body li:last-child {
-      border-bottom: none;
+            border-bottom: none;
 }
 .modal-total {
-      font-size: 1.3rem;
-      font-weight: 700;
-      text-align: right;
-      margin-top: 15px;
-      border-top: 2px solid var(--primary);
-      padding-top: 10px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-align: right;
+            margin-top: 15px;
+            border-top: 2px solid var(--primary);
+            padding-top: 10px;
 }
 .modal-balance-info {
-      margin-top: 10px;
-      padding: 10px;
-      background-color: var(--bg);
-      border-radius: 8px;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: var(--bg);
+            border-radius: 8px;
 }
 .modal-footer {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
 }
 .modal-footer button {
-      flex: 1;
+            flex: 1;
 }
 
 .history-detail-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
 }
 .history-detail-table th, .history-detail-table td {
-      border: 1px solid var(--border);
-      padding: 8px;
-      text-align: left;
+            border: 1px solid var(--border);
+            padding: 8px;
+            text-align: left;
 }
 .history-detail-table th {
-      background-color: var(--secondary);
+            background-color: var(--secondary);
 }
 
 </style>
@@ -378,119 +378,119 @@ button {
 <div class="container">
 <h1>Quản lý khách & POS</h1>
 <div class="tabs">
-      <button class="tab-button active" onclick="switchTab('posTab')">Bán hàng (POS)</button>
-      <button class="tab-button" onclick="switchTab('depositTab')">Nạp tiền</button>
-      <button class="tab-button" onclick="switchTab('customerListTab')">Danh sách</button>
-      <button class="tab-button" onclick="switchTab('addCustomerTab')">Thêm khách</button>
+            <button class="tab-button active" onclick="switchTab('posTab')">Bán hàng (POS)</button>
+            <button class="tab-button" onclick="switchTab('depositTab')">Nạp tiền</button>
+            <button class="tab-button" onclick="switchTab('customerListTab')">Danh sách</button>
+            <button class="tab-button" onclick="switchTab('addCustomerTab')">Thêm khách</button>
 </div>
 
 <div id="addCustomerTab" class="tab-content">
-      <h2>Thêm khách mới</h2>
-      <form id="addCustomerForm">
-            <div class="form-group">
-                  <label for="name">Tên khách hàng</label>
-                  <input type="text" id="name" placeholder="Tên khách" required>
-            </div>
-            <div class="form-group">
-                  <label for="phone">Số điện thoại</label>
-                  <input type="tel" id="phone" placeholder="Số điện thoại" required>
-            </div>
-            <button type="submit" class="btn-primary">Tạo khách</button>
-      </form>
+            <h2>Thêm khách mới</h2>
+            <form id="addCustomerForm">
+                        <div class="form-group">
+                                    <label for="name">Tên khách hàng</label>
+                                    <input type="text" id="name" placeholder="Tên khách" required>
+                        </div>
+                        <div class="form-group">
+                                    <label for="phone">Số điện thoại</label>
+                                    <input type="tel" id="phone" placeholder="Số điện thoại" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Tạo khách</button>
+            </form>
 </div>
 
 <div id="depositTab" class="tab-content">
-      <h2>Nạp tiền</h2>
-      <form id="depositForm" style="position: relative;">
-            <div class="form-group">
-                  <label for="depositPhone">SĐT khách</label>
-                  <input type="tel" id="depositPhone" placeholder="Nhập SĐT khách" autocomplete="off" required>
-                  <div id="suggestions" class="suggestions"></div>
-            </div>
-            <div class="form-group">
-                  <label for="depositAmount">Số tiền nạp</label>
-                  <input type="number" id="depositAmount" placeholder="Số tiền nạp" required>
-            </div>
-            <button type="submit" class="btn-primary">Nạp</button>
-      </form>
+            <h2>Nạp tiền</h2>
+            <form id="depositForm" style="position: relative;">
+                        <div class="form-group">
+                                    <label for="depositPhone">SĐT khách</label>
+                                    <input type="tel" id="depositPhone" placeholder="Nhập SĐT khách" autocomplete="off" required>
+                                    <div id="suggestions" class="suggestions"></div>
+                        </div>
+                        <div class="form-group">
+                                    <label for="depositAmount">Số tiền nạp</label>
+                                    <input type="number" id="depositAmount" placeholder="Số tiền nạp" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Nạp</button>
+            </form>
 </div>
 
 <div id="customerListTab" class="tab-content">
-      <h2>Danh sách khách</h2>
-      <div id="customerList"></div>
+            <h2>Danh sách khách</h2>
+            <div id="customerList"></div>
 </div>
 
 <div id="posTab" class="tab-content visible">
-      <h2>Bán hàng (POS)</h2>
-      <div class="form-group" style="position: relative;">
-            <label for="posPhone">SĐT khách</label>
-            <input type="tel" id="posPhone" placeholder="Nhập SĐT khách" autocomplete="off">
-            <div id="posSuggestions" class="suggestions"></div>
-      </div>
+            <h2>Bán hàng (POS)</h2>
+            <div class="form-group" style="position: relative;">
+                        <label for="posPhone">SĐT khách</label>
+                        <input type="tel" id="posPhone" placeholder="Nhập SĐT khách" autocomplete="off">
+                        <div id="posSuggestions" class="suggestions"></div>
+            </div>
 
-      <div id="posDetails" class="pos-content-hidden">
-            <div id="posCustomerInfo" class="pos-customer-info">
-                  <p id="posCustomerName"></p>
-                  <p id="posCustomerBalance"></p>
-            </div>
+            <div id="posDetails" class="pos-content-hidden">
+                        <div id="posCustomerInfo" class="pos-customer-info">
+                                    <p id="posCustomerName"></p>
+                                    <p id="posCustomerBalance"></p>
+                        </div>
 
-            <h3>Chọn sản phẩm</h3>
-            <div id="posProducts"></div>
+                        <h3>Chọn sản phẩm</h3>
+                        <div id="posProducts"></div>
 
-            <div class="total" id="posTotal">Tổng: 0 VND</div>
-            <button class="btn-primary" id="posPayBtn">Thanh toán</button>
+                        <div class="total" id="posTotal">Tổng: 0 VND</div>
+                        <button class="btn-primary" id="posPayBtn">Thanh toán</button>
 
-            <h3>Lịch sử mua hàng</h3>
-            <div class="history" id="posHistory"></div>
-      </div>
+                        <h3>Lịch sử mua hàng</h3>
+                        <div class="history" id="posHistory"></div>
+            </div>
 </div>
 </div>
 
 <div id="paymentModal" class="modal">
-      <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('paymentModal')">&times;</span>
-            <div class="modal-header">Xác nhận Thanh toán</div>
-            <div class="modal-body">
-                  <div class="pos-customer-info">
-                        <p>Khách hàng: <span id="modalCustomerName"></span></p>
-                        <p>Số dư hiện tại: <span id="modalCustomerBalance"></span> VND</p>
-                  </div>
-                  <h4>Chi tiết đơn hàng:</h4>
-                  <ul id="modalCartItems"></ul>
-                  <div class="modal-total">
-                        Tổng cộng: <span id="modalCartTotal"></span> VND
-                  </div>
-                  <div class="modal-balance-info">
-                        <p>Số dư sau khi thanh toán: <span id="modalNewBalance"></span> VND</p>
-                  </div>
-            </div>
-            <div class="modal-footer">
-                  <button class="btn-primary" onclick="processPayment()">Xác nhận</button>
-                  <button style="background-color: var(--red);" onclick="closeModal('paymentModal')">Hủy</button>
-            </div>
-      </div>
+            <div class="modal-content">
+                        <span class="close-btn" onclick="closeModal('paymentModal')">&times;</span>
+                        <div class="modal-header">Xác nhận Thanh toán</div>
+                        <div class="modal-body">
+                                    <div class="pos-customer-info">
+                                                <p>Khách hàng: <span id="modalCustomerName"></span></p>
+                                                <p>Số dư hiện tại: <span id="modalCustomerBalance"></span> VND</p>
+                                    </div>
+                                    <h4>Chi tiết đơn hàng:</h4>
+                                    <ul id="modalCartItems"></ul>
+                                    <div class="modal-total">
+                                                Tổng cộng: <span id="modalCartTotal"></span> VND
+                                    </div>
+                                    <div class="modal-balance-info">
+                                                <p>Số dư sau khi thanh toán: <span id="modalNewBalance"></span> VND</p>
+                                    </div>
+                        </div>
+                        <div class="modal-footer">
+                                    <button class="btn-primary" onclick="processPayment()">Xác nhận</button>
+                                    <button style="background-color: var(--red);" onclick="closeModal('paymentModal')">Hủy</button>
+                        </div>
+            </div>
 </div>
 
 <div id="historyModal" class="modal">
-      <div class="modal-content history-detail">
-            <span class="close-btn" onclick="closeModal('historyModal')">&times;</span>
-            <div class="modal-header">Chi tiết Lịch sử</div>
-            <div class="modal-body">
-                  <p><b>Thời gian:</b> <span id="historyDetailTime"></span></p>
-                  <p><b>Tổng tiền:</b> <span id="historyDetailTotal"></span> VND</p>
-                  <table class="history-detail-table">
-                        <thead>
-                              <tr>
-                                    <th>Sản phẩm</th>
-                                    <th>Số lượng</th>
-                                    <th>Giá</th>
-                                    <th>Tổng</th>
-                              </tr>
-                        </thead>
-                        <tbody id="historyDetailItems"></tbody>
-                  </table>
-            </div>
-      </div>
+            <div class="modal-content history-detail">
+                        <span class="close-btn" onclick="closeModal('historyModal')">&times;</span>
+                        <div class="modal-header">Chi tiết Lịch sử</div>
+                        <div class="modal-body">
+                                    <p><b>Thời gian:</b> <span id="historyDetailTime"></span></p>
+                                    <p><b>Tổng tiền:</b> <span id="historyDetailTotal"></span> VND</p>
+                                    <table class="history-detail-table">
+                                                <thead>
+                                                            <tr>
+                                                                        <th>Sản phẩm</th>
+                                                                        <th>Số lượng</th>
+                                                                        <th>Giá</th>
+                                                                        <th>Tổng</th>
+                                                            </tr>
+                                                </thead>
+                                                <tbody id="historyDetailItems"></tbody>
+                                    </table>
+                        </div>
+            </div>
 </div>
 
 <script type="module">
@@ -499,13 +499,13 @@ import { getDatabase, ref, set, get, update, onValue, push } from "https://www.g
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
 const firebaseConfig = {
-      apiKey: "AIzaSyB4S6E-Gl6k5mG57otkF8WUh3iuvqq-pWw",
-      authDomain: "member-ffd77.firebaseapp.com",
-      projectId: "member-ffd77",
-      storageBucket: "member-ffd77.firebasestorage.app",
-      messagingSenderId: "375537857518",
-      appId: "1:375537857518:web:86449f4419f0ab5f6954ff",
-      databaseURL: "https://member-ffd77-default-rtdb.firebaseio.com/"
+            apiKey: "AIzaSyB4S6E-Gl6k5mG57otkF8WUh3iuvqq-pWw",
+            authDomain: "member-ffd77.firebaseapp.com",
+            projectId: "member-ffd77",
+            storageBucket: "member-ffd77.firebasestorage.app",
+            messagingSenderId: "375537857518",
+            appId: "1:375537857518:web:86449f4419f0ab5f6954ff",
+            databaseURL: "https://member-ffd77-default-rtdb.firebaseio.com/"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -518,100 +518,100 @@ let allCustomers = {};
 const cart = {};
 
 const products = [
-      { name: "Vé 70k", price: 70000, category:"vé" },
-      { name: "Vé 100k", price: 100000, category:"vé" },
-      { name: "Nước 20k", price: 20000, category:"nước" },
-      { name: "Thức ăn chó 45k", price: 45000, category:"chó" },
-      { name: "Thức ăn chó 70k", price: 70000, category:"chó" },
-      { name: "Thức ăn chó 95k", price: 95000, category:"chó" },
-      { name: "Thức ăn chó 120k", price: 120000, category:"chó" },
-      { name: "Thức ăn mèo 15k", price: 15000, category:"mèo" },
-      { name: "Thức ăn mèo 45k", price: 45000, category:"mèo" },
-      { name: "Capy 20k", price: 20000, category:"capy" },
+            { name: "Vé 70k", price: 70000, category:"vé" },
+            { name: "Vé 100k", price: 100000, category:"vé" },
+            { name: "Nước 20k", price: 20000, category:"nước" },
+            { name: "Thức ăn chó 45k", price: 45000, category:"chó" },
+            { name: "Thức ăn chó 70k", price: 70000, category:"chó" },
+            { name: "Thức ăn chó 95k", price: 95000, category:"chó" },
+            { name: "Thức ăn chó 120k", price: 120000, category:"chó" },
+            { name: "Thức ăn mèo 15k", price: 15000, category:"mèo" },
+            { name: "Thức ăn mèo 45k", price: 45000, category:"mèo" },
+            { name: "Capy 20k", price: 20000, category:"capy" },
 ];
 const categories = ["vé","nước","chó","mèo","capy"];
 
 // --- Tabs ---
 window.switchTab = (tabId) => {
-      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('visible'));
-      document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
-      el(tabId).classList.add('visible');
-      document.querySelector(`[onclick="switchTab('${tabId}')"]`).classList.add('active');
-      
-      if (tabId !== 'posTab') {
-            el('posDetails').classList.add('pos-content-hidden');
-            el('posPhone').value = '';
-            posCurrentCustomer = null;
-            Object.keys(cart).forEach(key => cart[key].qty = 0);
-            document.querySelectorAll('[id^="qty-"]').forEach(span => span.innerText = '0');
-            updateTotal();
-            el('posTotal').style.display = 'none';
-            el('posPayBtn').style.display = 'none';
-      }
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('visible'));
+            document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+            el(tabId).classList.add('visible');
+            document.querySelector(`[onclick="switchTab('${tabId}')"]`).classList.add('active');
+              
+            if (tabId !== 'posTab') {
+                        el('posDetails').classList.add('pos-content-hidden');
+                        el('posPhone').value = '';
+                        posCurrentCustomer = null;
+                        Object.keys(cart).forEach(key => cart[key].qty = 0);
+                        document.querySelectorAll('[id^="qty-"]').forEach(span => span.innerText = '0');
+                        updateTotal();
+                        el('posTotal').style.display = 'none';
+                        el('posPayBtn').style.display = 'none';
+            }
 };
 
 // --- Thêm khách ---
 el("addCustomerForm").addEventListener("submit", async e=>{
-      e.preventDefault();
-      const name = el("name").value;
-      const phone = el("phone").value;
-      const id = 'KH'+Math.floor(Math.random()*1000000);
-      await set(ref(db, "customers/"+id), { id, name, phone, balance:0 });
-      el("name").value=""; el("phone").value="";
-      alert("Thêm khách thành công!");
+            e.preventDefault();
+            const name = el("name").value;
+            const phone = el("phone").value;
+            const id = 'KH'+Math.floor(Math.random()*1000000);
+            await set(ref(db, "customers/"+id), { id, name, phone, balance:0 });
+            el("name").value=""; el("phone").value="";
+            alert("Thêm khách thành công!");
 });
 
 // --- Nạp tiền ---
 el("depositPhone").addEventListener("input", () => {
-      const query = el("depositPhone").value.trim();
-      const suggestions = el("suggestions");
-      suggestions.innerHTML = "";
-      if (!query) { suggestions.style.display="none"; return; }
-      Object.values(allCustomers).forEach(c=>{
-            if(c.phone.includes(query)){
-                  const div=document.createElement("div");
-                  div.innerText = `${c.name} - ${c.phone}`;
-                  div.onclick=()=>{ el("depositPhone").value=c.phone; el("depositPhone").dataset.id=c.id; suggestions.style.display="none"; };
-                  suggestions.appendChild(div);
-            }
-      });
-      suggestions.style.display = suggestions.children.length ? "block" : "none";
+            const query = el("depositPhone").value.trim();
+            const suggestions = el("suggestions");
+            suggestions.innerHTML = "";
+            if (!query) { suggestions.style.display="none"; return; }
+            Object.values(allCustomers).forEach(c=>{
+                        if(c.phone.includes(query)){
+                                    const div=document.createElement("div");
+                                    div.innerText = `${c.name} - ${c.phone}`;
+                                    div.onclick=()=>{ el("depositPhone").value=c.phone; el("depositPhone").dataset.id=c.id; suggestions.style.display="none"; };
+                                    suggestions.appendChild(div);
+                        }
+            });
+            suggestions.style.display = suggestions.children.length ? "block" : "none";
 });
 
 el("depositForm").addEventListener("submit", async e=>{
-      e.preventDefault();
-      const id = el("depositPhone").dataset.id;
-      const amount = parseInt(el("depositAmount").value);
-      if(!id || isNaN(amount) || amount<=0) return alert("Vui lòng chọn khách và số tiền hợp lệ!");
-      const snap = await get(ref(db,"customers/"+id));
-      if(!snap.exists()) return alert("Khách không tồn tại!");
-      const customer = snap.val();
-      let bonus = amount===2000000 ? 3000000 : amount;
-      await update(ref(db,"customers/"+id), { balance:(customer.balance||0)+bonus });
-      el("depositPhone").value=""; el("depositPhone").dataset.id=""; el("depositAmount").value="";
-      alert(`Nạp thành công ${bonus} VND cho ${customer.name}`);
+            e.preventDefault();
+            const id = el("depositPhone").dataset.id;
+            const amount = parseInt(el("depositAmount").value);
+            if(!id || isNaN(amount) || amount<=0) return alert("Vui lòng chọn khách và số tiền hợp lệ!");
+            const snap = await get(ref(db,"customers/"+id));
+            if(!snap.exists()) return alert("Khách không tồn tại!");
+            const customer = snap.val();
+            let bonus = amount===2000000 ? 3000000 : amount;
+            await update(ref(db,"customers/"+id), { balance:(customer.balance||0)+bonus });
+            el("depositPhone").value=""; el("depositPhone").dataset.id=""; el("depositAmount").value="";
+            alert(`Nạp thành công ${bonus} VND cho ${customer.name}`);
 });
 
 // --- Load danh sách khách ---
 onValue(ref(db,"customers"), snap=>{
-      allCustomers = snap.exists()?snap.val():{};
-      const listDiv = el("customerList");
-      listDiv.innerHTML = "";
-      Object.values(allCustomers).forEach(c=>{
-            const card = document.createElement("div");
-            card.className="customer-card";
-            const qrDiv = document.createElement("div");
-            qrDiv.className="qr-box";
-            const linkDiv = document.createElement("div");
-            linkDiv.className="qr-link";
-            // Cập nhật đường link QR tại đây
-            const qrLink = `https://thanhchan791791.github.io/member/khachhang?id=${c.id}`;
-            linkDiv.innerHTML=`<a href="${qrLink}" target="_blank">${qrLink}</a>`;
-            card.innerHTML=`<p><b>${c.name}</b> (${c.phone})</p><p>Số dư: ${c.balance||0} VND</p>`;
-            card.appendChild(qrDiv); card.appendChild(linkDiv);
-            listDiv.appendChild(card);
-            new QRCode(qrDiv, { text: qrLink, width:100, height:100 });
-      });
+            allCustomers = snap.exists()?snap.val():{};
+            const listDiv = el("customerList");
+            listDiv.innerHTML = "";
+            Object.values(allCustomers).forEach(c=>{
+                        const card = document.createElement("div");
+                        card.className="customer-card";
+                        const qrDiv = document.createElement("div");
+                        qrDiv.className="qr-box";
+                        const linkDiv = document.createElement("div");
+                        linkDiv.className="qr-link";
+                        // Cập nhật đường link QR tại đây
+                        const qrLink = `https://thanhchan791791.github.io/member/khachhang?id=${c.id}`;
+                        linkDiv.innerHTML=`<a href="${qrLink}" target="_blank">${qrLink}</a>`;
+                        card.innerHTML=`<p><b>${c.name}</b> (${c.phone})</p><p>Số dư: ${c.balance||0} VND</p>`;
+                        card.appendChild(qrDiv); card.appendChild(linkDiv);
+                        listDiv.appendChild(card);
+                        new QRCode(qrDiv, { text: qrLink, width:100, height:100 });
+            });
 });
 
 // --- POS ---
@@ -640,213 +640,213 @@ const historyDetailTotal = el("historyDetailTotal");
 const historyDetailItems = el("historyDetailItems");
 
 function renderProducts() {
-      posProductsDiv.innerHTML = "";
-      categories.forEach(cat => {
-            const acc = document.createElement("button");
-            acc.className = "accordion";
-            acc.innerText = cat.charAt(0).toUpperCase() + cat.slice(1);
-            const panel = document.createElement("div");
-            panel.className = "panel";
-            
-            products.filter(p => p.category === cat).forEach(p => {
-                  const div = document.createElement("div");
-                  div.className = "product-card";
-                  const productName = p.name.replace(/\s+/g, '-');
-                  div.innerHTML = `<span>${p.name} (${p.price.toLocaleString()} VND)</span>
-                        <div>
-                              <button onclick="updateCart('${productName}', -1)">-</button>
-                              <span id="qty-${productName}">0</span>
-                              <button onclick="updateCart('${productName}', 1)">+</button>
-                        </div>`;
-                  panel.appendChild(div);
-            });
+            posProductsDiv.innerHTML = "";
+            categories.forEach(cat => {
+                        const acc = document.createElement("button");
+                        acc.className = "accordion";
+                        acc.innerText = cat.charAt(0).toUpperCase() + cat.slice(1);
+                        const panel = document.createElement("div");
+                        panel.className = "panel";
+                          
+                        products.filter(p => p.category === cat).forEach(p => {
+                                    const div = document.createElement("div");
+                                    div.className = "product-card";
+                                    const productName = p.name.replace(/\s+/g, '-');
+                                    div.innerHTML = `<span>${p.name} (${p.price.toLocaleString()} VND)</span>
+                                                <div>
+                                                            <button onclick="updateCart('${productName}', -1)">-</button>
+                                                            <span id="qty-${productName}">0</span>
+                                                            <button onclick="updateCart('${productName}', 1)">+</button>
+                                                </div>`;
+                                    panel.appendChild(div);
+                        });
 
-            posProductsDiv.appendChild(acc);
-            posProductsDiv.appendChild(panel);
+                        posProductsDiv.appendChild(acc);
+                        posProductsDiv.appendChild(panel);
 
-            acc.addEventListener("click", () => {
-                  acc.classList.toggle("active");
-                  panel.style.display = panel.style.display === "block" ? "none" : "block";
-            });
-      });
+                        acc.addEventListener("click", () => {
+                                    acc.classList.toggle("active");
+                                    panel.style.display = panel.style.display === "block" ? "none" : "block";
+                        });
+            });
 }
 
 window.updateCart = function(productName, change) {
-      if (!posCurrentCustomer) {
-            alert("Vui lòng chọn khách hàng trước khi thêm sản phẩm!");
-            return;
-      }
-      const product = products.find(p => p.name.replace(/\s+/g, '-') === productName);
-      if (!product) return;
+            if (!posCurrentCustomer) {
+                        alert("Vui lòng chọn khách hàng trước khi thêm sản phẩm!");
+                        return;
+            }
+            const product = products.find(p => p.name.replace(/\s+/g, '-') === productName);
+            if (!product) return;
 
-      if (!cart[product.name]) {
-            cart[product.name] = { name: product.name, price: product.price, qty: 0 };
-      }
-      
-      cart[product.name].qty += change;
-      if (cart[product.name].qty < 0) {
-            cart[product.name].qty = 0;
-      }
+            if (!cart[product.name]) {
+                        cart[product.name] = { name: product.name, price: product.price, qty: 0 };
+            }
+              
+            cart[product.name].qty += change;
+            if (cart[product.name].qty < 0) {
+                        cart[product.name].qty = 0;
+            }
 
-      document.getElementById(`qty-${productName}`).innerText = cart[product.name].qty;
-      updateTotal();
+            document.getElementById(`qty-${productName}`).innerText = cart[product.name].qty;
+            updateTotal();
 }
 
 function updateTotal() {
-      let total = 0;
-      let hasItems = false;
-      for (const key in cart) {
-            if (cart[key].qty > 0) {
-                  total += cart[key].qty * cart[key].price;
-                  hasItems = true;
-            }
-      }
-      posTotal.innerText = `Tổng: ${total.toLocaleString()} VND`;
-      if (hasItems) {
-            posTotal.style.display = 'block';
-            posPayBtn.style.display = 'block';
-      } else {
-            posTotal.style.display = 'none';
-            posPayBtn.style.display = 'none';
-      }
+            let total = 0;
+            let hasItems = false;
+            for (const key in cart) {
+                        if (cart[key].qty > 0) {
+                                    total += cart[key].qty * cart[key].price;
+                                    hasItems = true;
+                        }
+            }
+            posTotal.innerText = `Tổng: ${total.toLocaleString()} VND`;
+            if (hasItems) {
+                        posTotal.style.display = 'block';
+                        posPayBtn.style.display = 'block';
+            } else {
+                        posTotal.style.display = 'none';
+                        posPayBtn.style.display = 'none';
+            }
 }
 
 posPhone.addEventListener("input", () => {
-      const query = posPhone.value.trim();
-      posSuggestions.innerHTML = "";
-      if (!query) {
-            posSuggestions.style.display = "none";
-            el('posDetails').classList.add('pos-content-hidden');
-            posCurrentCustomer = null;
-            return;
-      }
-      Object.values(allCustomers).forEach(c => {
-            if (c.phone.includes(query)) {
-                  const div = document.createElement("div");
-                  div.innerText = `${c.name} - ${c.phone}`;
-                  div.onclick = () => {
-                        posPhone.value = c.phone;
-                        posCurrentCustomer = c;
-                        posCustomerName.innerText = `Tên: ${c.name}`;
-                        posCustomerBalance.innerText = `Số dư: ${c.balance || 0} VND`;
-                        posSuggestions.style.display = "none";
-                        el('posDetails').classList.remove('pos-content-hidden');
-                        Object.keys(cart).forEach(key => {
-                              if (cart[key]) cart[key].qty = 0;
-                        });
-                        document.querySelectorAll('[id^="qty-"]').forEach(span => span.innerText = '0');
-                        updateTotal();
-                        loadHistory(c.id);
-                  };
-                  posSuggestions.appendChild(div);
-            }
-      });
-      posSuggestions.style.display = posSuggestions.children.length ? "block" : "none";
+            const query = posPhone.value.trim();
+            posSuggestions.innerHTML = "";
+            if (!query) {
+                        posSuggestions.style.display = "none";
+                        el('posDetails').classList.add('pos-content-hidden');
+                        posCurrentCustomer = null;
+                        return;
+            }
+            Object.values(allCustomers).forEach(c => {
+                        if (c.phone.includes(query)) {
+                                    const div = document.createElement("div");
+                                    div.innerText = `${c.name} - ${c.phone}`;
+                                    div.onclick = () => {
+                                                posPhone.value = c.phone;
+                                                posCurrentCustomer = c;
+                                                posCustomerName.innerText = `Tên: ${c.name}`;
+                                                posCustomerBalance.innerText = `Số dư: ${c.balance || 0} VND`;
+                                                posSuggestions.style.display = "none";
+                                                el('posDetails').classList.remove('pos-content-hidden');
+                                                Object.keys(cart).forEach(key => {
+                                                            if (cart[key]) cart[key].qty = 0;
+                                                });
+                                                document.querySelectorAll('[id^="qty-"]').forEach(span => span.innerText = '0');
+                                                updateTotal();
+                                                loadHistory(c.id);
+                                    };
+                                    posSuggestions.appendChild(div);
+                        }
+            });
+            posSuggestions.style.display = posSuggestions.children.length ? "block" : "none";
 });
 
 posPayBtn.addEventListener("click", () => {
-      let total = 0;
-      const items = {};
-      for (const key in cart) {
-            if (cart[key].qty > 0) {
-                  total += cart[key].qty * cart[key].price;
-                  items[key] = cart[key].qty;
-            }
-      }
-      
-      if (total === 0) {
-            alert("Vui lòng thêm sản phẩm vào giỏ hàng!");
-            return;
-      }
-      if (total > (posCurrentCustomer.balance || 0)) {
-            alert("Khách không đủ tiền!");
-            return;
-      }
-      
-      // Populate and show the modal
-      modalCustomerName.innerText = posCurrentCustomer.name;
-      modalCustomerBalance.innerText = (posCurrentCustomer.balance || 0).toLocaleString();
-      modalCartItems.innerHTML = "";
-      for (const key in cart) {
-            if (cart[key].qty > 0) {
-                  const item = document.createElement("li");
-                  item.innerHTML = `<span>${cart[key].name} x ${cart[key].qty}</span><span>${(cart[key].qty * cart[key].price).toLocaleString()} VND</span>`;
-                  modalCartItems.appendChild(item);
-            }
-      }
-      modalCartTotal.innerText = total.toLocaleString();
-      modalNewBalance.innerText = ((posCurrentCustomer.balance || 0) - total).toLocaleString();
-      
-      paymentModal.classList.add('visible');
+            let total = 0;
+            const items = {};
+            for (const key in cart) {
+                        if (cart[key].qty > 0) {
+                                    total += cart[key].qty * cart[key].price;
+                                    items[key] = cart[key].qty;
+                        }
+            }
+              
+            if (total === 0) {
+                        alert("Vui lòng thêm sản phẩm vào giỏ hàng!");
+                        return;
+            }
+            if (total > (posCurrentCustomer.balance || 0)) {
+                        alert("Khách không đủ tiền!");
+                        return;
+            }
+              
+            // Populate and show the modal
+            modalCustomerName.innerText = posCurrentCustomer.name;
+            modalCustomerBalance.innerText = (posCurrentCustomer.balance || 0).toLocaleString();
+            modalCartItems.innerHTML = "";
+            for (const key in cart) {
+                        if (cart[key].qty > 0) {
+                                    const item = document.createElement("li");
+                                    item.innerHTML = `<span>${cart[key].name} x ${cart[key].qty}</span><span>${(cart[key].qty * cart[key].price).toLocaleString()} VND</span>`;
+                                    modalCartItems.appendChild(item);
+                        }
+            }
+            modalCartTotal.innerText = total.toLocaleString();
+            modalNewBalance.innerText = ((posCurrentCustomer.balance || 0) - total).toLocaleString();
+              
+            paymentModal.classList.add('visible');
 });
 
 window.closeModal = (modalId) => {
-      el(modalId).classList.remove('visible');
+            el(modalId).classList.remove('visible');
 };
 
 window.processPayment = async () => {
-      closeModal('paymentModal');
-      let total = 0;
-      const items = {};
-      for (const key in cart) {
-            if (cart[key].qty > 0) {
-                  total += cart[key].qty * cart[key].price;
-                  items[cart[key].name] = cart[key].qty;
-            }
-      }
-      const newBalance = (posCurrentCustomer.balance || 0) - total;
-      await update(ref(db, "customers/" + posCurrentCustomer.id), { balance: newBalance });
-      const historyRef = ref(db, "history/" + posCurrentCustomer.id);
-      const record = { items, total, timestamp: Date.now() };
-      await push(historyRef, record);
+            closeModal('paymentModal');
+            let total = 0;
+            const items = {};
+            for (const key in cart) {
+                        if (cart[key].qty > 0) {
+                                    total += cart[key].qty * cart[key].price;
+                                    items[cart[key].name] = cart[key].qty;
+                        }
+            }
+            const newBalance = (posCurrentCustomer.balance || 0) - total;
+            await update(ref(db, "customers/" + posCurrentCustomer.id), { balance: newBalance });
+            const historyRef = ref(db, "history/" + posCurrentCustomer.id);
+            const record = { items, total, timestamp: Date.now() };
+            await push(historyRef, record);
 
-      posCurrentCustomer.balance = newBalance;
-      posCustomerBalance.innerText = `Số dư: ${newBalance.toLocaleString()} VND`;
+            posCurrentCustomer.balance = newBalance;
+            posCustomerBalance.innerText = `Số dư: ${newBalance.toLocaleString()} VND`;
 
-      Object.keys(cart).forEach(key => {
-            if (cart[key]) cart[key].qty = 0;
-      });
-      document.querySelectorAll('[id^="qty-"]').forEach(span => span.innerText = '0');
-      updateTotal();
+            Object.keys(cart).forEach(key => {
+                        if (cart[key]) cart[key].qty = 0;
+            });
+            document.querySelectorAll('[id^="qty-"]').forEach(span => span.innerText = '0');
+            updateTotal();
 
-      loadHistory(posCurrentCustomer.id);
-      alert("Thanh toán thành công!");
+            loadHistory(posCurrentCustomer.id);
+            alert("Thanh toán thành công!");
 };
 
 function loadHistory(customerId) {
-      posHistory.innerHTML = "";
-      const historyRef = ref(db, "history/" + customerId);
-      onValue(historyRef, snap => {
-            posHistory.innerHTML = "";
-            if (!snap.exists()) return;
-            const historyData = [];
-            snap.forEach(child => {
-                  historyData.push({ id: child.key, ...child.val() });
-            });
-            historyData.reverse().forEach(rec => {
-                  const div = document.createElement("div");
-                  div.className = "history-item";
-                  const itemsString = Object.entries(rec.items).map(([name, qty]) => `${name}: ${qty}`).join(", ");
-                  div.innerHTML = `
-                        <div class="history-header">
-                              <span><b>Ngày:</b> ${new Date(rec.timestamp).toLocaleString()}</span>
-                              <span><b>Tổng:</b> ${rec.total.toLocaleString()} VND</span>
-                        </div>
-                        <div class="history-details">
-                              <p><b>Sản phẩm:</b> ${itemsString}</p>
-                        </div>
-                  `;
-                  const detailsDiv = div.querySelector('.history-details');
-                  div.querySelector('.history-header').addEventListener('click', () => {
-                        if (detailsDiv.style.display === 'none') {
-                              detailsDiv.style.display = 'block';
-                        } else {
-                              detailsDiv.style.display = 'none';
-                        }
-                  });
-                  posHistory.appendChild(div);
-            });
-      });
+            posHistory.innerHTML = "";
+            const historyRef = ref(db, "history/" + customerId);
+            onValue(historyRef, snap => {
+                        posHistory.innerHTML = "";
+                        if (!snap.exists()) return;
+                        const historyData = [];
+                        snap.forEach(child => {
+                                    historyData.push({ id: child.key, ...child.val() });
+                        });
+                        historyData.reverse().forEach(rec => {
+                                    const div = document.createElement("div");
+                                    div.className = "history-item";
+                                    const itemsString = Object.entries(rec.items).map(([name, qty]) => `${name}: ${qty}`).join(", ");
+                                    div.innerHTML = `
+                                                <div class="history-header">
+                                                            <span><b>Ngày:</b> ${new Date(rec.timestamp).toLocaleString()}</span>
+                                                            <span><b>Tổng:</b> ${rec.total.toLocaleString()} VND</span>
+                                                </div>
+                                                <div class="history-details">
+                                                            <p><b>Sản phẩm:</b> ${itemsString}</p>
+                                                </div>
+                                    `;
+                                    const detailsDiv = div.querySelector('.history-details');
+                                    div.querySelector('.history-header').addEventListener('click', () => {
+                                                if (detailsDiv.style.display === 'none') {
+                                                            detailsDiv.style.display = 'block';
+                                                } else {
+                                                            detailsDiv.style.display = 'none';
+                                                }
+                                    });
+                                    posHistory.appendChild(div);
+                        });
+            });
 }
 
 renderProducts();
@@ -854,3 +854,4 @@ renderProducts();
 </body>
 
 </html>
+
