@@ -1,1 +1,1317 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hệ thống nạp & thanh toán - Cherrypet Coffee</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #59a68a;
+            --primary-light: #8dc2af;
+            --secondary: #e2f4ea;
+            --accent: #ff7f50;
+            --muted: #888;
+            --card: #ffffff;
+            --bg: #f9fbf8;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #f97316;
+            --border: #e6e9ef;
+            --dark-text: #2c3e50;
+        }
 
+        html, body {
+            overflow-x: hidden;
+            height: 100%;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--bg);
+            margin: 0;
+            padding: 20px;
+            color: var(--dark-text);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: clamp(24px, 6vw, 36px);
+            color: var(--primary);
+            font-weight: 700;
+        }
+        
+        header p {
+            font-size: 14px;
+            color: var(--muted);
+            margin-top: 8px;
+        }
+
+        .tab-container {
+            display: flex;
+            background: var(--card);
+            padding: 6px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            gap: 6px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tab-button {
+            flex: 1;
+            white-space: nowrap;
+            background: transparent;
+            color: var(--muted);
+            border: none;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeInSlideUp 0.6s ease-out;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeInSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h3, h4 {
+            margin-top: 0;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        label {
+            display: block;
+            margin-top: 16px;
+            color: var(--dark-text);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        input[type="text"], input[type="tel"], input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            margin-top: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            color: var(--dark-text);
+            background: var(--bg);
+        }
+
+        input[type="text"]:focus, input[type="tel"]:focus, input[type="number"]:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(89, 166, 138, 0.2);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: 0;
+            padding: 14px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        button.ghost {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary-light);
+            box-shadow: none;
+        }
+        
+        .btn_small {
+            padding: 8px 12px;
+            font-size: 14px;
+            font-weight: 500;
+            margin: 0;
+            width: auto;
+        }
+
+        .row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .row button {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 14px;
+            margin-top: 12px;
+        }
+
+        .balance {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .danger {
+            color: var(--danger);
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 24px 0;
+        }
+
+        .pos-step {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .pos-step.active {
+            display: flex;
+        }
+
+        .menu-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .menu-group {
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--secondary);
+            transition: all 0.3s ease;
+        }
+        
+        .menu-group:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .menu-header {
+            padding: 16px;
+            font-weight: 600;
+            color: var(--dark-text);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--secondary);
+            border-bottom: 2px solid var(--primary-light);
+        }
+        
+        .menu-header:last-child {
+            border-bottom: none;
+        }
+
+        .menu-header::after {
+            content: '⌄';
+            font-size: 24px;
+            transition: transform 0.3s;
+            color: var(--primary);
+        }
+
+        .menu-header.open::after {
+            transform: rotate(180deg);
+        }
+
+        .menu-items {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+            background: var(--card);
+            padding: 0 16px;
+        }
+
+        .menu-items.open {
+            max-height: 500px;
+            padding: 16px;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .item-row:last-child {
+            border-bottom: none;
+        }
+
+        .item-row span {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .item-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .item-controls button {
+            margin: 0;
+            padding: 6px 14px;
+            font-size: 20px;
+            font-weight: 700;
+            background: var(--primary-light);
+            color: var(--dark-text);
+            border: none;
+            border-radius: 8px;
+            box-shadow: none;
+            flex-shrink: 0;
+            width: auto;
+        }
+
+        .item-controls button:active {
+            background: var(--primary);
+            color: white;
+            transform: scale(0.95);
+        }
+
+        .item-controls span.quantity {
+            display: inline-block;
+            width: 30px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .total-price {
+            text-align: right;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            background: var(--card);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            font-size: 14px;
+        }
+        
+        th {
+            font-weight: 700;
+            color: var(--primary);
+            background: var(--secondary);
+        }
+
+        td {
+            border-bottom: 1px solid var(--border);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .history {
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        /* Autocomplete Styles */
+        .autocomplete-container {
+            position: relative;
+        }
+
+        .autocomplete-items {
+            position: absolute;
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            border-top: none;
+            z-index: 99;
+            top: 100%;
+            left: 0;
+            right: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border-radius: 0 0 10px 10px;
+        }
+
+        .autocomplete-items div {
+            padding: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+            transition: background-color 0.2s ease;
+        }
+
+        .autocomplete-items div:hover, .autocomplete-items .autocomplete-active {
+            background-color: var(--secondary);
+        }
+
+        /* Toast Notification Styles */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .toast {
+            background: var(--card);
+            color: var(--dark-text);
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.5s cubic-bezier(0.25, 0.1, 0.25, 1), transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+            text-align: center;
+            min-width: 280px;
+            max-width: 90vw;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .toast-icon {
+            font-size: 24px;
+        }
+
+        .toast-icon.success { color: var(--success); }
+        .toast-icon.danger { color: var(--danger); }
+        .toast-icon.warning { color: var(--warning); }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: var(--bg);
+            margin: auto;
+            padding: 24px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .modal-header h4 {
+            margin: 0;
+            color: var(--primary);
+        }
+
+        .modal-close {
+            color: var(--muted);
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--dark-text);
+        }
+
+        .modal-body {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--border);
+            font-size: 15px;
+        }
+
+        .modal-item:last-child {
+            border-bottom: none;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .modal-buttons button {
+            flex: 1;
+            margin: 0;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <header>
+            <h1>Cherrypet Coffee</h1>
+            <p>Hệ thống nạp & thanh toán nội bộ</p>
+        </header>
+
+        <div class="tab-container">
+            <button class="tab-button active" data-tab="pos-tab">Bán hàng (POS)</button>
+            <button class="tab-button" data-tab="topup-tab">Nạp tiền</button>
+            <button class="tab-button" data-tab="add-customer-tab">Thêm khách mới</button>
+            <button class="tab-button" data-tab="manage-tab">Quản lý khách</button>
+        </div>
+
+        <div id="add-customer-tab" class="tab-content">
+            <div class="card">
+                <h3>Thêm khách mới</h3>
+                <label>Tên khách</label>
+                <input id="new_name" type="text" placeholder="VD: Nguyễn Văn A" />
+                <label>Số điện thoại</label>
+                <input id="new_phone" type="tel" inputmode="numeric" placeholder="VD: 0901234567" />
+                <div class="row">
+                    <button id="btn_add">Thêm khách</button>
+                    <button id="btn_seed" class="ghost">Thêm mẫu</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="topup-tab" class="tab-content">
+            <div class="card">
+                <h3>Nạp tiền cho khách</h3>
+                <label>Số điện thoại khách</label>
+                <div class="autocomplete-container">
+                    <input id="top_phone" type="tel" placeholder="Nhập số ĐT khách" autocomplete="off" />
+                    <div id="top_autocomplete_list" class="autocomplete-items"></div>
+                </div>
+                <label>Số tiền nạp (VNĐ)</label>
+                <input id="top_amount" type="number" placeholder="VD: 2000000" min="0" />
+                <div class="row">
+                    <button id="btn_top">Xác nhận nạp</button>
+                    <button id="btn_top_quick" class="ghost">Nạp 2.000.000</button>
+                </div>
+                <div class="muted">Nạp <span style="font-weight:700">≥ 2.000.000</span> → tặng <span style="font-weight:700">50%</span></div>
+            </div>
+        </div>
+
+        <div id="pos-tab" class="tab-content active">
+            <div class="card">
+                <h3>Bán hàng (POS)</h3>
+                <div id="pos-step-1" class="pos-step active">
+                    <h4>Tìm khách hàng</h4>
+                    <label>Nhập SĐT khách</label>
+                    <div class="autocomplete-container">
+                        <input id="pos_phone" type="tel" placeholder="Nhập sđt để hiển thị thông tin" autocomplete="off" />
+                        <div id="pos_autocomplete_list" class="autocomplete-items"></div>
+                    </div>
+                    <div class="row">
+                        <button id="btn_lookup">Tìm khách</button>
+                        <button id="btn_reset_pos_view" class="ghost">Xóa & Quay lại</button>
+                    </div>
+                </div>
+                <div id="pos-step-2" class="pos-step">
+                    <h4>Thông tin khách hàng</h4>
+                    <div><strong>Tên:</strong> <span id="cv_name"></span></div>
+                    <div><strong>SĐT:</strong> <span id="cv_phone"></span></div>
+                    <div><strong>Số dư:</strong> <span id="cv_balance" class="balance"></span></div>
+                    <div class="divider"></div>
+                    <h4>Chọn món</h4>
+                    <div class="menu-container">
+                        <div class="menu-group">
+                            <div class="menu-header">Vé</div>
+                            <div class="menu-items">
+                                <div class="item-row">
+                                    <span>Vé 70k</span>
+                                    <div class="item-controls" data-item-name="Vé 70k" data-price="70000">
+                                        <button class="btn-minus">-</button>
+                                        <span class="quantity">0</span>
+                                        <button class="btn-plus">+</button>
+                                    </div>
+                                </div>
+                                <div class="item-row">
+                                    <span>Vé 100k</span>
+                                    <div class="item-controls" data-item-name="Vé 100k" data-price="100000">
+                                        <button class="btn-minus">-</button>
+                                        <span class="quantity">0</span>
+                                        <button class="btn-plus">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="menu-group">
+                            <div class="menu-header">Nước</div>
+                            <div class="menu-items">
+                                <div class="item-row">
+                                    <span>Nước 40k</span>
+                                    <div class="item-controls" data-item-name="Nước 40k" data-price="40000">
+                                        <button class="btn-minus">-</button>
+                                        <span class="quantity">0</span>
+                                        <button class="btn-plus">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="menu-group">
+                            <div class="menu-header">Thức ăn cún</div>
+                            <div class="menu-items">
+                                <div class="item-row">
+                                    <span>TA cún 45k</span>
+                                    <div class="item-controls" data-item-name="Thức ăn cún 45k" data-price="45000">
+                                        <button class="btn-minus">-</button>
+                                        <span class="quantity">0</span>
+                                        <button class="btn-plus">+</button>
+                                    </div>
+                                </div>
+                                <div class="item-row">
+                                    <span>TA cún 70k</span>
+                                    <div class="item-controls" data-item-name="Thức ăn cún 70k" data-price="70000">
+                                        <button class="btn-minus">-</button>
+                                        <span class="quantity">0</span>
+                                        <button class="btn-plus">+</button>
+                                    </div>
+                                </div>
+                                <div class="item-row">
+                                    <span>TA cún 95k</span>
+                                    <div class="item-controls" data-item-name="Thức ăn cún 95k" data-price="95000">
+                                        <button class="btn-minus">-</button>
+                                        <span class="quantity">0</span>
+                                        <button class="btn-plus">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="menu-group">
+                            <div class="menu-header">Thức ăn mèo</div>
+                            <div class="menu-items">
+                                <div class="item-row">
+                                    <span>TA mèo 15k</span>
+                                    <div class="item-controls" data-item-name="Thức ăn mèo 15k" data-price="15000">
+                                        <button class="btn-minus">-</button>
+                                        <span class="quantity">0</span>
+                                        <button class="btn-plus">+</button>
+                                    </div>
+                                </div>
+                                <div class="item-row">
+                                    <span>TA mèo 45k</span>
+                                    <div class="item-controls" data-item-name="Thức ăn mèo 45k" data-price="45000">
+                                        <button class="btn-minus">-</button>
+                                        <span class="quantity">0</span>
+                                        <button class="btn-plus">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="menu-group">
+                            <div class="menu-header">Thức ăn Capy</div>
+                            <div class="menu-items">
+                                <div class="item-row">
+                                    <span>TA Capy 20k</span>
+                                    <div class="item-controls" data-item-name="Thức ăn Capy 20k" data-price="20000">
+                                        <button class="btn-minus">-</button>
+                                        <span class="quantity">0</span>
+                                        <button class="btn-plus">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="total-price">
+                        Tổng tiền: <span id="total_purchase">0 ₫</span>
+                    </div>
+                    <div class="row">
+                        <button id="btn_charge">Thanh toán (trừ tiền)</button>
+                        <button id="btn_back_to_search" class="ghost">Quay lại</button>
+                    </div>
+                    <div class="divider"></div>
+                    <div>
+                        <h4>Lịch sử giao dịch</h4>
+                        <div class="history">
+                            <table id="history_table">
+                                <thead>
+                                    <tr>
+                                        <th>Thời gian</th>
+                                        <th>Loại</th>
+                                        <th>Số tiền</th>
+                                        <th>Số dư sau</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="manage-tab" class="tab-content">
+            <div class="card">
+                <h3>Quản lý khách hàng</h3>
+                <div class="muted">Nhấp "Xem" để mở thông tin, "Xóa" để xóa khách.</div>
+                <table id="list_customers">
+                    <thead>
+                        <tr>
+                            <th>Tên</th>
+                            <th>SĐT</th>
+                            <th>Số dư</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div class="divider"></div>
+                <div>
+                    <button id="btn_clear_all" class="ghost">Xóa toàn bộ dữ liệu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="toast-container"></div>
+    <div id="modal_details" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Chi tiết giao dịch</h4>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="modal_transaction_date"></div>
+                <div id="modal_item_list"></div>
+                <div id="modal_total_price" style="text-align: right; margin-top: 10px; font-weight: 700;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="modal_confirm_payment" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Xác nhận thanh toán</h4>
+                <span class="modal-close" id="confirm_modal_close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="confirm_modal_items"></div>
+                <div id="confirm_modal_total" class="total-price" style="margin-top: 20px;"></div>
+                <div class="modal-buttons">
+                    <button id="btn_confirm_pay">Xác nhận</button>
+                    <button id="btn_cancel_pay" class="ghost">Hủy bỏ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // --- Cấu hình khuyến mãi (thay đổi nếu cần) ---
+        const PROMO_THRESHOLD = 2000000;
+        const PROMO_BONUS_RATIO = 0.5;
+        // --- Helpers ---
+        function fmtVND(num) {
+            if (num == null) return '0 ₫';
+            return Number(num).toLocaleString('vi-VN') + ' ₫';
+        }
+        function nowISO() { return new Date().toISOString(); }
+        function nowReadable() { return new Date().toLocaleString('vi-VN', { hour12: false }); }
+        function escapeHtml(s) {
+            return String(s || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
+        }
+        // --- Toast Notification ---
+        const toastContainer = document.getElementById('toast-container');
+        function showToast(message, type = 'success', duration = 3000) {
+            const toast = document.createElement('div');
+            const icon = type === 'success' ? '✅' : type === 'danger' ? '❌' : '⚠️';
+            toast.innerHTML = `<span class="toast-icon ${type}">${icon}</span><span>${message}</span>`;
+            toast.classList.add('toast');
+            if (toastContainer.lastChild) {
+                toastContainer.lastChild.classList.remove('show');
+            }
+            toastContainer.appendChild(toast);
+            void toast.offsetWidth;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.remove();
+                    }
+                }, 500);
+            }, duration);
+        }
+        // --- Storage keys & basic model ---
+        const STORAGE_KEY = 'cherrypet_customers_v2';
+        function loadCustomers() {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return [];
+            try { return JSON.parse(raw); } catch (e) { return []; }
+        }
+        function saveCustomers(list) { localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
+        function findCustomer(phone) {
+            const list = loadCustomers();
+            return list.find(c => c.phone === phone);
+        }
+        function upsertCustomer(customer) {
+            const list = loadCustomers();
+            const idx = list.findIndex(c => c.phone === customer.phone);
+            if (idx >= 0) list[idx] = customer;
+            else list.push(customer);
+            saveCustomers(list);
+        }
+        function deleteCustomer(phone) {
+            const list = loadCustomers().filter(c => c.phone !== phone);
+            saveCustomers(list);
+        }
+        // --- Business logic ---
+        function applyPromo(amount) {
+            amount = Number(amount) || 0;
+            if (amount >= PROMO_THRESHOLD) {
+                const bonus = Math.round(amount * PROMO_BONUS_RATIO);
+                return { base: amount, bonus, total: amount + bonus };
+            }
+            return { base: amount, bonus: 0, total: amount };
+        }
+        function addCustomer(name, phone) {
+            phone = String(phone).trim();
+            name = String(name).trim();
+            if (!name) throw new Error('Tên không được để trống.');
+            if (!phone) throw new Error('Số điện thoại không được để trống.');
+            if (findCustomer(phone)) throw new Error('Số điện thoại đã tồn tại.');
+            const c = { name, phone, balance: 0, history: [] };
+            upsertCustomer(c);
+            return c;
+        }
+        function topUp(phone, amount, source = 'Nạp') {
+            const c = findCustomer(phone);
+            if (!c) throw new Error('Không tìm thấy khách hàng.');
+            amount = Number(amount);
+            if (isNaN(amount) || amount <= 0) throw new Error('Số tiền không hợp lệ.');
+            const promo = applyPromo(amount);
+            c.balance = Number(c.balance) + promo.total;
+            c.history.unshift({
+                time: nowISO(),
+                readable: nowReadable(),
+                type: 'Nạp',
+                amount: promo.total,
+                base: promo.base,
+                bonus: promo.bonus,
+                balanceAfter: c.balance,
+                note: source
+            });
+            upsertCustomer(c);
+            return { customer: c, promo };
+        }
+        function charge(phone, items) {
+            const c = findCustomer(phone);
+            if (!c) throw new Error('Không tìm thấy khách hàng.');
+            let total = 0;
+            let itemDetails = [];
+            for (const item of items) {
+                if (item.quantity > 0) {
+                    total += item.price * item.quantity;
+                    itemDetails.push({ name: item.name, quantity: item.quantity, price: item.price });
+                }
+            }
+            if (total === 0) throw new Error('Vui lòng chọn món để thanh toán.');
+            if (Number(c.balance) < total) throw new Error('Số dư không đủ để thanh toán.');
+            c.balance = Number(c.balance) - total;
+            c.history.unshift({
+                time: nowISO(),
+                readable: nowReadable(),
+                type: 'Trừ',
+                amount: -total,
+                balanceAfter: c.balance,
+                itemDetails: itemDetails
+            });
+            upsertCustomer(c);
+            return c;
+        }
+        // --- UI wiring & Events ---
+        const el = id => document.getElementById(id);
+        const itemControls = document.querySelectorAll('.item-controls');
+        const totalPurchaseEl = el('total_purchase');
+        const tabs = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        let currentPurchaseItems = [];
+        
+        function switchTab(tabId) {
+            tabContents.forEach(content => content.classList.remove('active'));
+            tabs.forEach(tab => tab.classList.remove('active'));
+            el(tabId).classList.add('active');
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+            if (tabId === 'manage-tab') {
+                renderCustomerList();
+            }
+            if (tabId === 'pos-tab') {
+                resetPosView();
+            }
+        }
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                switchTab(tab.dataset.tab);
+            });
+        });
+        function renderCustomerList() {
+            const tbody = el('list_customers').querySelector('tbody');
+            tbody.innerHTML = '';
+            const list = loadCustomers().sort((a, b) => a.name.localeCompare(b.name));
+            for (const c of list) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+            <td>${escapeHtml(c.name)}</td>
+            <td>${escapeHtml(c.phone)}</td>
+            <td>${fmtVND(c.balance)}</td>
+            <td>
+              <button data-phone="${c.phone}" class="btn_view btn_small">Xem</button>
+              <button data-phone="${c.phone}" class="btn_del btn_small danger">Xóa</button>
+            </td>
+          `;
+                tbody.appendChild(tr);
+            }
+            document.querySelectorAll('.btn_view').forEach(b => {
+                b.onclick = () => {
+                    el('pos_phone').value = b.dataset.phone;
+                    el('btn_lookup').click();
+                    switchTab('pos-tab');
+                };
+            });
+            document.querySelectorAll('.btn_del').forEach(b => {
+                b.onclick = () => {
+                    if (!confirm('Xác nhận xóa khách này?')) return;
+                    deleteCustomer(b.dataset.phone);
+                    renderCustomerList();
+                    showToast('Đã xóa khách hàng.', 'danger');
+                };
+            });
+        }
+        function renderPosCustomerView(c) {
+            el('pos-step-1').classList.remove('active');
+            el('pos-step-2').classList.add('active');
+            el('cv_name').textContent = c.name;
+            el('cv_phone').textContent = c.phone;
+            el('cv_balance').textContent = fmtVND(c.balance);
+            const tb = el('history_table').querySelector('tbody');
+            tb.innerHTML = '';
+            (c.history || []).slice(0, 100).forEach((h, index) => {
+                const tr = document.createElement('tr');
+                let detailButton = '';
+                if (h.type === 'Trừ') {
+                    detailButton = `<button class="btn_view_details btn_small" data-history-index="${index}">Xem chi tiết</button>`;
+                }
+                tr.innerHTML = `
+                    <td style="white-space:nowrap">${escapeHtml(h.readable || h.time)}</td>
+                    <td>${escapeHtml(h.type)}</td>
+                    <td>${fmtVND(h.amount)}</td>
+                    <td>${fmtVND(h.balanceAfter)}</td>
+                    <td>${detailButton}</td>
+                `;
+                tb.appendChild(tr);
+            });
+            document.querySelectorAll('.btn_view_details').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const index = e.target.dataset.historyIndex;
+                    const historyItem = c.history[index];
+                    showTransactionDetails(historyItem);
+                });
+            });
+        }
+        
+        function showTransactionDetails(historyItem) {
+            const modal = el('modal_details');
+            const itemList = el('modal_item_list');
+            const totalEl = el('modal_total_price');
+            const dateEl = el('modal_transaction_date');
+            
+            itemList.innerHTML = '';
+            dateEl.innerHTML = `<strong>Thời gian:</strong> ${escapeHtml(historyItem.readable)}`;
+            
+            let total = 0;
+            if (historyItem.itemDetails && historyItem.itemDetails.length > 0) {
+                historyItem.itemDetails.forEach(item => {
+                    const itemRow = document.createElement('div');
+                    itemRow.classList.add('modal-item');
+                    itemRow.innerHTML = `
+                        <span>${escapeHtml(item.name)} (x${item.quantity})</span>
+                        <span>${fmtVND(item.price * item.quantity)}</span>
+                    `;
+                    itemList.appendChild(itemRow);
+                    total += item.price * item.quantity;
+                });
+                totalEl.textContent = `Tổng cộng: ${fmtVND(total)}`;
+            } else {
+                itemList.innerHTML = 'Không có chi tiết món ăn.';
+                totalEl.textContent = `Tổng cộng: ${fmtVND(historyItem.amount)}`;
+            }
+            modal.classList.add('show');
+        }
+
+        function showConfirmModal(items, total) {
+            const modal = el('modal_confirm_payment');
+            const itemList = el('confirm_modal_items');
+            const totalEl = el('confirm_modal_total');
+            
+            itemList.innerHTML = '';
+            items.forEach(item => {
+                if (item.quantity > 0) {
+                    const itemRow = document.createElement('div');
+                    itemRow.classList.add('modal-item');
+                    itemRow.innerHTML = `
+                        <span>${escapeHtml(item.name)} (x${item.quantity})</span>
+                        <span>${fmtVND(item.price * item.quantity)}</span>
+                    `;
+                    itemList.appendChild(itemRow);
+                }
+            });
+            
+            totalEl.textContent = `Tổng tiền: ${fmtVND(total)}`;
+            modal.classList.add('show');
+        }
+        
+        el('modal_details').querySelector('.modal-close').addEventListener('click', () => {
+            el('modal_details').classList.remove('show');
+        });
+        el('confirm_modal_close').addEventListener('click', () => {
+            el('modal_confirm_payment').classList.remove('show');
+        });
+        el('btn_cancel_pay').addEventListener('click', () => {
+            el('modal_confirm_payment').classList.remove('show');
+        });
+
+        window.onclick = function(event) {
+            if (event.target == el('modal_details')) {
+                el('modal_details').classList.remove('show');
+            }
+            if (event.target == el('modal_confirm_payment')) {
+                el('modal_confirm_payment').classList.remove('show');
+            }
+        }
+        
+        function resetPosView() {
+            el('pos-step-1').classList.add('active');
+            el('pos-step-2').classList.remove('active');
+            el('pos_phone').value = '';
+            resetItemQuantities();
+        }
+        function resetItemQuantities() {
+            document.querySelectorAll('.item-controls .quantity').forEach(span => {
+                span.textContent = '0';
+            });
+            updateTotal();
+        }
+        function updateTotal() {
+            let total = 0;
+            currentPurchaseItems = [];
+            itemControls.forEach(controls => {
+                const price = Number(controls.dataset.price);
+                const quantity = Number(controls.querySelector('.quantity').textContent);
+                if (!isNaN(price) && !isNaN(quantity) && quantity > 0) {
+                    const item = {
+                        name: controls.dataset.itemName,
+                        price: price,
+                        quantity: quantity
+                    };
+                    currentPurchaseItems.push(item);
+                    total += price * quantity;
+                }
+            });
+            totalPurchaseEl.textContent = fmtVND(total);
+        }
+        // Autocomplete Functionality
+        function autocomplete(input) {
+            input.addEventListener('input', function () {
+                closeAllLists(this);
+                const val = this.value.trim();
+                if (!val) return false;
+                const customers = loadCustomers();
+                const matchingCustomers = customers.filter(c => c.phone.includes(val) || c.name.toLowerCase().includes(val.toLowerCase()));
+                if (matchingCustomers.length > 0) {
+                    const list = document.createElement("div");
+                    list.setAttribute("class", "autocomplete-items");
+                    this.parentNode.appendChild(list);
+                    matchingCustomers.forEach(c => {
+                        const item = document.createElement("div");
+                        item.innerHTML = `<strong>${escapeHtml(c.name)}</strong> (${escapeHtml(c.phone)})`;
+                        item.addEventListener("click", () => {
+                            input.value = c.phone;
+                            closeAllLists();
+                            if (input.id === 'pos_phone') {
+                                el('btn_lookup').click();
+                            }
+                        });
+                        list.appendChild(item);
+                    });
+                }
+            });
+            function closeAllLists(exceptThis = null) {
+                const lists = document.querySelectorAll(".autocomplete-items");
+                lists.forEach(list => {
+                    if (list.parentNode.querySelector('input') !== exceptThis) {
+                        list.parentNode.removeChild(list);
+                    }
+                });
+            }
+            document.addEventListener("click", e => {
+                if (!e.target.closest(".autocomplete-container")) {
+                    closeAllLists();
+                }
+            });
+        }
+        // Event Listeners
+        el('btn_add').addEventListener('click', () => {
+            const name = el('new_name').value.trim();
+            const phone = el('new_phone').value.trim();
+            try {
+                addCustomer(name, phone);
+                showToast('Thêm khách thành công.', 'success');
+                el('new_name').value = '';
+                el('new_phone').value = '';
+            } catch (e) {
+                showToast(e.message, 'danger');
+            }
+        });
+        el('btn_seed').addEventListener('click', () => {
+            const samples = [
+                { name: 'Nguyễn Văn A', phone: '0901234567', balance: 150000 },
+                { name: 'Trần Thị B', phone: '0912345678', balance: 500000 },
+                { name: 'Phạm C', phone: '0987654321', balance: 3000000 }
+            ];
+            const list = loadCustomers();
+            for (const s of samples) {
+                if (!list.find(x => x.phone === s.phone)) {
+                    list.push({ name: s.name, phone: s.phone, balance: s.balance, history: [{ time: nowISO(), readable: nowReadable(), type: 'Init', amount: s.balance, balanceAfter: s.balance, note: 'Mẫu' }] });
+                }
+            }
+            saveCustomers(list);
+            showToast('Đã thêm dữ liệu mẫu.', 'success');
+        });
+        el('btn_top').addEventListener('click', () => {
+            const phone = el('top_phone').value.trim();
+            const amount = Number(el('top_amount').value);
+            try {
+                const r = topUp(phone, amount, 'Nạp trực tiếp (admin)');
+                showToast(`Nạp thành công: cộng ${fmtVND(r.promo.total)}. Số dư: ${fmtVND(r.customer.balance)}.`, 'success', 6000);
+                el('top_amount').value = '';
+            } catch (e) {
+                showToast(e.message, 'danger');
+            }
+        });
+        el('btn_top_quick').addEventListener('click', () => {
+            el('top_amount').value = 2000000;
+            el('btn_top').click();
+        });
+        el('btn_lookup').addEventListener('click', () => {
+            const phone = el('pos_phone').value.trim();
+            const c = findCustomer(phone);
+            if (c) {
+                renderPosCustomerView(c);
+                showToast(`Tìm thấy khách: ${c.name}`, 'success');
+            } else {
+                showToast('Không tìm thấy khách hàng.', 'danger');
+            }
+        });
+        el('btn_reset_pos_view').addEventListener('click', resetPosView);
+        el('btn_back_to_search').addEventListener('click', resetPosView);
+        
+        el('btn_charge').addEventListener('click', () => {
+            const total = currentPurchaseItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            if (total === 0) {
+                showToast('Vui lòng chọn món để thanh toán.', 'warning');
+                return;
+            }
+            showConfirmModal(currentPurchaseItems, total);
+        });
+        
+        el('btn_confirm_pay').addEventListener('click', () => {
+            const phone = el('cv_phone').textContent.trim();
+            try {
+                const c = charge(phone, currentPurchaseItems);
+                showToast(`Thanh toán thành công. Số dư: ${fmtVND(c.balance)}`, 'success', 5000);
+                renderPosCustomerView(c);
+                resetItemQuantities();
+                el('modal_confirm_payment').classList.remove('show');
+            } catch (e) {
+                showToast(e.message, 'danger');
+                el('modal_confirm_payment').classList.remove('show');
+            }
+        });
+
+        el('btn_clear_all').addEventListener('click', () => {
+            if (!confirm('Xác nhận xóa toàn bộ dữ liệu khách hàng?')) return;
+            localStorage.removeItem(STORAGE_KEY);
+            renderCustomerList();
+            resetPosView();
+            showToast('Đã xóa toàn bộ dữ liệu.', 'danger');
+        });
+        document.querySelectorAll('.menu-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const items = header.nextElementSibling;
+                const isAlreadyOpen = items.classList.contains('open');
+                document.querySelectorAll('.menu-items.open').forEach(openItems => {
+                    openItems.classList.remove('open');
+                    openItems.previousElementSibling.classList.remove('open');
+                });
+                if (!isAlreadyOpen) {
+                    header.classList.add('open');
+                    items.classList.add('open');
+                }
+            });
+        });
+        document.querySelectorAll('.btn-plus').forEach(button => {
+            button.addEventListener('click', () => {
+                const controls = button.closest('.item-controls');
+                const quantitySpan = controls.querySelector('.quantity');
+                let quantity = Number(quantitySpan.textContent);
+                quantity++;
+                quantitySpan.textContent = quantity;
+                updateTotal();
+                const itemName = controls.dataset.itemName;
+                showToast(`Đã thêm 1 x ${itemName}`, 'success');
+            });
+        });
+        document.querySelectorAll('.btn-minus').forEach(button => {
+            button.addEventListener('click', () => {
+                const controls = button.closest('.item-controls');
+                const quantitySpan = controls.querySelector('.quantity');
+                let quantity = Number(quantitySpan.textContent);
+                if (quantity > 0) {
+                    quantity--;
+                    quantitySpan.textContent = quantity;
+                    updateTotal();
+                    const itemName = controls.dataset.itemName;
+                    showToast(`Đã bớt 1 x ${itemName}`, 'danger');
+                } else {
+                    showToast('Số lượng đã ở mức tối thiểu.', 'warning');
+                }
+            });
+        });
+        document.addEventListener('DOMContentLoaded', () => {
+            switchTab('pos-tab');
+            updateTotal();
+            autocomplete(el('pos_phone'));
+            autocomplete(el('top_phone'));
+        });
+        el('pos_phone').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') el('btn_lookup').click();
+        });
+        el('top_phone').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') el('btn_top').click();
+        });
+        el('top_amount').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') el('btn_top').click();
+        });
+    </script>
+</body>
+</html>
