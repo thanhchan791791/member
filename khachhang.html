@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thông tin khách hàng - Cherrypet Coffee</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f6f9;
+      color: #333;
+    }
+    .container {
+      max-width: 550px;
+      margin: 0 auto;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    h1 {
+      text-align: center;
+      color: #4CAF50;
+      margin: 20px 0;
+      font-size: 26px;
+      font-weight: 700;
+    }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .info p {
+      margin: 8px 0;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    .info p b {
+      color: #555;
+    }
+    .balance {
+      font-weight: 700;
+      font-size: 20px;
+      color: #e74c3c;
+      margin-top: 15px;
+      text-align: center;
+    }
+    .history h2 {
+      text-align: center;
+      color: #4CAF50;
+      margin-bottom: 15px;
+      font-size: 22px;
+    }
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .history-item {
+      background: #fff;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+      cursor: pointer;
+    }
+    .history-item:hover {
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+    }
+    .history-item .info {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .history-item .date {
+      font-size: 14px;
+      color: #7f8c8d;
+    }
+    .history-item .type {
+      font-weight: 600;
+      font-size: 16px;
+    }
+    .history-item .type.deposit { color: #27ae60; }
+    .history-item .type.purchase { color: #c0392b; }
+    .history-item .amount {
+      font-weight: 700;
+      font-size: 18px;
+      color: #34495e;
+    }
+    /* Modal Styles */
+    .details-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      background: #fff;
+      border-radius: 16px;
+      padding: 25px;
+      width: 90%;
+      max-width: 450px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      z-index: 1000;
+      transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.4s ease;
+      opacity: 0;
+      visibility: hidden;
+      overflow-y: auto;
+      max-height: 85vh;
+    }
+    .details-modal.open {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+      visibility: visible;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .modal-header h3 {
+      margin: 0;
+      font-size: 20px;
+      color: #4CAF50;
+      font-weight: 700;
+    }
+    .close-btn {
+      background: #e74c3c;
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .close-btn:hover {
+      background: #c0392b;
+    }
+    .details-content p {
+      margin: 8px 0;
+      line-height: 1.6;
+    }
+    .details-content p b {
+      color: #555;
+    }
+    .item-list {
+      margin-top: 10px;
+      padding-left: 0;
+      list-style: none;
+    }
+    .item-list li {
+      margin-bottom: 5px;
+      padding-left: 15px;
+      position: relative;
+    }
+    .item-list li::before {
+      content: "•";
+      color: #4CAF50;
+      font-weight: bold;
+      display: inline-block;
+      width: 1em;
+      margin-left: -1em;
+    }
+    .overlay {
+      position: fixed;
+      top: 0;
+      left:0;
+      width:100%;
+      height:100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 900;
+      display:none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .overlay.show {
+      display:block;
+      opacity: 1;
+    }
+    .loading-text {
+      text-align: center;
+      color: #95a5a6;
+      margin-top: 30px;
+      font-style: italic;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Thông tin khách hàng</h1>
+    <div class="card info">
+      <p><b>Tên:</b> <span id="cName">...</span></p>
+      <p><b>SĐT:</b> <span id="cPhone">...</span></p>
+      <p class="balance">Số dư: <span id="cBalance">0</span> đ</p>
+    </div>
+
+    <div class="history">
+      <h2>Lịch sử giao dịch</h2>
+      <div class="history-list" id="historyList">
+         <p class="loading-text">Đang tải...</p>
+      </div>
+    </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+<div class="details-modal" id="detailsModal">
+    <div class="modal-header">
+      <h3>Chi tiết giao dịch</h3>
+      <button class="close-btn" id="closeModal">Đóng</button>
+    </div>
+    <div class="details-content" id="detailsContent"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyB4S6E-Gl6k5mG57otkF8WUh3iuvqq-pWw",
+    authDomain: "member-ffd77.firebaseapp.com",
+    projectId: "member-ffd77",
+    storageBucket: "member-ffd77.firebasestorage.app",
+    messagingSenderId: "375537857518",
+    appId: "1:375537857518:web:86449f4419f0ab5f6954ff",
+    databaseURL: "https://member-ffd77-default-rtdb.firebaseio.com/"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const params = new URLSearchParams(window.location.search);
+const customerId = params.get("id");
+
+const overlay = document.getElementById('overlay');
+const modal = document.getElementById('detailsModal');
+const detailsContent = document.getElementById('detailsContent');
+const closeModalBtn = document.getElementById('closeModal');
+
+function openModal(content) {
+    detailsContent.innerHTML = content;
+    modal.classList.add('open');
+    overlay.classList.add('show');
+}
+function closeModal() {
+    modal.classList.remove('open');
+    overlay.classList.remove('show');
+}
+closeModalBtn.addEventListener('click', closeModal);
+overlay.addEventListener('click', closeModal);
+
+if (!customerId) {
+    document.body.innerHTML = "<p class='loading-text'>Không tìm thấy khách hàng.</p>";
+} else {
+    const cRef = ref(db, "customers/" + customerId);
+    onValue(cRef, (snap) => {
+      if (!snap.exists()) {
+          document.body.innerHTML = "<p class='loading-text'>Không tìm thấy khách hàng.</p>";
+          return;
+      }
+      const c = snap.val();
+      document.getElementById("cName").innerText = c.name || "-";
+      document.getElementById("cPhone").innerText = c.phone || "-";
+      document.getElementById("cBalance").innerText = Number(c.balance || 0).toLocaleString();
+    });
+
+    const historyRef = ref(db, "history/" + customerId);
+    onValue(historyRef, (snap) => {
+      const list = document.getElementById("historyList");
+      list.innerHTML = "";
+      if (!snap.exists()) {
+          list.innerHTML = "<p class='loading-text'>Chưa có lịch sử giao dịch.</p>";
+          return;
+      }
+
+      const records = [];
+      snap.forEach(child => {
+          const rec = child.val();
+          rec.timestamp = rec.timestamp || Date.now();
+          rec.type = rec.items ? "purchase" : "deposit";
+          rec.totalAmount = Number(rec.total || rec.amount || 0);
+          records.push(rec);
+      });
+
+      // Sắp xếp mới nhất trước
+      records.sort((a,b) => b.timestamp - a.timestamp);
+
+      records.forEach(rec => {
+          const date = new Date(rec.timestamp).toLocaleString();
+          const typeText = rec.type === "purchase" ? "Mua hàng" : "Nạp tiền";
+
+          const item = document.createElement("div");
+          item.className = "history-item";
+          item.innerHTML = `
+            <div class="info">
+               <span class="type ${rec.type}">${typeText}</span>
+               <span class="date">${date}</span>
+            </div>
+            <div class="amount">${(rec.type === "purchase" ? "-" : "+") + rec.totalAmount.toLocaleString()} đ</div>
+          `;
+          list.appendChild(item);
+
+          item.addEventListener('click', () => {
+             let detailHTML = `
+                <p><b>Loại giao dịch:</b> ${typeText}</p>
+                <p><b>Ngày:</b> ${date}</p>
+                <p><b>Số tiền:</b> ${(rec.type === "purchase" ? "-" : "+") + rec.totalAmount.toLocaleString()} đ</p>
+              `;
+
+             if (rec.type === "purchase" && rec.items) {
+                 let itemsHtml = '<ul class="item-list">';
+                 for (const [name, qty] of Object.entries(rec.items)) {
+                     itemsHtml += `<li>${name} (x${qty})</li>`;
+                 }
+                 itemsHtml += '</ul>';
+                 detailHTML += `<p><b>Chi tiết đơn hàng:</b></p>${itemsHtml}`;
+             } else if (rec.type === "deposit") {
+                 detailHTML += `<p><b>Ghi chú:</b> Nạp tiền vào tài khoản.</p>`;
+             }
+
+             openModal(detailHTML);
+          });
+      });
+    });
+}
+</script>
+</body>
+</html>
