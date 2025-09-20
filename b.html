@@ -65,6 +65,7 @@
         .bg-income { background-color: var(--success-color); }
         .bg-expense { background-color: var(--danger-color); }
         .bg-balance { background-color: var(--primary-color); }
+        .bg-report { background-color: var(--info-color); }
 
         .chart-container {
             height: 350px;
@@ -103,22 +104,28 @@
         .transaction-item .amount {
             font-weight: bold;
             font-size: 1.1em;
+            margin-left: auto;
         }
 
-        .add-transaction-btn {
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            font-size: 24px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        .main-action-buttons {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
             z-index: 1000;
+        }
+
+        .main-action-buttons .btn-circle {
+            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            font-size: 22px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
             transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .add-transaction-btn:active {
+        .main-action-buttons .btn-circle:active {
             transform: scale(0.9);
         }
 
@@ -130,32 +137,23 @@
         .modal.fade.show .modal-dialog {
             transform: none;
         }
+        
+        .transaction-date-header {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-top: 15px;
+            margin-bottom: 5px;
+            padding-left: 15px;
+        }
     </style>
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-light">
+    <nav class="navbar navbar-light bg-light">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold text-primary" href="#">💰 Quản Lý Chi Tiêu</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Tổng quan</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Giao Dịch</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Báo cáo</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Cài đặt</a>
-                    </li>
-                </ul>
-            </div>
+            <span id="userIdDisplay" class="text-muted fw-bold">ID người dùng: Đang tải...</span>
         </div>
     </nav>
 
@@ -180,6 +178,7 @@
                             <div>
                                 <h6 class="text-muted">Tổng chi tiêu</h6>
                                 <h4 class="fw-bold text-danger" id="totalExpense">0₫</h4>
+                                <button class="btn btn-sm btn-outline-danger mt-2" data-bs-toggle="modal" data-bs-target="#statisticsModal">Xem Thống Kê</button>
                             </div>
                             <div class="icon-circle bg-expense">
                                 <i class="fas fa-arrow-down"></i>
@@ -200,52 +199,20 @@
                 </div>
             </div>
 
-            <div class="col-lg-8">
-                <div class="card p-4">
-                    <h5 class="mb-4">Biểu đồ dòng tiền</h5>
-                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="pills-day-tab" data-bs-toggle="pill" data-bs-target="#pills-day" type="button" role="tab" aria-controls="pills-day" aria-selected="true">Ngày</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="pills-week-tab" data-bs-toggle="pill" data-bs-target="#pills-week" type="button" role="tab" aria-controls="pills-week" aria-selected="false">Tuần</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="pills-month-tab" data-bs-toggle="pill" data-bs-target="#pills-month" type="button" role="tab" aria-controls="pills-month" aria-selected="false">Tháng</button>
-                        </li>
-                    </ul>
-                    <div class="tab-content" id="pills-tabContent">
-                        <div class="tab-pane fade show active" id="pills-day" role="tabpanel" aria-labelledby="pills-day-tab">
-                            <div class="chart-container">
-                                <canvas id="dailyChart"></canvas>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="pills-week" role="tabpanel" aria-labelledby="pills-week-tab">
-                            <div class="chart-container">
-                                <canvas id="weeklyChart"></canvas>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="pills-month" role="tabpanel" aria-labelledby="pills-month-tab">
-                            <div class="chart-container">
-                                <canvas id="monthlyChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4">
-                <div class="card p-4">
-                    <h5 class="mb-3">Giao dịch gần đây</h5>
+            <div class="col-lg-12">
+                <div class="card p-4 mt-4">
+                    <h5 class="mb-3">Lịch sử giao dịch</h5>
                     <div class="list-group list-group-flush" id="transactionList">
-                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <button class="btn btn-primary add-transaction-btn" data-bs-toggle="modal" data-bs-target="#addTransactionModal"><i class="fas fa-plus"></i></button>
-
+    <div class="main-action-buttons">
+        <button class="btn btn-primary btn-circle" data-bs-toggle="modal" data-bs-target="#addTransactionModal"><i class="fas fa-plus"></i></button>
+    </div>
+    
     <div class="modal fade" id="addTransactionModal" tabindex="-1" aria-labelledby="addTransactionModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -307,32 +274,210 @@
         </div>
     </div>
 
+    <!-- Modal Thống Kê -->
+    <div class="modal fade" id="statisticsModal" tabindex="-1" aria-labelledby="statisticsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="statisticsModalLabel">Thống Kê Chi Tiêu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="startDate" class="form-label">Từ ngày</label>
+                            <input type="date" class="form-control" id="startDate">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="endDate" class="form-label">Đến ngày</label>
+                            <input type="date" class="form-control" id="endDate">
+                        </div>
+                    </div>
+                    <div class="d-grid mb-4">
+                        <button class="btn btn-primary" id="applyDateFilter">Áp dụng</button>
+                    </div>
+
+                    <div class="row text-center mb-4">
+                        <div class="col-4">
+                            <div class="card p-3 bg-income text-white">
+                                <h6 class="mb-0">Tổng thu nhập</h6>
+                                <h4 class="fw-bold" id="statsIncome">0₫</h4>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="card p-3 bg-expense text-white">
+                                <h6 class="mb-0">Tổng chi tiêu</h6>
+                                <h4 class="fw-bold" id="statsExpense">0₫</h4>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="card p-3 bg-balance text-white">
+                                <h6 class="mb-0">Số dư</h6>
+                                <h4 class="fw-bold" id="statsBalance">0₫</h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <ul class="nav nav-pills mb-3" id="stats-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="stats-daily-tab" data-bs-toggle="pill" data-bs-target="#stats-daily" type="button" role="tab" aria-controls="stats-daily" aria-selected="true">Ngày</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="stats-weekly-tab" data-bs-toggle="pill" data-bs-target="#stats-weekly" type="button" role="tab" aria-controls="stats-weekly" aria-selected="false">Tuần</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="stats-monthly-tab" data-bs-toggle="pill" data-bs-target="#stats-monthly" type="button" role="tab" aria-controls="stats-monthly" aria-selected="false">Tháng</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="stats-tabContent">
+                        <div class="tab-pane fade show active" id="stats-daily" role="tabpanel" aria-labelledby="stats-daily-tab">
+                            <div class="chart-container">
+                                <canvas id="dailyChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="stats-weekly" role="tabpanel" aria-labelledby="stats-weekly-tab">
+                            <div class="chart-container">
+                                <canvas id="weeklyChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="stats-monthly" role="tabpanel" aria-labelledby="stats-monthly-tab">
+                            <div class="chart-container">
+                                <canvas id="monthlyChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        // Các biến toàn cục để lưu trữ dữ liệu
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getDatabase, ref, push, set, update, onValue } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+        
+        // Your Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyB8uLkLJFlzmCodcawJhs2dRckHQzO5y10",
+            authDomain: "chitieu-7263e.firebaseapp.com",
+            databaseURL: "https://chitieu-7263e-default-rtdb.firebaseio.com",
+            projectId: "chitieu-7263e",
+            storageBucket: "chitieu-7263e.firebasestorage.app",
+            messagingSenderId: "83833140682",
+            appId: "1:83833140682:web:f9254b418ace3a659fcb33",
+            measurementId: "G-523X74K18N"
+        };
+        
+        const appId = typeof __app_id !== 'undefined' ? __app_id.replace(/\./g, '-') : 'default-app-id';
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let db, auth, userId;
         let totalIncome = 0;
         let totalExpense = 0;
-        
-        // Cập nhật số liệu tổng quan trên UI
+        let transactions = [];
+        let initialBalance = 0;
+        const todayFormatted = new Date().toISOString().split('T')[0];
+
+        const initFirebase = async () => {
+            try {
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getDatabase(app);
+
+                // Attempt to sign in with custom token, if it exists
+                if (initialAuthToken) {
+                    try {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                    } catch (e) {
+                        console.error("Lỗi khi đăng nhập bằng token tùy chỉnh, chuyển sang đăng nhập ẩn danh:", e);
+                        await signInAnonymously(auth);
+                    }
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        document.getElementById('userIdDisplay').innerText = ``;
+                        setupRealtimeListeners();
+                    } else {
+                        console.log("Người dùng đã đăng xuất.");
+                    }
+                });
+            } catch (error) {
+                console.error("Lỗi khi khởi tạo Firebase hoặc xác thực:", error);
+            }
+        };
+
+        const setupRealtimeListeners = () => {
+            // Listen for transactions
+            const transactionsRef = ref(db, `artifacts/${appId}/public/data/transactions`);
+            onValue(transactionsRef, (snapshot) => {
+                const fetchedTransactions = [];
+                snapshot.forEach((childSnapshot) => {
+                    const transactionData = childSnapshot.val();
+                    fetchedTransactions.push({ id: childSnapshot.key, ...transactionData });
+                });
+                transactions = fetchedTransactions;
+                recalculateAndRender();
+            }, (error) => {
+                console.error("Lỗi khi lắng nghe Firebase Realtime Database transactions:", error);
+            });
+
+            // Listen for initial balance
+            const balanceRef = ref(db, `artifacts/${appId}/public/data/initialBalance`);
+            onValue(balanceRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    initialBalance = data.amount || 0;
+                } else {
+                    initialBalance = 0;
+                }
+                recalculateAndRender();
+            }, (error) => {
+                console.error("Lỗi khi lắng nghe Firebase Realtime Database balance:", error);
+            });
+        };
+
+        const recalculateAndRender = () => {
+            totalIncome = initialBalance;
+            totalExpense = 0;
+            
+            transactions.forEach(t => {
+                if (t.type === 'income') {
+                    totalIncome += t.amount;
+                } else {
+                    totalExpense += t.amount;
+                }
+            });
+
+            updateSummary();
+            renderTransactions();
+        };
+
+        const formatCurrency = (amount) => {
+            return amount.toLocaleString('vi-VN') + '₫';
+        };
+
         const updateSummary = () => {
             const balance = totalIncome - totalExpense;
-            
-            document.getElementById('totalIncome').innerText = totalIncome.toLocaleString('vi-VN') + '₫';
-            document.getElementById('totalExpense').innerText = totalExpense.toLocaleString('vi-VN') + '₫';
-            
+            document.getElementById('totalIncome').innerText = formatCurrency(totalIncome);
+            document.getElementById('totalExpense').innerText = formatCurrency(totalExpense);
             const balanceElement = document.getElementById('netBalance');
-            balanceElement.innerText = balance.toLocaleString('vi-VN') + '₫';
+            balanceElement.innerText = formatCurrency(balance);
             balanceElement.className = `fw-bold ${balance >= 0 ? 'text-primary' : 'text-danger'}`;
         };
 
-        // Hàm để tạo một mục giao dịch trong danh sách
-        const createTransactionItem = (type, amount, description, date) => {
+        const createTransactionItem = (type, amount, description, itemUserId) => {
             const iconClass = type === 'income' ? 'bg-success' : 'bg-danger';
             const iconSymbol = type === 'income' ? 'fas fa-arrow-up' : 'fas fa-arrow-down';
             const amountClass = type === 'expense' ? 'text-danger' : 'text-success';
             const sign = type === 'expense' ? '-' : '+';
-            const formattedAmount = amount.toLocaleString('vi-VN');
+            const formattedAmount = formatCurrency(amount);
+            const isCurrentUser = itemUserId === userId;
+            const userLabel = isCurrentUser ? 'Bạn' : `Người dùng: ${itemUserId.substring(0, 8)}`;
 
             const newItem = document.createElement('div');
             newItem.className = 'transaction-item';
@@ -340,137 +485,95 @@
                 <div class="icon ${iconClass}"><i class="${iconSymbol}"></i></div>
                 <div class="details">
                     <h6 class="mb-0">${description}</h6>
-                    <small class="text-muted">Ngày ${date}</small>
+                    <small class="text-muted">${userLabel}</small>
                 </div>
-                <span class="amount ${amountClass}">${sign}${formattedAmount}₫</span>
+                <span class="amount ${amountClass}">${sign}${formattedAmount}</span>
             `;
             return newItem;
         };
 
-        // Hàm xử lý tự động định dạng số
+        const renderTransactions = () => {
+            const transactionList = document.getElementById('transactionList');
+            transactionList.innerHTML = '';
+            
+            transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            const groupedTransactions = transactions.reduce((groups, transaction) => {
+                const date = transaction.date;
+                if (!groups[date]) {
+                    groups[date] = [];
+                }
+                groups[date].push(transaction);
+                return groups;
+            }, {});
+
+            const sortedDates = Object.keys(groupedTransactions).sort((a, b) => new Date(b) - new Date(a));
+
+            if (sortedDates.length === 0) {
+                const noTransactionsMsg = document.createElement('div');
+                noTransactionsMsg.className = 'text-center text-muted py-5';
+                noTransactionsMsg.innerText = 'Chưa có giao dịch nào.';
+                transactionList.appendChild(noTransactionsMsg);
+            } else {
+                sortedDates.forEach(date => {
+                    const header = document.createElement('h6');
+                    header.className = 'transaction-date-header';
+                    const displayDate = date === todayFormatted ? 'Hôm nay' : date.split('-').reverse().join('/');
+                    header.innerText = displayDate;
+                    transactionList.appendChild(header);
+
+                    groupedTransactions[date].forEach(t => {
+                        const item = createTransactionItem(t.type, t.amount, t.description, t.userId);
+                        transactionList.appendChild(item);
+                    });
+                });
+            }
+        };
+
         const formatNumberInput = (event) => {
             let input = event.target;
-            let value = input.value.replace(/\D/g, ''); // Xóa tất cả ký tự không phải số
+            let value = input.value.replace(/\D/g, '');
             if (value === '') {
                 input.value = '';
                 return;
             }
-            // Thêm dấu chấm sau mỗi 3 chữ số từ cuối lên
             input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         };
 
-        // Tạo các biểu đồ khi trang được tải
-        document.addEventListener('DOMContentLoaded', () => {
-            updateSummary();
+        let dailyChart, weeklyChart, monthlyChart;
 
-            // Lấy ngày hôm nay và định dạng
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('transactionDate').value = today;
-
-            // Dữ liệu biểu đồ mẫu (đã reset về 0)
-            const dailyData = {
-                labels: ['16/9', '17/9', '18/9', '19/9', '20/9'],
+        const createChart = (id, options) => {
+            const ctx = document.getElementById(id).getContext('2d');
+            const data = {
+                labels: [],
                 datasets: [
-                    {
-                        label: 'Chi tiêu',
-                        data: [0, 0, 0, 0, 0],
-                        backgroundColor: 'rgba(231, 76, 60, 0.7)',
-                        borderColor: 'rgba(231, 76, 60, 1)',
-                        borderWidth: 1,
-                        fill: false
-                    },
-                    {
-                        label: 'Thu nhập',
-                        data: [0, 0, 0, 0, 0],
-                        backgroundColor: 'rgba(46, 204, 113, 0.7)',
-                        borderColor: 'rgba(46, 204, 113, 1)',
-                        borderWidth: 1,
-                        fill: false
-                    }
+                    { label: 'Chi tiêu', data: [], backgroundColor: 'rgba(231, 76, 60, 0.7)', borderColor: 'rgba(231, 76, 60, 1)', borderWidth: 1, fill: false },
+                    { label: 'Thu nhập', data: [], backgroundColor: 'rgba(46, 204, 113, 0.7)', borderColor: 'rgba(46, 204, 113, 1)', borderWidth: 1, fill: false }
                 ]
             };
-
-            const weeklyData = {
-                labels: ['Tuần 1', 'Tuần 2', 'Tuần 3', 'Tuần 4'],
-                datasets: [
-                    {
-                        label: 'Chi tiêu',
-                        data: [0, 0, 0, 0],
-                        backgroundColor: 'rgba(231, 76, 60, 0.7)',
-                        borderColor: 'rgba(231, 76, 60, 1)',
-                        borderWidth: 1,
-                        fill: false
-                    },
-                    {
-                        label: 'Thu nhập',
-                        data: [0, 0, 0, 0],
-                        backgroundColor: 'rgba(46, 204, 113, 0.7)',
-                        borderColor: 'rgba(46, 204, 113, 1)',
-                        borderWidth: 1,
-                        fill: false
-                    }
-                ]
-            };
-
-            const monthlyData = {
-                labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6'],
-                datasets: [
-                    {
-                        label: 'Chi tiêu',
-                        data: [0, 0, 0, 0, 0, 0],
-                        backgroundColor: 'rgba(231, 76, 60, 0.7)',
-                        borderColor: 'rgba(231, 76, 60, 1)',
-                        borderWidth: 1,
-                        fill: false
-                    },
-                    {
-                        label: 'Thu nhập',
-                        data: [0, 0, 0, 0, 0, 0],
-                        backgroundColor: 'rgba(46, 204, 113, 0.7)',
-                        borderColor: 'rgba(46, 204, 113, 1)',
-                        borderWidth: 1,
-                        fill: false
-                    }
-                ]
-            };
-
-            // Cấu hình biểu đồ
-            const options = {
+            return new Chart(ctx, { type: 'line', data: data, options: options });
+        };
+        
+        const updateCharts = (filteredTransactions) => {
+            const chartOptions = {
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
                     y: {
                         beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Số tiền (VND)'
-                        }
+                        title: { display: true, text: 'Số tiền (VND)' },
+                        ticks: { callback: (value) => formatCurrency(value) }
                     },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Thời gian'
-                        }
-                    }
+                    x: { title: { display: true, text: 'Thời gian' } }
                 },
                 plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top',
-                        labels: {
-                            font: {
-                                size: 14
-                            }
-                        }
-                    },
+                    legend: { display: true, position: 'top' },
                     tooltip: {
                         callbacks: {
-                            label: function(context) {
+                            label: (context) => {
                                 let label = context.dataset.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
-                                label += context.parsed.y.toLocaleString('vi-VN') + '₫';
+                                if (label) { label += ': '; }
+                                label += formatCurrency(context.parsed.y);
                                 return label;
                             }
                         }
@@ -478,72 +581,169 @@
                 }
             };
             
-            // Khởi tạo biểu đồ
-            function createChart(id, data) {
-                const ctx = document.getElementById(id).getContext('2d');
-                return new Chart(ctx, {
-                    type: 'line',
-                    data: data,
-                    options: options
-                });
-            }
+            // Daily chart
+            const dailyDataMap = filteredTransactions.reduce((acc, t) => {
+                const date = t.date;
+                if (!acc[date]) { acc[date] = { income: 0, expense: 0 }; }
+                if (t.type === 'income') { acc[date].income += t.amount; } else { acc[date].expense += t.amount; }
+                return acc;
+            }, {});
+            const dailyLabels = Object.keys(dailyDataMap).sort().map(date => date.split('-').reverse().join('/'));
+            const dailyExpenses = Object.keys(dailyDataMap).sort().map(date => dailyDataMap[date].expense);
+            const dailyIncomes = Object.keys(dailyDataMap).sort().map(date => dailyDataMap[date].income);
+            
+            if (dailyChart) dailyChart.destroy();
+            dailyChart = createChart('dailyChart', chartOptions);
+            dailyChart.data.labels = dailyLabels;
+            dailyChart.data.datasets[0].data = dailyExpenses;
+            dailyChart.data.datasets[1].data = dailyIncomes;
+            dailyChart.update();
 
-            const dailyChart = createChart('dailyChart', dailyData);
-            const weeklyChart = createChart('weeklyChart', weeklyData);
-            const monthlyChart = createChart('monthlyChart', monthlyData);
-            
-            // Lắng nghe sự kiện nhập liệu trên trường số tiền
-            const transactionAmountInput = document.getElementById('transactionAmount');
-            transactionAmountInput.addEventListener('input', formatNumberInput);
-            
-            const newIncomeAmountInput = document.getElementById('newIncomeAmount');
-            newIncomeAmountInput.addEventListener('input', formatNumberInput);
-            
-            // Xử lý form thêm giao dịch
-            const transactionForm = document.getElementById('transactionForm');
-            const transactionList = document.getElementById('transactionList');
+            // Weekly chart
+            const weeklyDataMap = {};
+            filteredTransactions.forEach(t => {
+                const date = new Date(t.date);
+                const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+                const pastDays = (date - firstDayOfYear) / 86400000;
+                const week = Math.ceil((pastDays + firstDayOfYear.getDay() + 1) / 7);
+                const weekKey = `${date.getFullYear()}-W${week}`;
+                if (!weeklyDataMap[weekKey]) { weeklyDataMap[weekKey] = { income: 0, expense: 0 }; }
+                if (t.type === 'income') { weeklyDataMap[weekKey].income += t.amount; } else { weeklyDataMap[weekKey].expense += t.amount; }
+            });
+            const weeklyLabels = Object.keys(weeklyDataMap).sort().map(key => `Tuần ${key.split('-W')[1]}`);
+            const weeklyExpenses = Object.keys(weeklyDataMap).sort().map(key => weeklyDataMap[key].expense);
+            const weeklyIncomes = Object.keys(weeklyDataMap).sort().map(key => weeklyDataMap[key].income);
 
-            transactionForm.addEventListener('submit', function(event) {
+            if (weeklyChart) weeklyChart.destroy();
+            weeklyChart = createChart('weeklyChart', chartOptions);
+            weeklyChart.data.labels = weeklyLabels;
+            weeklyChart.data.datasets[0].data = weeklyExpenses;
+            weeklyChart.data.datasets[1].data = weeklyIncomes;
+            weeklyChart.update();
+
+            // Monthly chart
+            const monthlyDataMap = {};
+            filteredTransactions.forEach(t => {
+                const date = new Date(t.date);
+                const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`;
+                if (!monthlyDataMap[monthKey]) { monthlyDataMap[monthKey] = { income: 0, expense: 0 }; }
+                if (t.type === 'income') { monthlyDataMap[monthKey].income += t.amount; } else { monthlyDataMap[monthKey].expense += t.amount; }
+            });
+            const monthlyLabels = Object.keys(monthlyDataMap).sort((a, b) => {
+                const [yearA, monthA] = a.split('-').map(Number);
+                const [yearB, monthB] = b.split('-').map(Number);
+                if (yearA !== yearB) return yearA - yearB;
+                return monthA - monthB;
+            }).map(key => `Tháng ${key.split('-')[1]}`);
+            const monthlyExpenses = Object.keys(monthlyDataMap).sort((a, b) => {
+                const [yearA, monthA] = a.split('-').map(Number);
+                const [yearB, monthB] = b.split('-').map(Number);
+                if (yearA !== yearB) return yearA - yearB;
+                return monthA - monthB;
+            }).map(key => monthlyDataMap[key].expense);
+            const monthlyIncomes = Object.keys(monthlyDataMap).sort((a, b) => {
+                const [yearA, monthA] = a.split('-').map(Number);
+                const [yearB, monthB] = b.split('-').map(Number);
+                if (yearA !== yearB) return yearA - yearB;
+                return monthA - monthB;
+            }).map(key => monthlyDataMap[key].income);
+
+            if (monthlyChart) monthlyChart.destroy();
+            monthlyChart = createChart('monthlyChart', chartOptions);
+            monthlyChart.data.labels = monthlyLabels;
+            monthlyChart.data.datasets[0].data = monthlyExpenses;
+            monthlyChart.data.datasets[1].data = monthlyIncomes;
+            monthlyChart.update();
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('transactionDate').value = todayFormatted;
+
+            document.getElementById('transactionAmount').addEventListener('input', formatNumberInput);
+            document.getElementById('newIncomeAmount').addEventListener('input', formatNumberInput);
+
+            document.getElementById('transactionForm').addEventListener('submit', async function(event) {
                 event.preventDefault();
-
                 const type = document.getElementById('transactionType').value;
                 const amount = parseInt(document.getElementById('transactionAmount').value.replace(/\./g, ''));
                 const description = document.getElementById('transactionDescription').value;
                 const date = document.getElementById('transactionDate').value;
-                
-                if (type === 'income') {
-                    totalIncome += amount;
-                } else {
-                    totalExpense += amount;
+
+                try {
+                    const transactionsRef = ref(db, `artifacts/${appId}/public/data/transactions`);
+                    await push(transactionsRef, {
+                        userId: userId,
+                        type: type,
+                        amount: amount,
+                        description: description,
+                        date: date,
+                        timestamp: new Date().toISOString()
+                    });
+                    bootstrap.Modal.getInstance(document.getElementById('addTransactionModal')).hide();
+                    this.reset();
+                    document.getElementById('transactionDate').value = todayFormatted;
+                } catch (e) {
+                    console.error("Lỗi khi thêm giao dịch: ", e);
                 }
-                
-                updateSummary();
-                const newItem = createTransactionItem(type, amount, description, date);
-                transactionList.prepend(newItem);
-
-                const modal = bootstrap.Modal.getInstance(document.getElementById('addTransactionModal'));
-                modal.hide();
-
-                transactionForm.reset();
-                document.getElementById('transactionDate').value = today; // Reset ngày về ngày hôm nay
             });
 
-            // Xử lý form cập nhật số dư
-            const updateIncomeForm = document.getElementById('updateIncomeForm');
-            updateIncomeForm.addEventListener('submit', function(event) {
+            document.getElementById('updateIncomeForm').addEventListener('submit', async function(event) {
                 event.preventDefault();
                 const newAmount = parseInt(document.getElementById('newIncomeAmount').value.replace(/\./g, ''));
                 
-                totalIncome = newAmount;
-                totalExpense = 0;
-                
-                updateSummary();
-                
-                const modal = bootstrap.Modal.getInstance(document.getElementById('updateIncomeModal'));
-                modal.hide();
-                
-                updateIncomeForm.reset();
+                try {
+                    const balanceRef = ref(db, `artifacts/${appId}/public/data/initialBalance`);
+                    await set(balanceRef, {
+                        userId: userId,
+                        amount: newAmount,
+                        timestamp: new Date().toISOString()
+                    });
+                    bootstrap.Modal.getInstance(document.getElementById('updateIncomeModal')).hide();
+                    this.reset();
+                } catch (e) {
+                    console.error("Lỗi khi cập nhật số dư ban đầu: ", e);
+                }
             });
+
+            const updateStats = (filteredTransactions) => {
+                const statsIncome = filteredTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+                const statsExpense = filteredTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
+                const statsBalance = statsIncome - statsExpense;
+                
+                document.getElementById('statsIncome').innerText = formatCurrency(statsIncome);
+                document.getElementById('statsExpense').innerText = formatCurrency(statsExpense);
+                document.getElementById('statsBalance').innerText = formatCurrency(statsBalance);
+
+                updateCharts(filteredTransactions);
+            };
+
+            const filterTransactionsByDate = (start, end) => {
+                const startDate = start ? new Date(start) : null;
+                const endDate = end ? new Date(end) : null;
+                
+                return transactions.filter(t => {
+                    const transactionDate = new Date(t.date);
+                    const isAfterStart = !startDate || transactionDate >= startDate;
+                    const isBeforeEnd = !endDate || transactionDate <= endDate;
+                    return isAfterStart && isBeforeEnd;
+                });
+            };
+
+            document.getElementById('applyDateFilter').addEventListener('click', () => {
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                const filtered = filterTransactionsByDate(startDate, endDate);
+                updateStats(filtered);
+            });
+
+            const statisticsModal = document.getElementById('statisticsModal');
+            statisticsModal.addEventListener('show.bs.modal', () => {
+                document.getElementById('startDate').value = '';
+                document.getElementById('endDate').value = '';
+                updateStats(transactions);
+            });
+
+            initFirebase();
         });
     </script>
 </body>
