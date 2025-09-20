@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Quản Lý Chi Tiêu</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --info-color: #1abc9c;
+            --light-bg: #ecf0f1;
+            --dark-text: #2c3e50;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+        }
+
+        .container-fluid {
+            padding: 20px;
+        }
+
+        .navbar {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            background-color: #fff;
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+            border: none;
+            overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .stats-card .icon-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 24px;
+        }
+
+        .bg-income { background-color: var(--success-color); }
+        .bg-expense { background-color: var(--danger-color); }
+        .bg-balance { background-color: var(--primary-color); }
+
+        .chart-container {
+            height: 350px;
+            width: 100%;
+        }
+
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .transaction-item:hover {
+            background-color: #f7f7f7;
+            transform: scale(1.01);
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+        
+        .transaction-item .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-size: 18px;
+            margin-right: 15px;
+        }
+        
+        .transaction-item .amount {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .add-transaction-btn {
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .add-transaction-btn:active {
+            transform: scale(0.9);
+        }
+
+        .modal.fade .modal-dialog {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            transform: translateY(50px);
+        }
+
+        .modal.fade.show .modal-dialog {
+            transform: none;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold text-primary" href="#">💰 Quản Lý Chi Tiêu</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Tổng quan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Giao Dịch</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Báo cáo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Cài đặt</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <div class="row g-4">
+            <div class="col-lg-12">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="card p-4 stats-card">
+                            <div>
+                                <h6 class="text-muted">Tổng thu nhập</h6>
+                                <h4 class="fw-bold text-success" id="totalIncome">0₫</h4>
+                                <button class="btn btn-sm btn-outline-success mt-2" data-bs-toggle="modal" data-bs-target="#updateIncomeModal">Cập nhật</button>
+                            </div>
+                            <div class="icon-circle bg-income">
+                                <i class="fas fa-arrow-up"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card p-4 stats-card">
+                            <div>
+                                <h6 class="text-muted">Tổng chi tiêu</h6>
+                                <h4 class="fw-bold text-danger" id="totalExpense">0₫</h4>
+                            </div>
+                            <div class="icon-circle bg-expense">
+                                <i class="fas fa-arrow-down"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card p-4 stats-card">
+                            <div>
+                                <h6 class="text-muted">Số dư còn lại</h6>
+                                <h4 class="fw-bold text-primary" id="netBalance">0₫</h4>
+                            </div>
+                            <div class="icon-circle bg-balance">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="card p-4">
+                    <h5 class="mb-4">Biểu đồ dòng tiền</h5>
+                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="pills-day-tab" data-bs-toggle="pill" data-bs-target="#pills-day" type="button" role="tab" aria-controls="pills-day" aria-selected="true">Ngày</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-week-tab" data-bs-toggle="pill" data-bs-target="#pills-week" type="button" role="tab" aria-controls="pills-week" aria-selected="false">Tuần</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-month-tab" data-bs-toggle="pill" data-bs-target="#pills-month" type="button" role="tab" aria-controls="pills-month" aria-selected="false">Tháng</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade show active" id="pills-day" role="tabpanel" aria-labelledby="pills-day-tab">
+                            <div class="chart-container">
+                                <canvas id="dailyChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="pills-week" role="tabpanel" aria-labelledby="pills-week-tab">
+                            <div class="chart-container">
+                                <canvas id="weeklyChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="pills-month" role="tabpanel" aria-labelledby="pills-month-tab">
+                            <div class="chart-container">
+                                <canvas id="monthlyChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card p-4">
+                    <h5 class="mb-3">Giao dịch gần đây</h5>
+                    <div class="list-group list-group-flush" id="transactionList">
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn btn-primary add-transaction-btn" data-bs-toggle="modal" data-bs-target="#addTransactionModal"><i class="fas fa-plus"></i></button>
+
+    <div class="modal fade" id="addTransactionModal" tabindex="-1" aria-labelledby="addTransactionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addTransactionModalLabel">Thêm Giao Dịch Mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="transactionForm">
+                        <div class="mb-3">
+                            <label for="transactionType" class="form-label">Loại giao dịch</label>
+                            <select class="form-select" id="transactionType">
+                                <option value="expense">Chi tiêu</option>
+                                <option value="income">Thu nhập</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="transactionAmount" class="form-label">Số tiền</label>
+                            <input type="text" class="form-control" id="transactionAmount" required inputmode="numeric">
+                        </div>
+                        <div class="mb-3">
+                            <label for="transactionDescription" class="form-label">Mô tả</label>
+                            <input type="text" class="form-control" id="transactionDescription" placeholder="Ví dụ: Mua bàn ghế" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="transactionDate" class="form-label">Ngày</label>
+                            <input type="date" class="form-control" id="transactionDate" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" form="transactionForm" class="btn btn-primary">Lưu giao dịch</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="updateIncomeModal" tabindex="-1" aria-labelledby="updateIncomeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateIncomeModalLabel">Cập nhật Số dư ban đầu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="updateIncomeForm">
+                        <div class="mb-3">
+                            <label for="newIncomeAmount" class="form-label">Nhập số dư mới</label>
+                            <input type="text" class="form-control" id="newIncomeAmount" required inputmode="numeric">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" form="updateIncomeForm" class="btn btn-primary">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Các biến toàn cục để lưu trữ dữ liệu
+        let totalIncome = 0;
+        let totalExpense = 0;
+        
+        // Cập nhật số liệu tổng quan trên UI
+        const updateSummary = () => {
+            const balance = totalIncome - totalExpense;
+            
+            document.getElementById('totalIncome').innerText = totalIncome.toLocaleString('vi-VN') + '₫';
+            document.getElementById('totalExpense').innerText = totalExpense.toLocaleString('vi-VN') + '₫';
+            
+            const balanceElement = document.getElementById('netBalance');
+            balanceElement.innerText = balance.toLocaleString('vi-VN') + '₫';
+            balanceElement.className = `fw-bold ${balance >= 0 ? 'text-primary' : 'text-danger'}`;
+        };
+
+        // Hàm để tạo một mục giao dịch trong danh sách
+        const createTransactionItem = (type, amount, description, date) => {
+            const iconClass = type === 'income' ? 'bg-success' : 'bg-danger';
+            const iconSymbol = type === 'income' ? 'fas fa-arrow-up' : 'fas fa-arrow-down';
+            const amountClass = type === 'expense' ? 'text-danger' : 'text-success';
+            const sign = type === 'expense' ? '-' : '+';
+            const formattedAmount = amount.toLocaleString('vi-VN');
+
+            const newItem = document.createElement('div');
+            newItem.className = 'transaction-item';
+            newItem.innerHTML = `
+                <div class="icon ${iconClass}"><i class="${iconSymbol}"></i></div>
+                <div class="details">
+                    <h6 class="mb-0">${description}</h6>
+                    <small class="text-muted">Ngày ${date}</small>
+                </div>
+                <span class="amount ${amountClass}">${sign}${formattedAmount}₫</span>
+            `;
+            return newItem;
+        };
+
+        // Hàm xử lý tự động định dạng số
+        const formatNumberInput = (event) => {
+            let input = event.target;
+            let value = input.value.replace(/\D/g, ''); // Xóa tất cả ký tự không phải số
+            if (value === '') {
+                input.value = '';
+                return;
+            }
+            // Thêm dấu chấm sau mỗi 3 chữ số từ cuối lên
+            input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        };
+
+        // Tạo các biểu đồ khi trang được tải
+        document.addEventListener('DOMContentLoaded', () => {
+            updateSummary();
+
+            // Lấy ngày hôm nay và định dạng
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('transactionDate').value = today;
+
+            // Dữ liệu biểu đồ mẫu (đã reset về 0)
+            const dailyData = {
+                labels: ['16/9', '17/9', '18/9', '19/9', '20/9'],
+                datasets: [
+                    {
+                        label: 'Chi tiêu',
+                        data: [0, 0, 0, 0, 0],
+                        backgroundColor: 'rgba(231, 76, 60, 0.7)',
+                        borderColor: 'rgba(231, 76, 60, 1)',
+                        borderWidth: 1,
+                        fill: false
+                    },
+                    {
+                        label: 'Thu nhập',
+                        data: [0, 0, 0, 0, 0],
+                        backgroundColor: 'rgba(46, 204, 113, 0.7)',
+                        borderColor: 'rgba(46, 204, 113, 1)',
+                        borderWidth: 1,
+                        fill: false
+                    }
+                ]
+            };
+
+            const weeklyData = {
+                labels: ['Tuần 1', 'Tuần 2', 'Tuần 3', 'Tuần 4'],
+                datasets: [
+                    {
+                        label: 'Chi tiêu',
+                        data: [0, 0, 0, 0],
+                        backgroundColor: 'rgba(231, 76, 60, 0.7)',
+                        borderColor: 'rgba(231, 76, 60, 1)',
+                        borderWidth: 1,
+                        fill: false
+                    },
+                    {
+                        label: 'Thu nhập',
+                        data: [0, 0, 0, 0],
+                        backgroundColor: 'rgba(46, 204, 113, 0.7)',
+                        borderColor: 'rgba(46, 204, 113, 1)',
+                        borderWidth: 1,
+                        fill: false
+                    }
+                ]
+            };
+
+            const monthlyData = {
+                labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6'],
+                datasets: [
+                    {
+                        label: 'Chi tiêu',
+                        data: [0, 0, 0, 0, 0, 0],
+                        backgroundColor: 'rgba(231, 76, 60, 0.7)',
+                        borderColor: 'rgba(231, 76, 60, 1)',
+                        borderWidth: 1,
+                        fill: false
+                    },
+                    {
+                        label: 'Thu nhập',
+                        data: [0, 0, 0, 0, 0, 0],
+                        backgroundColor: 'rgba(46, 204, 113, 0.7)',
+                        borderColor: 'rgba(46, 204, 113, 1)',
+                        borderWidth: 1,
+                        fill: false
+                    }
+                ]
+            };
+
+            // Cấu hình biểu đồ
+            const options = {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Số tiền (VND)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Thời gian'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 14
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += context.parsed.y.toLocaleString('vi-VN') + '₫';
+                                return label;
+                            }
+                        }
+                    }
+                }
+            };
+            
+            // Khởi tạo biểu đồ
+            function createChart(id, data) {
+                const ctx = document.getElementById(id).getContext('2d');
+                return new Chart(ctx, {
+                    type: 'line',
+                    data: data,
+                    options: options
+                });
+            }
+
+            const dailyChart = createChart('dailyChart', dailyData);
+            const weeklyChart = createChart('weeklyChart', weeklyData);
+            const monthlyChart = createChart('monthlyChart', monthlyData);
+            
+            // Lắng nghe sự kiện nhập liệu trên trường số tiền
+            const transactionAmountInput = document.getElementById('transactionAmount');
+            transactionAmountInput.addEventListener('input', formatNumberInput);
+            
+            const newIncomeAmountInput = document.getElementById('newIncomeAmount');
+            newIncomeAmountInput.addEventListener('input', formatNumberInput);
+            
+            // Xử lý form thêm giao dịch
+            const transactionForm = document.getElementById('transactionForm');
+            const transactionList = document.getElementById('transactionList');
+
+            transactionForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const type = document.getElementById('transactionType').value;
+                const amount = parseInt(document.getElementById('transactionAmount').value.replace(/\./g, ''));
+                const description = document.getElementById('transactionDescription').value;
+                const date = document.getElementById('transactionDate').value;
+                
+                if (type === 'income') {
+                    totalIncome += amount;
+                } else {
+                    totalExpense += amount;
+                }
+                
+                updateSummary();
+                const newItem = createTransactionItem(type, amount, description, date);
+                transactionList.prepend(newItem);
+
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addTransactionModal'));
+                modal.hide();
+
+                transactionForm.reset();
+                document.getElementById('transactionDate').value = today; // Reset ngày về ngày hôm nay
+            });
+
+            // Xử lý form cập nhật số dư
+            const updateIncomeForm = document.getElementById('updateIncomeForm');
+            updateIncomeForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const newAmount = parseInt(document.getElementById('newIncomeAmount').value.replace(/\./g, ''));
+                
+                totalIncome = newAmount;
+                totalExpense = 0;
+                
+                updateSummary();
+                
+                const modal = bootstrap.Modal.getInstance(document.getElementById('updateIncomeModal'));
+                modal.hide();
+                
+                updateIncomeForm.reset();
+            });
+        });
+    </script>
+</body>
+</html>
