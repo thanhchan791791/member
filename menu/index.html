@@ -385,6 +385,7 @@
 
                 const cardHtml = `
                     <div id="item-${id}" class="ios-card overflow-hidden flex flex-col cursor-pointer" 
+                         onclick="addItemToCart('${id}')" 
                          ontouchstart="this.classList.add('active-tap')" ontouchend="this.classList.remove('active-tap')" 
                          onmouseleave="this.classList.remove('active-tap')">
                         <!-- Ảnh món ăn -->
@@ -555,27 +556,27 @@
             // Fly-to-cart animation (Bay vào giỏ hàng)
             const itemCard = document.getElementById(`item-${id}`);
             if (itemCard) {
-                const button = itemCard.querySelector('button');
+                // SỬ DỤNG ID CỦA THẺ CARD ĐỂ LÀM START POINT
+                const startRect = itemCard.getBoundingClientRect();
                 const cartIcon = document.getElementById('floating-cart-bubble'); 
                 const flyClone = document.getElementById('fly-clone');
 
-                if (button && cartIcon && flyClone) {
-                    const startRect = button.getBoundingClientRect();
-                    const cartRect = cartIcon.getBoundingClientRect();
-
-                    // Khởi tạo vị trí clone từ nút '+'
-                    flyClone.style.top = `${startRect.top}px`;
-                    flyClone.style.left = `${startRect.left}px`;
-                    flyClone.style.width = `${startRect.width}px`;
-                    flyClone.style.height = `${startRect.height}px`;
+                if (cartIcon && flyClone) {
+                    const buttonSize = 40; // Kích thước giả định cho điểm xuất phát
+                    
+                    // Khởi tạo vị trí clone từ tâm của thẻ món ăn
+                    flyClone.style.top = `${startRect.top + startRect.height / 2 - buttonSize / 2}px`;
+                    flyClone.style.left = `${startRect.left + startRect.width / 2 - buttonSize / 2}px`;
+                    flyClone.style.width = `${buttonSize}px`;
+                    flyClone.style.height = `${buttonSize}px`;
                     flyClone.style.opacity = 1;
                     flyClone.style.transform = 'scale(1)';
 
                     // Bắt đầu bay về giỏ hàng
                     setTimeout(() => {
                         // Vị trí tâm của FAB
-                        flyClone.style.top = `${cartRect.top + cartRect.height / 2 - 10}px`;
-                        flyClone.style.left = `${cartRect.left + cartRect.width / 2 - 10}px`;
+                        flyClone.style.top = `${cartIcon.getBoundingClientRect().top + cartIcon.getBoundingClientRect().height / 2 - 10}px`;
+                        flyClone.style.left = `${cartIcon.getBoundingClientRect().left + cartIcon.getBoundingClientRect().width / 2 - 10}px`;
                         flyClone.style.width = '20px';
                         flyClone.style.height = '20px';
                         flyClone.style.opacity = 0.5;
@@ -712,7 +713,7 @@
                 autoplay: true,
                 animationData: {
                     v: "5.7.4",
-                    nm: "Checkmark",
+                    nm: "Check",
                     assets: [],
                     layers: [
                         {
