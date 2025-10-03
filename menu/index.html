@@ -3,49 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu Nhà Hàng Cao Cấp - iOS Style</title>
+    <title>Menu Nhà Hàng Cao Cấp - Tông Gỗ Nhạt</title>
     <!-- Tải Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Tải Lottie cho animation thành công -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.6/lottie.min.js"></script>
-    <!-- Tải Font Inter (thay thế SF Pro) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tải Font Inter (Body) và Playfair Display (Header) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
     <style>
-        /* Định nghĩa màu accent mới: Deep Slate Gray & Muted Brass */
+        /* Định nghĩa màu chủ đạo mới: Light Wood & Deep Espresso */
         :root {
-            --color-accent: #1E1E1E; /* Deep Slate Gray cho CTA/Primary */
-            --color-highlight: #A38E6D; /* Muted Brass cho Price/Secondary highlight */
-            --color-accent-dark: #000000; 
-            --color-shadow-light: rgba(0, 0, 0, 0.05);
-            --color-shadow-heavy: rgba(0, 0, 0, 0.15);
+            --color-primary-wood: #6B4423;      /* Nâu Espresso Đậm (CTA/Primary - Nút bấm) */
+            --color-secondary-gold: #A38E6D;    /* Đồng Mờ (Highlight/Price) */
+            --color-background-light: #FAF5EF;   /* Nền tổng thể: Kem Gỗ Sồi Nhạt */
+            --color-card-bg-light: #FFFFFF;     /* Nền card món ăn: Trắng tinh */
+            --color-text-dark: #2C1D15;         /* Màu chữ chính: Nâu Đen Đậm */
+            --color-text-muted: #574B40;        /* Màu chữ phụ */
+            --color-shadow-wood-light: rgba(107, 68, 35, 0.15); /* Shadow Gỗ Nhẹ */
+            --color-shadow-wood-heavy: rgba(107, 68, 35, 0.3);  /* Shadow Gỗ Nặng */
+            --color-placeholder: #F0E8E1;       /* Màu trung tính cho placeholder ảnh */
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #F8F8F8; /* Nền trắng tinh tế */
-            color: #1a1a1a;
+            background-color: var(--color-background-light); /* Nền tổng thể là màu gỗ nhạt */
+            color: var(--color-text-dark); /* Màu chữ mặc định là nâu đen */
             -webkit-tap-highlight-color: transparent;
         }
+        
+        /* Font kiểu cho tiêu đề ấn tượng */
+        .display-font {
+            font-family: 'Playfair Display', serif;
+        }
 
-        /* Tùy chỉnh Tailwind CSS để sử dụng màu accent mới */
-        .tailwind-config-override {
-            --tw-ring-color: var(--color-accent);
+        /* Nút Stepper và CTA */
+        .stepper-btn {
+            transition: transform 0.1s ease-out, background-color 0.1s;
+        }
+        .stepper-btn:active {
+            transform: scale(0.85); /* Hiệu ứng nhấn sâu hơn */
+        }
+        .cta-button {
+             transition: all 0.15s ease-out;
+             box-shadow: 0 4px 10px var(--color-shadow-wood-heavy);
+        }
+        .cta-button:active {
+             transform: scale(0.98);
+             box-shadow: 0 2px 5px var(--color-shadow-wood-heavy);
         }
 
         /* Hiệu ứng iOS Card */
         .ios-card {
-            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-            box-shadow: 0 4px 12px var(--color-shadow-light);
-            border-radius: 24px; /* Bo tròn lớn */
-            background-color: white;
+            background-color: var(--color-card-bg-light); 
+            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1); 
+            box-shadow: 0 4px 12px var(--color-shadow-wood-light);
+            border-radius: 24px; 
             will-change: transform, box-shadow;
+            border: 1px solid #EBE4D9; /* Viền mỏng như giấy */
         }
+        /* Hiệu ứng nhấn (tap) mượt mà như iOS */
         .ios-card:hover, .ios-card.active-tap {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 18px var(--color-shadow-heavy);
+            transform: translateY(-4px); 
+            box-shadow: 0 8px 18px var(--color-shadow-wood-heavy);
         }
 
-        /* Giỏ hàng (Drawer) */
+        /* Giỏ hàng (Drawer) và Header */
+        .drawer-bg, .header-bg {
+            background-color: var(--color-background-light);
+        }
         .cart-drawer {
             transition: transform 0.4s cubic-bezier(0.3, 0.7, 0.4, 1.5);
             transform: translateY(100%);
@@ -53,39 +78,7 @@
         .cart-drawer.open {
             transform: translateY(0);
         }
-
-        /* Nút Stepper */
-        .stepper-btn {
-            transition: transform 0.1s ease-out, background-color 0.1s;
-        }
-        .stepper-btn:active {
-            transform: scale(0.9);
-        }
-
-        /* Loading Skeleton */
-        .skeleton {
-            background-color: #e2e2e2;
-            background: linear-gradient(90deg, #e2e2e2 25%, #f0f0f0 50%, #e2e2e2 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-        }
-        @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        /* Fly to Cart Animation */
-        #fly-clone {
-            position: fixed;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 1000;
-            opacity: 0;
-            transition: all 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
+        
         /* iOS-like Active Tab Underline */
         .tab-item {
             position: relative;
@@ -102,19 +95,18 @@
             transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
             transform: scaleX(0);
         }
-        /* Sử dụng màu accent cho underline */
+        /* Sử dụng màu đồng mờ sáng cho underline */
         .tab-item.active::after {
-            background-color: var(--color-accent);
+            background-color: var(--color-secondary-gold);
             transform: scaleX(1);
         }
         
         /* CSS cho Floating Cart Bubble (FAB) */
         #floating-cart-bubble {
-            box-shadow: 0 6px 15px rgba(163, 142, 109, 0.4); /* Shadow nhẹ nổi bật */
-            border: 2px solid white; /* Viền trắng tinh tế */
+            box-shadow: 0 6px 15px var(--color-shadow-wood-heavy); 
+            border: 2px solid var(--color-card-bg-light); 
         }
         
-        /* Hiệu ứng rung nhẹ khi có món mới */
         @keyframes subtle-shake {
             0%, 100% { transform: scale(1) translate(0, 0); }
             20%, 60% { transform: scale(1.05) translate(-1px, 1px); }
@@ -123,22 +115,30 @@
         .bubble-shake {
             animation: subtle-shake 0.4s ease-in-out;
         }
+
+        /* Ẩn thanh cuộn trên các trình duyệt */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
     </style>
 </head>
-<body class="tailwind-config-override">
+<body>
     <div id="app" class="max-w-xl mx-auto min-h-screen relative p-4 pb-32">
         <!-- 1. Header (Thanh điều hướng) -->
-        <header class="flex justify-center items-center py-4 sticky top-0 bg-[#F8F8F8] z-30">
+        <header class="flex justify-center items-center py-4 sticky top-0 z-30 header-bg">
             <div class="flex-1 text-center">
-                <span class="text-2xl font-extrabold tracking-widest text-gray-800">THE</span>
-                <span class="text-2xl font-extralight text-gray-800" style="color: var(--color-highlight);">MENU</span>
+                <span class="text-3xl font-extrabold tracking-wider display-font" style="color: var(--color-text-dark);">The </span>
+                <span class="text-3xl font-extrabold display-font italic" style="color: var(--color-secondary-gold);">Menu</span>
             </div>
-            <!-- Đã loại bỏ icon giỏ hàng khỏi Header -->
         </header>
 
         <!-- 2. Danh mục (Tabs) -->
-        <div class="sticky top-16 z-20 bg-[#F8F8F8] pb-4">
-            <div id="category-tabs" class="flex overflow-x-scroll no-scrollbar space-x-4 pb-2">
+        <div class="sticky top-16 z-20 pb-4 header-bg">
+            <div id="category-tabs" class="flex overflow-x-scroll no-scrollbar space-x-6 pb-2">
                 <!-- Tabs được tạo bởi JS -->
             </div>
         </div>
@@ -148,10 +148,10 @@
             <!-- Menu Cards được tạo bởi JS hoặc Skeleton Loader -->
         </div>
 
-        <!-- Nút Giỏ Hàng Nổi (Kiểu Bong Bóng Chat/FAB) -->
+        <!-- Nút Giỏ Hàng Nổi (FAB) -->
         <button id="floating-cart-bubble" 
                 class="fixed bottom-6 right-6 z-50 p-4 rounded-full text-white shadow-xl flex items-center space-x-2 transition-all duration-300 scale-0 origin-bottom-right" 
-                style="background-color: var(--color-highlight);"
+                style="background-color: var(--color-primary-wood);"
                 onclick="toggleCart(true)">
             <svg id="cart-svg-bubble" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -160,31 +160,33 @@
         </button>
 
         <!-- Animation Clone (Bay vào giỏ hàng) -->
-        <div id="fly-clone" style="background-color: var(--color-accent);"></div>
+        <div id="fly-clone" class="fixed rounded-full z-50 transition-all duration-500 ease-out pointer-events-none opacity-0" 
+             style="background-color: var(--color-primary-wood); width: 0; height: 0;"></div>
 
-        <!-- 4. Giỏ hàng (Cart Drawer - iOS Style Modal) -->
-        <div id="cart-drawer" class="cart-drawer fixed inset-x-0 bottom-0 bg-white z-40 rounded-t-3xl shadow-2xl max-h-[85vh] flex flex-col">
+        <!-- 4. Giỏ hàng (Cart Drawer) -->
+        <div id="cart-drawer" class="cart-drawer fixed inset-x-0 bottom-0 z-40 rounded-t-3xl shadow-2xl max-h-[85vh] flex flex-col"
+             style="background-color: var(--color-background-light);">
             <div class="p-4 border-b border-gray-100 relative">
-                <button onclick="toggleCart(false)" class="absolute left-4 top-1/2 transform -translate-y-1/2 p-2 rounded-full hover:bg-gray-50">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                <button onclick="toggleCart(false)" class="absolute left-4 top-1/2 transform -translate-y-1/2 p-2 rounded-full hover:bg-gray-200 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color: var(--color-text-dark);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
                 </button>
-                <h2 class="text-xl font-bold text-center">Giỏ Hàng Của Bạn</h2>
+                <h2 class="text-xl font-bold text-center" style="color: var(--color-text-dark);">Giỏ Hàng Của Bạn</h2>
             </div>
             
             <!-- Danh sách món trong giỏ -->
             <div id="cart-items-list" class="flex-1 overflow-y-auto p-4 space-y-4">
-                <p id="empty-cart-message" class="text-center text-gray-500 mt-10">Giỏ hàng trống.</p>
+                <p id="empty-cart-message" class="text-center mt-10" style="color: var(--color-text-muted);">Giỏ hàng trống.</p>
                 <!-- Items -->
             </div>
 
             <!-- Thanh tổng kết cố định -->
-            <div id="cart-summary" class="p-4 bg-white border-t-2 border-gray-100 shadow-inner">
+            <div id="cart-summary" class="p-4 border-t-2 border-gray-200 shadow-inner" style="background-color: var(--color-card-bg-light);">
                 <div class="flex justify-between items-center mb-4">
-                    <span class="text-lg font-semibold text-gray-500">Tổng cộng:</span>
-                    <span id="cart-total" class="text-2xl font-extrabold" style="color: var(--color-accent);">0đ</span>
+                    <span class="text-lg font-semibold" style="color: var(--color-text-dark);">Tổng cộng:</span>
+                    <span id="cart-total" class="text-2xl font-extrabold" style="color: var(--color-primary-wood);">0đ</span>
                 </div>
-                <button id="checkout-button" class="w-full text-white font-bold py-3 px-4 rounded-full text-lg shadow-lg opacity-50 cursor-not-allowed" 
-                        style="background-color: var(--color-accent); transition: all 0.3s ease-in-out;"
+                <button id="checkout-button" class="cta-button w-full text-white font-bold py-3 px-4 rounded-full text-lg shadow-lg opacity-50 cursor-not-allowed" 
+                        style="background-color: var(--color-primary-wood);"
                         disabled
                         onclick="openCheckoutModal()">
                     Đặt món ngay
@@ -193,38 +195,43 @@
         </div>
 
         <!-- 5. Checkout Modal -->
-        <div id="checkout-modal" class="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-end justify-center transition-opacity duration-300 opacity-0 pointer-events-none">
-            <div id="checkout-drawer" class="bg-white w-full max-w-xl rounded-t-3xl p-6 transform translate-y-full transition-transform duration-300 ease-in-out">
-                <h2 class="text-2xl font-bold text-center mb-6">Thông Tin Đặt Món</h2>
+        <div id="checkout-modal" class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-end justify-center transition-opacity duration-300 opacity-0 pointer-events-none">
+            <div id="checkout-drawer" class="w-full max-w-xl rounded-t-3xl p-6 transform translate-y-full transition-transform duration-300 ease-in-out"
+                 style="background-color: var(--color-background-light);">
+                <h2 class="text-2xl font-bold text-center mb-6" style="color: var(--color-text-dark);">Thông Tin Đặt Món</h2>
                 <form id="checkout-form" onsubmit="handleCheckout(event)">
                     <div class="space-y-4">
+                        <!-- Input fields -->
                         <input type="text" id="customer-name" placeholder="Tên khách hàng" required 
-                               class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-gray-800 transition duration-200 focus:outline-none">
+                               class="w-full p-3 border-2 border-gray-300 rounded-xl focus:border-[var(--color-primary-wood)] transition duration-200 focus:outline-none"
+                               style="color: var(--color-text-dark); background-color: var(--color-card-bg-light);">
                         <input type="tel" id="customer-phone" placeholder="Số điện thoại" required 
-                               class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-gray-800 transition duration-200 focus:outline-none">
+                               class="w-full p-3 border-2 border-gray-300 rounded-xl focus:border-[var(--color-primary-wood)] transition duration-200 focus:outline-none"
+                               style="color: var(--color-text-dark); background-color: var(--color-card-bg-light);">
                         <textarea id="customer-note" placeholder="Ghi chú (Ví dụ: Số bàn, yêu cầu đặc biệt)" 
-                                  class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-gray-800 transition duration-200 focus:outline-none h-24"></textarea>
+                                  class="w-full p-3 border-2 border-gray-300 rounded-xl focus:border-[var(--color-primary-wood)] transition duration-200 focus:outline-none h-24"
+                                  style="color: var(--color-text-dark); background-color: var(--color-card-bg-light);"></textarea>
                     </div>
-                    <button type="submit" class="mt-6 w-full text-white font-bold py-4 rounded-full text-lg shadow-xl"
-                            style="background-color: var(--color-accent); transition: background-position 0.5s ease-in-out, transform 0.1s ease-out; background-size: 200% auto;"
-                            onmousedown="this.style.transform='scale(0.98)'"
-                            onmouseup="this.style.transform='scale(1)'"
-                            onmouseleave="this.style.transform='scale(1)'">
+                    <!-- Checkout Button -->
+                    <button type="submit" class="cta-button mt-6 w-full text-white font-bold py-4 rounded-full text-lg shadow-xl"
+                            style="background-color: var(--color-primary-wood);">
                         Xác nhận Đặt Món (Tổng: <span id="checkout-summary-total">0đ</span>)
                     </button>
-                    <button type="button" onclick="closeCheckoutModal()" class="w-full text-gray-500 mt-2 p-2">Hủy</button>
+                    <button type="button" onclick="closeCheckoutModal()" class="w-full mt-2 p-2 transition hover:text-[var(--color-primary-wood)]"
+                            style="color: var(--color-text-muted);">Hủy</button>
                 </form>
             </div>
         </div>
 
-        <!-- 6. Success Popup (Confetti Animation) -->
+        <!-- 6. Success Popup -->
         <div id="success-popup" class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
-            <div class="bg-white p-8 rounded-3xl text-center shadow-2xl transform scale-90 transition-transform duration-300" style="width: 300px;">
+            <div class="p-8 rounded-3xl text-center shadow-2xl transform scale-90 transition-transform duration-300" 
+                 style="width: 300px; background-color: var(--color-card-bg-light);">
                 <div id="lottie-checkmark" class="w-32 h-32 mx-auto"></div>
-                <h3 class="text-2xl font-extrabold mt-4" style="color: var(--color-accent);">Đặt Món Thành Công!</h3>
-                <p class="text-gray-600 mt-2">Đơn hàng của quý khách đang được chuẩn bị. Xin cảm ơn!</p>
-                <button onclick="closeSuccessPopup()" class="mt-6 w-full py-3 rounded-full text-white font-semibold" 
-                        style="background-color: var(--color-accent); transition: transform 0.1s;">
+                <h3 class="text-2xl font-extrabold mt-4" style="color: var(--color-primary-wood);">Đặt Món Thành Công!</h3>
+                <p class="mt-2" style="color: var(--color-text-muted);">Đơn hàng của quý khách đang được chuẩn bị. Xin cảm ơn!</p>
+                <button onclick="closeSuccessPopup()" class="cta-button mt-6 w-full py-3 rounded-full text-white font-semibold" 
+                        style="background-color: var(--color-primary-wood);">
                     Hoàn tất
                 </button>
             </div>
@@ -238,8 +245,9 @@
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
         // --- Cấu hình và Khởi tạo Firebase ---
+        // Vui lòng thay thế cấu hình dưới đây bằng cấu hình Firebase của bạn
         const firebaseConfig = {
-            // SỬ DỤNG CẤU HÌNH CỦA BẠN TỪ FILE GỐC
+            // SỬ DỤNG CẤU HÌNH MẪU - VUI LÒNG THAY THẾ BẰNG CẤU HÌNH THỰC TẾ
             apiKey: "AIzaSyAV7r-rjXo6U62LX1AA7c7DAHb8GhOOOsg",
             authDomain: "saigon-dalat.firebaseapp.com",
             databaseURL: "https://saigon-dalat-default-rtdb.firebaseio.com",
@@ -256,7 +264,7 @@
         let menuData = {};    // Dữ liệu thô từ Firebase
         let flatMenuData = {}; // Dữ liệu phẳng để tra cứu nhanh bằng ID
         let cartItems = {};    // { itemId: { item, quantity } }
-        let categories = {};   // Danh mục động (chỉ bao gồm drink và food nếu có)
+        let categories = {};   // Danh mục động 
         let activeCategory = '';
 
         // --- Helpers ---
@@ -274,83 +282,139 @@
                 .then(() => console.log("✅ Order đã được ghi lên Realtime DB."))
                 .catch(error => console.error("❌ Lỗi ghi Order:", error));
         };
+        
+        // Dữ liệu mẫu (sẽ bị ghi đè nếu Firebase có data)
+         const sampleData = {
+            drink: {
+              "-Lw-R-M-aWb-0lI-7H2g": { name: "Cà phê đen đá Ý", price: 65000, img: "https://placehold.co/1000x800/F0E8E1/6B4423?text=Ca+Phe" },
+              "-Oa403XF8CuYwOfIK2lh": { name: "Trà đào cam sả đặc biệt", price: 85000, img: "https://placehold.co/1000x800/F0E8E1/6B4423?text=Tra+Dao" }
+            },
+            food: {
+              "-Lw-R-M-aWb-0lI-7H2f": { name: "Thăn nội bò nướng than", price: 1250000, img: "https://placehold.co/1000x800/F0E8E1/6B4423?text=Bo+Nuong" },
+              "-Oa403XF8CuYwOfIK2lj": { name: "Súp bào ngư vi cá", price: 850000, img: "https://placehold.co/1000x800/F0E8E1/6B4423?text=Sup+Cao+Cap" }
+            }
+          };
 
-        // --- Lifecycle và Data Loading (CHỈ LOAD TỪ FIREBASE) ---
-
-        function initData() {
-            renderSkeleton(); // Hiển thị Skeleton UI khi khởi tạo
-
-            // Lắng nghe dữ liệu Menu chính
-            onValue(ref(db, "menu"), (snapshot) => {
-                const data = snapshot.val();
+        // Hàm ghi dữ liệu mẫu vào Firebase (chỉ ghi nếu chưa có)
+        async function initData() {
+            const menuRef = ref(db, "menu");
+            onValue(menuRef, (snapshot) => {
+                let data = snapshot.val();
                 
-                // 1. Chỉ lấy data từ Firebase và ánh xạ sang key chuẩn
-                menuData = {};
-                if (data?.drink && Object.keys(data.drink).length > 0) {
-                    menuData.drinks = data.drink;
+                // Ghi dữ liệu mẫu nếu DB trống
+                if (!data || (Object.keys(data).length === 0)) {
+                    console.log("⚡ Chưa có dữ liệu → Ghi dữ liệu mẫu");
+                    data = sampleData; // Sử dụng dữ liệu mẫu cho lần tải đầu
+                    set(menuRef, sampleData)
+                        .then(() => console.log("Đã ghi dữ liệu mẫu."))
+                        .catch(err => console.error("Lỗi ghi dữ liệu mẫu:", err));
                 }
-                if (data?.food && Object.keys(data.food).length > 0) {
-                    menuData.foods = data.food;
-                }
-
-                // 2. Tạo categories động
-                categories = {};
-                                if (menuData.foods) categories.foods = { label: ' Món ăn' };
-
-                if (menuData.drinks) categories.drinks = { label: ' Đồ uống' };
                 
-                // 3. Chuẩn hóa và gộp data (Flattening)
-                flatMenuData = {};
-                let firstCategory = '';
-                Object.keys(menuData).forEach(catKey => {
-                    if (!firstCategory) firstCategory = catKey;
-                    const items = menuData[catKey];
-                    Object.keys(items).forEach(id => {
-                        flatMenuData[id] = { id: id, ...items[id], categoryKey: catKey };
-                    });
-                });
-                
-                // 4. Thiết lập category active đầu tiên
-                if (!activeCategory || !categories[activeCategory]) {
-                     activeCategory = firstCategory || '';
-                }
-
-                renderTabs();
-                renderMenu();
-                
-                // CẬP NHẬT: Gọi renderCart sau khi menu tải xong để UI giỏ hàng được đồng bộ
-                renderCart(); 
-
-                const appElement = document.getElementById('app');
-                if (appElement) {
-                    appElement.classList.remove('loading-state');
-                }
+                // Luôn tải và render dữ liệu hiện tại
+                loadAndRenderMenu(data);
+            }, {
+                onlyOnce: false // Giữ listener để cập nhật Realtime
             });
         }
+        
+        // Hàm xử lý data và render UI
+        function loadAndRenderMenu(data) {
+            
+            // 1. Chỉ lấy data và ánh xạ sang key chuẩn
+            menuData = {};
+            if (data?.food && Object.keys(data.food).length > 0) {
+                menuData.foods = data.food;
+            }
+            if (data?.drink && Object.keys(data.drink).length > 0) {
+                menuData.drinks = data.drink;
+            }
+
+            // 2. Tạo categories động
+            categories = {};
+            if (menuData.foods) categories.foods = { label: ' Món ăn chính' };
+            if (menuData.drinks) categories.drinks = { label: ' Thức uống' };
+            
+            // 3. Chuẩn hóa và gộp data (Flattening)
+            flatMenuData = {};
+            let firstCategory = '';
+            Object.keys(menuData).forEach(catKey => {
+                if (!firstCategory) firstCategory = catKey;
+                const items = menuData[catKey];
+                Object.keys(items).forEach(id => {
+                    flatMenuData[id] = { id: id, ...items[id], categoryKey: catKey };
+                });
+            });
+            
+            // 4. Thiết lập category active đầu tiên
+            if (!activeCategory || !categories[activeCategory]) {
+                 activeCategory = firstCategory || '';
+            }
+
+            renderTabs();
+            renderMenu();
+            renderCart(); 
+
+            // Loại bỏ trạng thái loading/skeleton nếu có
+            const appElement = document.getElementById('app');
+            if (appElement) {
+                appElement.classList.remove('loading-state');
+            }
+        }
+
 
         // --- Render Functions ---
 
-        const renderSkeleton = () => {
-             const menuList = document.getElementById('menu-list');
-             if (!menuList) return;
-             
-             menuList.innerHTML = '';
-             for (let i = 0; i < 6; i++) {
-                 menuList.innerHTML += `
-                    <div class="ios-card overflow-hidden h-64 flex flex-col">
-                        <div class="skeleton w-full h-3/5 rounded-t-2xl"></div>
-                        <div class="p-3 space-y-2 flex-1 flex flex-col justify-between">
-                            <div class="skeleton h-5 w-3/4 rounded-md"></div>
-                            <div class="flex justify-between items-center">
-                                <div class="skeleton h-6 w-1/3 rounded-md"></div>
-                                <div class="skeleton w-10 h-10 rounded-full"></div>
+        window.renderMenu = () => {
+            const menuList = document.getElementById('menu-list');
+            if (!menuList) return;
+
+            menuList.innerHTML = '';
+            const items = menuData[activeCategory] || {};
+            
+            if (Object.keys(items).length === 0) {
+                 menuList.innerHTML = `<p class="col-span-2 text-center py-10" style="color: var(--color-text-muted);">Hiện tại không có món nào trong danh mục này.</p>`;
+                 return;
+            }
+
+            Object.keys(items).forEach(id => {
+                const item = flatMenuData[id];
+                // Placeholder ảnh vẫn giữ màu trung tính/tối để bạn dễ thay thế ảnh đồ ăn sáng màu
+                const imageUrl = item.img && item.img.startsWith('http') 
+                                 ? item.img 
+                                 : `https://placehold.co/1000x800/F0E8E1/6B4423?text=FOOD+IMAGE`;
+
+                const cardHtml = `
+                    <div id="item-${id}" class="ios-card overflow-hidden flex flex-col cursor-pointer" 
+                         ontouchstart="this.classList.add('active-tap')" ontouchend="this.classList.remove('active-tap')" 
+                         onmouseleave="this.classList.remove('active-tap')">
+                        <!-- Ảnh món ăn -->
+                        <div class="w-full h-[60%] overflow-hidden rounded-t-2xl">
+                             <img src="${imageUrl}" 
+                                  onerror="this.onerror=null;this.src='https://placehold.co/1000x800/F0E8E1/6B4423?text=FOOD+IMAGE';" 
+                                  class="w-full h-full object-cover transition duration-300 transform hover:scale-105" alt="${item.name}">
+                        </div>
+                        
+                        <!-- Thông tin món ăn (Chữ màu tối trên nền card sáng) -->
+                        <div class="p-4 flex flex-col justify-between flex-1">
+                            <h3 class="text-base font-extrabold line-clamp-2 leading-snug" style="color: var(--color-text-dark);">${item.name}</h3>
+                            <div class="flex justify-between items-center mt-2">
+                                <span class="text-xl font-bold" style="color: var(--color-secondary-gold);">${formatCurrency(item.price)}</span>
+                                <button onclick="event.stopPropagation(); addItemToCart('${id}')" 
+                                        class="stepper-btn w-10 h-10 flex items-center justify-center rounded-full text-white shadow-md transition duration-150"
+                                        style="background-color: var(--color-primary-wood);">
+                                    <!-- Icon Plus -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                                    </svg>
+                                </button>
                             </div>
                         </div>
                     </div>
                 `;
-             }
-        }
-        
+                menuList.innerHTML += cardHtml;
+            });
+        };
+
         const renderTabs = () => {
             const tabsContainer = document.getElementById('category-tabs');
             if (!tabsContainer) return;
@@ -361,15 +425,14 @@
                 const isActive = key === activeCategory;
                 const tabHtml = `
                     <button data-category="${key}" onclick="setActiveCategory('${key}')" 
-                            class="tab-item px-4 py-2 text-lg font-semibold whitespace-nowrap ${isActive ? 'active text-gray-900 font-bold' : 'text-gray-500 font-medium'}"
-                            style="transition: all 0.3s;">
+                            class="tab-item px-1 py-2 text-lg font-semibold whitespace-nowrap ${isActive ? 'active font-bold' : 'text-gray-500 font-medium'}"
+                            style="transition: all 0.3s; color: ${isActive ? 'var(--color-text-dark)' : 'var(--color-text-muted)'};">
                         ${categories[key].label}
                     </button>
                 `;
                 tabsContainer.innerHTML += tabHtml;
             });
             
-            // Cuộn đến tab đang active
             const activeTab = tabsContainer.querySelector(`.tab-item[data-category="${activeCategory}"]`);
             if (activeTab) {
                  activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
@@ -382,54 +445,6 @@
             renderMenu();
         };
 
-        window.renderMenu = () => {
-            const menuList = document.getElementById('menu-list');
-            if (!menuList) return;
-
-            menuList.innerHTML = '';
-            const items = menuData[activeCategory] || {};
-            
-            if (Object.keys(items).length === 0) {
-                 menuList.innerHTML = `<p class="col-span-2 text-center text-gray-500 py-10">Hiện tại không có món nào trong danh mục này.</p>`;
-                 return;
-            }
-
-            Object.keys(items).forEach(id => {
-                const item = flatMenuData[id];
-                // Sử dụng placeholder image nếu không có URL
-                const imageUrl = item.img && item.img.startsWith('http') 
-                                 ? item.img 
-                                 : 'https://placehold.co/1000x800/E5E7EB/6B7280?text=LUXURY+FOOD';
-
-                const cardHtml = `
-                    <div id="item-${id}" class="ios-card overflow-hidden flex flex-col cursor-pointer" 
-                         ontouchstart="this.classList.add('active-tap')" ontouchend="this.classList.remove('active-tap')" 
-                         onmouseleave="this.classList.remove('active-tap')">
-                        <!-- Ảnh món ăn -->
-                        <div class="w-full h-[60%] overflow-hidden rounded-t-2xl">
-                             <img src="${imageUrl}" 
-                                  onerror="this.onerror=null;this.src='https://placehold.co/1000x800/E5E7EB/6B7280?text=Luxury+Food';" 
-                                  class="w-full h-full object-cover transition duration-300 transform hover:scale-105" alt="${item.name}">
-                        </div>
-                        
-                        <!-- Thông tin món ăn -->
-                        <div class="p-4 flex flex-col justify-between flex-1">
-                            <h3 class="text-base font-extrabold line-clamp-2 leading-snug mb-2 text-gray-900">${item.name}</h3>
-                            <div class="flex justify-between items-center">
-                                <span class="text-xl font-light" style="color: var(--color-highlight);">${formatCurrency(item.price)}</span>
-                                <button onclick="event.stopPropagation(); addItemToCart('${id}')" 
-                                        class="w-10 h-10 flex items-center justify-center rounded-full text-white shadow-md transition duration-150 transform hover:scale-110 active:scale-90"
-                                        style="background-color: var(--color-accent);">
-                                    +
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                menuList.innerHTML += cardHtml;
-            });
-        };
-
         window.renderCart = () => {
             try {
                 const cartList = document.getElementById('cart-items-list');
@@ -438,7 +453,6 @@
                 const emptyMessage = document.getElementById('empty-cart-message');
                 const checkoutButton = document.getElementById('checkout-button');
                 
-                // Cập nhật cho FAB (Bubble)
                 const floatingBubble = document.getElementById('floating-cart-bubble');
                 const bubbleCount = document.getElementById('bubble-item-count');
 
@@ -451,7 +465,6 @@
                 // Cập nhật Floating Bubble
                 if (floatingBubble && bubbleCount) {
                     bubbleCount.textContent = itemCount;
-                    // Hiển thị FAB khi có món, ẩn khi trống
                     floatingBubble.classList.toggle('scale-100', itemCount > 0);
                     floatingBubble.classList.toggle('scale-0', itemCount === 0);
                 }
@@ -464,7 +477,6 @@
                     checkoutSummaryTotal.textContent = formatCurrency(total);
                 }
 
-                // Ẩn/Hiện thông báo Giỏ hàng trống
                 if (emptyMessage) {
                     emptyMessage.classList.toggle('hidden', itemCount > 0);
                 }
@@ -483,33 +495,33 @@
                 Object.keys(cartItems).forEach(id => {
                     const cartItem = cartItems[id];
                     const item = cartItem.item;
-                    const itemTotal = item.price * cartItem.quantity;
-
+                    
                     const imageUrl = item.img && item.img.startsWith('http') 
                                      ? item.img 
-                                     : 'https://placehold.co/100x100/E5E7EB/6B7280?text=Food';
+                                     : 'https://placehold.co/100x100/F0E8E1/6B4423?text=FOOD';
                     
                     const itemHtml = `
-                        <div class="flex items-center p-3 bg-gray-50 rounded-2xl shadow-sm transition duration-300 hover:bg-gray-100">
+                        <div class="flex items-center p-3 rounded-xl shadow-sm transition duration-300 border" style="background-color: var(--color-card-bg-light); border-color: #EBE4D9;">
                             <!-- Ảnh nhỏ -->
                             <img src="${imageUrl}" 
-                                 class="w-16 h-16 object-cover rounded-xl mr-4">
+                                 class="w-16 h-16 object-cover rounded-lg mr-4"
+                                 onerror="this.onerror=null;this.src='https://placehold.co/100x100/F0E8E1/6B4423?text=FOOD';">
                             
                             <!-- Chi tiết -->
                             <div class="flex-1 min-w-0">
-                                <p class="font-bold truncate text-sm">${item.name}</p>
-                                <p class="text-sm font-light text-gray-700">${formatCurrency(itemTotal)}</p>
+                                <p class="font-bold truncate text-sm" style="color: var(--color-text-dark);">${item.name}</p>
+                                <p class="text-sm font-semibold" style="color: var(--color-secondary-gold);">${formatCurrency(item.price)} x ${cartItem.quantity}</p>
                             </div>
 
                             <!-- Stepper -->
-                            <div class="flex items-center space-x-2 border border-gray-200 rounded-full p-1 ml-4">
+                            <div class="flex items-center space-x-2 border border-gray-200 rounded-full p-1 ml-4 shadow-sm" style="background-color: var(--color-card-bg-light);">
                                 <button class="stepper-btn w-6 h-6 flex items-center justify-center rounded-full bg-white text-gray-500" 
                                         onclick="updateCartQuantity('${id}', -1)">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" /></svg>
                                 </button>
-                                <span class="font-medium text-sm w-4 text-center">${cartItem.quantity}</span>
+                                <span class="font-medium text-sm w-4 text-center" style="color: var(--color-text-dark);">${cartItem.quantity}</span>
                                 <button class="stepper-btn w-6 h-6 flex items-center justify-center rounded-full text-white" 
-                                        style="background-color: var(--color-accent);"
+                                        style="background-color: var(--color-primary-wood);"
                                         onclick="updateCartQuantity('${id}', 1)">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
                                 </button>
@@ -534,25 +546,23 @@
                 cartItems[id] = { item: item, quantity: 1 };
             }
 
-            // Animation cho Floating Bubble
             const floatingBubble = document.getElementById('floating-cart-bubble');
             if (floatingBubble) {
-                // Thêm class lắc nhẹ khi món ăn được thêm vào
                 floatingBubble.classList.add('bubble-shake');
                 setTimeout(() => floatingBubble.classList.remove('bubble-shake'), 500);
             }
 
-            // Fly-to-cart animation
+            // Fly-to-cart animation (Bay vào giỏ hàng)
             const itemCard = document.getElementById(`item-${id}`);
             if (itemCard) {
                 const button = itemCard.querySelector('button');
-                const cartIcon = document.getElementById('floating-cart-bubble'); // Thay đổi target thành FAB
-                
-                if (button && cartIcon) {
+                const cartIcon = document.getElementById('floating-cart-bubble'); 
+                const flyClone = document.getElementById('fly-clone');
+
+                if (button && cartIcon && flyClone) {
                     const startRect = button.getBoundingClientRect();
                     const cartRect = cartIcon.getBoundingClientRect();
 
-                    const flyClone = document.getElementById('fly-clone');
                     // Khởi tạo vị trí clone từ nút '+'
                     flyClone.style.top = `${startRect.top}px`;
                     flyClone.style.left = `${startRect.left}px`;
@@ -563,13 +573,13 @@
 
                     // Bắt đầu bay về giỏ hàng
                     setTimeout(() => {
-                        // Tính toán vị trí tâm của FAB
-                        flyClone.style.top = `${cartRect.top + cartRect.height / 2 - 20}px`;
-                        flyClone.style.left = `${cartRect.left + cartRect.width / 2 - 20}px`;
-                        flyClone.style.width = '40px';
-                        flyClone.style.height = '40px';
+                        // Vị trí tâm của FAB
+                        flyClone.style.top = `${cartRect.top + cartRect.height / 2 - 10}px`;
+                        flyClone.style.left = `${cartRect.left + cartRect.width / 2 - 10}px`;
+                        flyClone.style.width = '20px';
+                        flyClone.style.height = '20px';
                         flyClone.style.opacity = 0.5;
-                        flyClone.style.transform = 'scale(0.3)';
+                        flyClone.style.transform = 'scale(0.5)';
                     }, 50);
 
                     // Hoàn tất bay
@@ -606,13 +616,10 @@
             if (!drawer) return;
 
             if (open) {
-                // Chỉ mở giỏ hàng nếu có món
                 if (Object.keys(cartItems).length > 0) {
                     renderCart();
                     drawer.classList.add('open');
-                } else {
-                    console.log("Giỏ hàng trống, không mở drawer.");
-                }
+                } 
             } else {
                 drawer.classList.remove('open');
             }
@@ -718,8 +725,8 @@
                             shapes: [
                                 { ty: "gr", nm: "Group 1", it: [
                                     { d: 1, ty: "sh", path: { k: { i: [[0, 0], [0, 0], [0, 0]], o: [[0, 0], [0, 0], [0, 0]], v: [[50, 50], [70, 70], [90, 30]] } } },
-                                    // Sử dụng màu accent cho checkmark
-                                    { ty: "st", c: { a: 0, k: [30/255, 30/255, 30/255, 1] }, w: { a: 0, k: 8 }, lc: 2, lj: 1 },
+                                    // Sửa: Sử dụng màu gỗ đậm cho checkmark (RGB của #6B4423)
+                                    { ty: "st", c: { a: 0, k: [107/255, 68/255, 35/255, 1] }, w: { a: 0, k: 8 }, lc: 2, lj: 1 },
                                     { ty: "tr", a: { a: 0, k: [0, 0] }, p: { a: 0, k: [0, 0] }, s: { a: 0, k: [100, 100] } }
                                 ]}
                             ]
@@ -745,14 +752,6 @@
 
         // --- Khởi chạy Ứng dụng ---
         document.addEventListener('DOMContentLoaded', initData);
-
-        // Đảm bảo không có horizontal scroll trên các màn hình nhỏ
-        document.addEventListener('scroll', () => {
-             const tabsContainer = document.getElementById('category-tabs');
-             if (tabsContainer) {
-                 // Không cần thiết logic cuộn/shadow phức tạp cho ví dụ này, chỉ để lại đây nếu cần thiết
-             }
-        });
     </script>
 </body>
 </html>
