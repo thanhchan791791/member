@@ -59,7 +59,6 @@
             box-shadow: 0 8px 18px var(--color-shadow-wood-heavy);
         }
         
-        /* --- Style cho Featured Card (Đã bỏ, giữ lại phòng trường hợp cần thiết) --- */
         .featured-card {
              background-color: var(--color-card-bg-light); 
              box-shadow: 0 6px 16px var(--color-shadow-wood-heavy);
@@ -82,14 +81,13 @@
             transform: translateY(0);
         }
         
-        /* --- Cập nhật Style cho Tab Item --- */
         .tab-item {
             position: relative;
             transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
-            font-weight: 700 !important; /* Luôn đậm */
+            font-weight: 700 !important; 
         }
         .tab-item.active {
-             transform: scale(1.05); /* Hiệu ứng nổi bật khi active */
+             transform: scale(1.05); 
         }
         .tab-item::after {
             content: '';
@@ -97,14 +95,14 @@
             bottom: -8px;
             left: 0;
             width: 100%;
-            height: 3px; /* Tăng độ dày underline */
+            height: 3px; 
             background-color: transparent;
             transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
             transform: scaleX(0);
             border-radius: 2px;
         }
         .tab-item.active::after {
-            background-color: var(--color-primary-wood); /* Đổi màu underline sang Primary Wood */
+            background-color: var(--color-primary-wood); 
             transform: scaleX(1);
         }
         
@@ -129,8 +127,101 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+        
+        /* ------------------------------------- */
+        /* --- ANIMATION KHỞI ĐỘNG (2.5 GIÂY, 5 VÒNG) --- */
+        /* ------------------------------------- */
+        
+        /* 1. Trạng thái ẩn ban đầu */
+        #app.initial-hidden {
+            opacity: 0;
+            /* Xoay ngược 5 vòng */
+            transform: scale(0.4) rotate(-1800deg) skewX(-15deg); 
+        }
 
-        /* --- CSS cho SVG Checkmark Animation --- */
+        /* 2. Keyframes cho hiệu ứng XOẮN VÀ HIỆN RA (5 VÒNG, CHẬM) */
+        @keyframes initial-spin-in {
+            0% { 
+                opacity: 0; 
+                transform: scale(0.4) rotate(-1800deg) skewX(-15deg); /* Bắt đầu xoay ngược 5 vòng */
+            }
+            85% { /* Kéo dài thời gian xoay chính */
+                opacity: 1; 
+                transform: scale(1.02) rotate(0deg) skewX(0deg); 
+            }
+            100% { 
+                opacity: 1; 
+                transform: scale(1) rotate(0deg) skewX(0deg); 
+            }
+        }
+
+        /* 3. Áp dụng animation chính lên #app */
+        #app.initial-visible {
+             animation: initial-spin-in 2.5s cubic-bezier(0.5, 0.0, 0.2, 1) forwards; /* Tăng thời gian lên 2.5s */
+             transform-origin: center center;
+             will-change: transform, opacity;
+        }
+
+        /* 4. Hiệu ứng xuất hiện từng phần (Header, Tabs) */
+        @keyframes fade-up {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .stagger-item {
+            opacity: 0;
+            animation: fade-up 0.5s ease-out forwards;
+        }
+
+        /* ------------------------------------------- */
+        /* --- HIỆU ỨNG CHUYỂN TAB (1.5 GIÂY, 5 VÒNG) --- */
+        /* ------------------------------------------- */
+        #menu-list {
+            position: relative; 
+            will-change: opacity, transform; 
+            transform-style: preserve-3d; 
+        }
+        
+        /* Keyframes cho hiệu ứng XOẮN VÀ BIẾN MẤT (5 VÒNG THU NHỎ) */
+        @keyframes warp-spin-out {
+            0% { 
+                opacity: 1; 
+                transform: scale(1) rotate(0deg) skewX(0deg); 
+            }
+            100% { 
+                opacity: 0; 
+                /* Xoay 5 vòng và biến mất */
+                transform: scale(0.4) rotate(1800deg) skewX(15deg); 
+            }
+        }
+
+        /* Keyframes cho hiệu ứng XOẮN VÀ HIỆN RA (5 VÒNG MỞ RỘNG) */
+        @keyframes warp-spin-in {
+            0% { 
+                opacity: 0; 
+                /* Bắt đầu xoay ngược 5 vòng và mở ra */
+                transform: scale(0.4) rotate(-1800deg) skewX(-15deg); 
+            }
+            100% { 
+                opacity: 1; 
+                transform: scale(1) rotate(0deg) skewX(0deg); 
+            }
+        }
+        
+        /* Trạng thái chuẩn bị chuyển (gọi animation) */
+        #menu-list.warp-spin-out {
+             animation: warp-spin-out 1.5s cubic-bezier(0.5, 0.0, 0.5, 1.0) forwards; /* 1.5s cho 5 vòng quay chậm */
+             pointer-events: none; 
+        }
+        
+        /* Trạng thái sau khi chuyển (gọi animation) */
+        #menu-list.warp-spin-in {
+             animation: warp-spin-in 1.5s cubic-bezier(0.5, 0.0, 0.5, 1.0) forwards; /* 1.5s cho 5 vòng quay chậm */
+             pointer-events: auto;
+        }
+        /* ------------------------------------- */
+
+        /* --- Các Styles khác (giữ nguyên) --- */
         .checkmark-container {
             width: 100%;
             height: 100%;
@@ -179,8 +270,7 @@
         @keyframes fill {
             100% { box-shadow: inset 0 0 0 30px var(--color-background-light); } 
         }
-
-        /* --- CSS cho Loading Spinner Ấn Tượng --- */
+        
         .loading-spinner {
             display: inline-block;
             width: 1.5rem;
@@ -235,38 +325,14 @@
             color: var(--color-primary-wood);
             font-family: 'Playfair Display', serif;
         }
-
-        /* ------------------------------------- */
-        /* --- HIỆU ỨNG CHUYỂN TAB MỚI (iOS) --- */
-        /* ------------------------------------- */
-        #menu-list {
-            position: relative; /* Quan trọng cho việc tạo layer */
-            transition: opacity 0.35s ease-in-out, transform 0.35s ease-in-out; 
-        }
-        
-        /* Trạng thái chuẩn bị chuyển (ẩn) */
-        #menu-list.fade-out-right {
-             opacity: 0;
-             transform: translateX(10px); /* Bắt đầu trượt từ phải */
-        }
-        #menu-list.fade-out-left {
-             opacity: 0;
-             transform: translateX(-10px); /* Bắt đầu trượt từ trái */
-        }
-        
-        /* Trạng thái sau khi chuyển (hiện) */
-        #menu-list.fade-in {
-             opacity: 1;
-             transform: translateX(0);
-        }
-        /* ------------------------------------- */
         
     </style>
 </head>
 <body>
-    <div id="app" class="max-w-xl mx-auto min-h-screen relative p-4 pb-32">
+    
+    <div id="app" class="max-w-xl mx-auto min-h-screen relative p-4 pb-32 initial-hidden">
         
-        <header class="flex justify-between items-center py-4 sticky top-0 z-30 header-bg">
+        <header id="app-header" class="flex justify-between items-center py-4 sticky top-0 z-30 header-bg stagger-item" style="animation-delay: 2.2s;">
             <div class="flex items-center space-x-2">
 <img 
   src="logobanme.png" 
@@ -285,7 +351,7 @@
             <div class="w-[64px] h-16"></div> 
         </header>
         
-        <div class="sticky top-20 z-20 pb-4 header-bg">
+        <div id="app-tabs-container" class="sticky top-20 z-20 pb-4 header-bg stagger-item" style="animation-delay: 2.4s;">
             <div id="category-tabs" class="flex overflow-x-scroll no-scrollbar space-x-6 pb-2">
                 </div>
         </div>
@@ -402,11 +468,8 @@
         let cartItems = {};    
         let categories = {};   
         let activeCategory = '';
-        let previousCategory = ''; // *Bổ sung: Biến lưu danh mục trước đó*
+        let previousCategory = ''; 
         
-        // --- DỮ LIỆU MÓN NỔI BẬT (Featured) - ĐÃ BỎ SỬ DỤNG ---
-        // const featuredItemIds = ["-O_rTEe0SYGEcdvjBkNk", "-Lw-R-M-aWb-0lI-7H2f"]; 
-
         // --- Helpers ---
         const formatCurrency = (amount) => {
             return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount).replace('₫', 'đ');
@@ -442,6 +505,10 @@
           };
 
         async function initData() {
+            // Ứng dụng hiệu ứng khởi động lên #app
+            document.getElementById('app').classList.remove('initial-hidden');
+            document.getElementById('app').classList.add('initial-visible');
+            
             const menuRef = ref(db, "menu");
             onValue(menuRef, (snapshot) => {
                 let data = snapshot.val();
@@ -470,8 +537,8 @@
             }
 
             categories = {};
-            if (menuData.foods) categories.foods = { label: ' Món Ăn Chính', index: 0 }; /* Cập nhật nhãn và index */
-            if (menuData.drinks) categories.drinks = { label: ' Thức Uống', index: 1 };  /* Cập nhật nhãn và index */
+            if (menuData.foods) categories.foods = { label: ' Món Ăn Chính', index: 0 }; 
+            if (menuData.drinks) categories.drinks = { label: ' Thức Uống', index: 1 };  
             
             flatMenuData = {};
             let firstCategory = '';
@@ -487,47 +554,37 @@
                  activeCategory = firstCategory || '';
             }
 
-            // renderFeaturedMenu(); // Đã XÓA
             renderTabs();
-            renderMenu(false); // Gọi lần đầu không cần animation
+            renderMenu(false); 
             renderCart(); 
         }
 
-        // --- ĐÃ XÓA: renderFeaturedMenu ---
-
-
         // --- Render Functions ---
 
-        // *Cập nhật hàm renderMenu để hỗ trợ animation*
         window.renderMenu = (animate = true) => {
             const menuList = document.getElementById('menu-list');
+            const ANIMATION_DURATION = 1500; // 1.5 giây
+
             if (!menuList) return;
 
-            // 1. Nếu có animation, ẩn danh sách món hiện tại với hiệu ứng trượt
+            menuList.classList.remove('warp-spin-out', 'warp-spin-in');
+
             if (animate) {
-                 const currentCatIndex = categories[activeCategory]?.index || 0;
-                 const prevCatIndex = categories[previousCategory]?.index || 0;
+                 menuList.classList.add('warp-spin-out');
                  
-                 menuList.classList.remove('fade-in');
-                 
-                 // Quyết định hướng trượt (Trái: danh mục mới có index nhỏ hơn; Phải: danh mục mới có index lớn hơn)
-                 const directionClass = currentCatIndex > prevCatIndex ? 'fade-out-right' : 'fade-out-left';
-                 
-                 menuList.classList.add(directionClass);
-                 
-                 // Đợi animation fade out kết thúc (0.35s) rồi render nội dung mới
                  setTimeout(() => {
                       updateMenuListContent(menuList);
                       
-                      // 3. Hiển thị nội dung mới với hiệu ứng trượt vào
-                      menuList.classList.remove('fade-out-right', 'fade-out-left');
-                      menuList.classList.add('fade-in');
+                      menuList.classList.remove('warp-spin-out');
+                      menuList.classList.add('warp-spin-in');
+                      
+                      setTimeout(() => {
+                          menuList.classList.remove('warp-spin-in');
+                      }, ANIMATION_DURATION); // Đợi 1.5 giây để hiệu ứng in kết thúc
 
-                 }, 350);
+                 }, ANIMATION_DURATION); // Đợi 1.5 giây để hiệu ứng out kết thúc
             } else {
-                 // Không animation, render ngay lập tức
                  updateMenuListContent(menuList);
-                 menuList.classList.add('fade-in');
             }
         };
 
@@ -600,7 +657,6 @@
             }
         };
 
-        // *Cập nhật hàm setActiveCategory để lưu trữ danh mục cũ và gọi renderMenu có animation*
         window.setActiveCategory = (key) => {
             if (key === activeCategory) return;
 
@@ -608,10 +664,9 @@
             activeCategory = key;
             
             renderTabs();
-            renderMenu(true); // Kích hoạt animation
+            renderMenu(true); 
         };
 
-        // window.renderCart 
         window.renderCart = () => {
             try {
                 const cartList = document.getElementById('cart-items-list');
@@ -643,11 +698,11 @@
                 }
                 
                 if (checkoutButton) {
-                    const isSending = checkoutButton.dataset.sending === 'true'; // Kiểm tra trạng thái đang gửi
+                    const isSending = checkoutButton.dataset.sending === 'true'; 
                     if (itemCount === 0 || isSending) {
                         checkoutButton.disabled = true;
                         checkoutButton.classList.add('opacity-50', 'cursor-not-allowed');
-                        if(!isSending) checkoutButton.innerHTML = 'Đặt món ngay'; // Đảm bảo không ghi đè nếu đang gửi
+                        if(!isSending) checkoutButton.innerHTML = 'Đặt món ngay'; 
                     } else {
                         checkoutButton.disabled = false;
                         checkoutButton.classList.remove('opacity-50', 'cursor-not-allowed');
@@ -777,7 +832,7 @@
             }
         };
 
-        // --- Popup Functions (Sử dụng SVG/CSS Checkmark) ---
+        // --- Popup Functions (Giữ nguyên) ---
         
         // window.showSuccessPopup 
         window.showSuccessPopup = () => {
@@ -785,7 +840,6 @@
              const svgContainer = document.getElementById('lottie-success-container');
              if (!popup || !svgContainer) return;
 
-             // THAY THẾ Lottie bằng SVG Checkmark và animation qua CSS
              svgContainer.innerHTML = `
                  <div class="checkmark-container">
                      <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
@@ -839,7 +893,7 @@
             popup.querySelector('div')?.classList.add('scale-90');
         };
 
-        // --- Loading Overlay Functions MỚI ---
+        // --- Loading Overlay Functions (Giữ nguyên) ---
         const showLoading = () => {
              document.getElementById('loading-overlay')?.classList.add('show');
              document.getElementById('checkout-button')?.setAttribute('data-sending', 'true');
@@ -852,7 +906,7 @@
         };
 
 
-        // --- Telegram & Checkout Logic (Cập nhật) ---
+        // --- Telegram & Checkout Logic (Giữ nguyên) ---
 
         async function sendTelegramNotification(message) {
             const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
@@ -889,10 +943,10 @@
                  return;
             }
             
-            showLoading(); // HIỂN THỊ LOADING
+            showLoading(); 
 
             const tableName = "B1"; 
-            const totalAmount = getCartTotal(); // Lấy tổng tiền
+            const totalAmount = getCartTotal(); 
 
             const itemsObject = {};
             let foodItems = [];
@@ -900,12 +954,10 @@
             let hasFood = false;
             let hasDrink = false;
 
-            // 1. Phân loại và định dạng món ăn/thức uống cho Telegram
             Object.keys(cartItems).forEach(id => {
                 const ci = cartItems[id];
                 const itemType = ci.item.type;
                 
-                // Định dạng cho tin nhắn Telegram (dùng Markdown: *bold*)
                 const itemString = `- ${ci.item.name} x *${ci.quantity}* (${formatCurrency(ci.item.price)})`;
 
                 if (itemType === 'food') {
@@ -925,7 +977,6 @@
                 };
             });
             
-            // 2. Xây dựng nội dung tin nhắn Telegram
             let message = `*🧾 ĐƠN HÀNG MỚI (Bàn ${tableName})* \n`;
             message += `--------------------------------------\n`;
 
@@ -943,7 +994,6 @@
 
             message += `\n*💵 TỔNG CỘNG: ${formatCurrency(totalAmount)}*`;
             
-            // 3. Chuẩn bị Order cho API backend
             let orderType = 'misc'; 
             if (hasFood && hasDrink) {
                 orderType = 'food_and_drink';
@@ -992,7 +1042,7 @@
                 console.error("❌ Lỗi khi gửi: " + err.message, err);
                 showErrorPopup("❌ Lỗi kết nối API: " + err.message + "\n\nKiểm tra console để biết chi tiết.");
             } finally {
-                 hideLoading(); // ẨN LOADING
+                 hideLoading(); 
                  renderCart(); 
             }
         };
