@@ -235,6 +235,31 @@
             color: var(--color-primary-wood);
             font-family: 'Playfair Display', serif;
         }
+
+        /* ------------------------------------- */
+        /* --- HIỆU ỨNG CHUYỂN TAB MỚI (iOS) --- */
+        /* ------------------------------------- */
+        #menu-list {
+            position: relative; /* Quan trọng cho việc tạo layer */
+            transition: opacity 0.35s ease-in-out, transform 0.35s ease-in-out; 
+        }
+        
+        /* Trạng thái chuẩn bị chuyển (ẩn) */
+        #menu-list.fade-out-right {
+             opacity: 0;
+             transform: translateX(10px); /* Bắt đầu trượt từ phải */
+        }
+        #menu-list.fade-out-left {
+             opacity: 0;
+             transform: translateX(-10px); /* Bắt đầu trượt từ trái */
+        }
+        
+        /* Trạng thái sau khi chuyển (hiện) */
+        #menu-list.fade-in {
+             opacity: 1;
+             transform: translateX(0);
+        }
+        /* ------------------------------------- */
         
     </style>
 </head>
@@ -377,6 +402,7 @@
         let cartItems = {};    
         let categories = {};   
         let activeCategory = '';
+        let previousCategory = ''; // *Bổ sung: Biến lưu danh mục trước đó*
         
         // --- DỮ LIỆU MÓN NỔI BẬT (Featured) - ĐÃ BỎ SỬ DỤNG ---
         // const featuredItemIds = ["-O_rTEe0SYGEcdvjBkNk", "-Lw-R-M-aWb-0lI-7H2f"]; 
@@ -444,8 +470,8 @@
             }
 
             categories = {};
-            if (menuData.foods) categories.foods = { label: ' Món Ăn Chính' }; /* Cập nhật nhãn */
-            if (menuData.drinks) categories.drinks = { label: ' Thức Uống' };  /* Cập nhật nhãn */
+            if (menuData.foods) categories.foods = { label: ' Món Ăn Chính', index: 0 }; /* Cập nhật nhãn và index */
+            if (menuData.drinks) categories.drinks = { label: ' Thức Uống', index: 1 };  /* Cập nhật nhãn và index */
             
             flatMenuData = {};
             let firstCategory = '';
@@ -463,7 +489,7 @@
 
             // renderFeaturedMenu(); // Đã XÓA
             renderTabs();
-            renderMenu();
+            renderMenu(false); // Gọi lần đầu không cần animation
             renderCart(); 
         }
 
@@ -472,12 +498,42 @@
 
         // --- Render Functions ---
 
-        window.renderMenu = () => {
+        // *Cập nhật hàm renderMenu để hỗ trợ animation*
+        window.renderMenu = (animate = true) => {
             const menuList = document.getElementById('menu-list');
             if (!menuList) return;
 
-            menuList.innerHTML = '';
-            const items = menuData[activeCategory] || {};
+            // 1. Nếu có animation, ẩn danh sách món hiện tại với hiệu ứng trượt
+            if (animate) {
+                 const currentCatIndex = categories[activeCategory]?.index || 0;
+                 const prevCatIndex = categories[previousCategory]?.index || 0;
+                 
+                 menuList.classList.remove('fade-in');
+                 
+                 // Quyết định hướng trượt (Trái: danh mục mới có index nhỏ hơn; Phải: danh mục mới có index lớn hơn)
+                 const directionClass = currentCatIndex > prevCatIndex ? 'fade-out-right' : 'fade-out-left';
+                 
+                 menuList.classList.add(directionClass);
+                 
+                 // Đợi animation fade out kết thúc (0.35s) rồi render nội dung mới
+                 setTimeout(() => {
+                      updateMenuListContent(menuList);
+                      
+                      // 3. Hiển thị nội dung mới với hiệu ứng trượt vào
+                      menuList.classList.remove('fade-out-right', 'fade-out-left');
+                      menuList.classList.add('fade-in');
+
+                 }, 350);
+            } else {
+                 // Không animation, render ngay lập tức
+                 updateMenuListContent(menuList);
+                 menuList.classList.add('fade-in');
+            }
+        };
+
+        const updateMenuListContent = (menuList) => {
+             menuList.innerHTML = '';
+             const items = menuData[activeCategory] || {};
             
             if (Object.keys(items).length === 0) {
                  menuList.innerHTML = `<p class="col-span-2 text-center py-10" style="color: var(--color-text-muted);">Hiện tại không có món nào trong danh mục này.</p>`;
@@ -517,7 +573,8 @@
                 `;
                 menuList.innerHTML += cardHtml;
             });
-        };
+        }
+
 
         const renderTabs = () => {
             const tabsContainer = document.getElementById('category-tabs');
@@ -543,10 +600,15 @@
             }
         };
 
+        // *Cập nhật hàm setActiveCategory để lưu trữ danh mục cũ và gọi renderMenu có animation*
         window.setActiveCategory = (key) => {
+            if (key === activeCategory) return;
+
+            previousCategory = activeCategory; 
             activeCategory = key;
+            
             renderTabs();
-            renderMenu();
+            renderMenu(true); // Kích hoạt animation
         };
 
         // window.renderCart 
