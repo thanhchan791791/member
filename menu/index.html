@@ -3,12 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu Nhà Hàng Cao Cấp - Tông Gỗ Nhạt</title>
-    <!-- Tải Tailwind CSS -->
+    <title>Menu Nhà Hàng Cao Cấp - Đặt Món Nhanh</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Tải Lottie cho animation thành công -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.6/lottie.min.js"></script>
-    <!-- Tải Font Inter (Body) và Playfair Display (Header) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
     <style>
         /* Định nghĩa màu chủ đạo mới: Light Wood & Deep Espresso */
@@ -26,22 +22,20 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--color-background-light); /* Nền tổng thể là màu gỗ nhạt */
-            color: var(--color-text-dark); /* Màu chữ mặc định là nâu đen */
+            background-color: var(--color-background-light); 
+            color: var(--color-text-dark); 
             -webkit-tap-highlight-color: transparent;
         }
         
-        /* Font kiểu cho tiêu đề ấn tượng */
         .display-font {
             font-family: 'Playfair Display', serif;
         }
 
-        /* Nút Stepper và CTA */
         .stepper-btn {
             transition: transform 0.1s ease-out, background-color 0.1s;
         }
         .stepper-btn:active {
-            transform: scale(0.85); /* Hiệu ứng nhấn sâu hơn */
+            transform: scale(0.85); 
         }
         .cta-button {
              transition: all 0.15s ease-out;
@@ -52,22 +46,19 @@
              box-shadow: 0 2px 5px var(--color-shadow-wood-heavy);
         }
 
-        /* Hiệu ứng iOS Card */
         .ios-card {
             background-color: var(--color-card-bg-light); 
             transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1); 
             box-shadow: 0 4px 12px var(--color-shadow-wood-light);
             border-radius: 24px; 
             will-change: transform, box-shadow;
-            border: 1px solid #EBE4D9; /* Viền mỏng như giấy */
+            border: 1px solid #EBE4D9; 
         }
-        /* Hiệu ứng nhấn (tap) mượt mà như iOS */
         .ios-card:hover, .ios-card.active-tap {
             transform: translateY(-4px); 
             box-shadow: 0 8px 18px var(--color-shadow-wood-heavy);
         }
 
-        /* Giỏ hàng (Drawer) và Header */
         .drawer-bg, .header-bg {
             background-color: var(--color-background-light);
         }
@@ -79,7 +70,6 @@
             transform: translateY(0);
         }
         
-        /* iOS-like Active Tab Underline */
         .tab-item {
             position: relative;
             transition: color 0.3s ease-in-out;
@@ -95,13 +85,11 @@
             transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
             transform: scaleX(0);
         }
-        /* Sử dụng màu đồng mờ sáng cho underline */
         .tab-item.active::after {
             background-color: var(--color-secondary-gold);
             transform: scaleX(1);
         }
         
-        /* CSS cho Floating Cart Bubble (FAB) */
         #floating-cart-bubble {
             box-shadow: 0 6px 15px var(--color-shadow-wood-heavy); 
             border: 2px solid var(--color-card-bg-light); 
@@ -116,19 +104,70 @@
             animation: subtle-shake 0.4s ease-in-out;
         }
 
-        /* Ẩn thanh cuộn trên các trình duyệt */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
         .no-scrollbar {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* --- CSS cho SVG Checkmark Animation (Thay thế Lottie) --- */
+        .checkmark-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .checkmark {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            display: block;
+            stroke-width: 2;
+            stroke: var(--color-primary-wood); 
+            stroke-miterlimit: 10;
+            /* Thêm hiệu ứng fill màu nền để có cảm giác vẽ */
+            box-shadow: inset 0 0 0 var(--color-primary-wood); 
+            animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+        }
+        .checkmark__circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 4;
+            stroke-miterlimit: 10;
+            stroke: var(--color-primary-wood);
+            fill: none;
+            /* Animation vẽ hình tròn */
+            animation: stroke .6s cubic-bezier(0.65, 0, 0.45, 1) forwards; 
+        }
+        .checkmark__check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke: var(--color-primary-wood);
+            fill: none;
+            /* Animation vẽ dấu tích */
+            animation: stroke .3s cubic-bezier(0.65, 0, 0.45, 1) .8s forwards; 
+        }
+        @keyframes stroke {
+            100% { stroke-dashoffset: 0; }
+        }
+        @keyframes scale {
+            0%, 100% { transform: none; }
+            50% { transform: scale3d(1.1, 1.1, 1); }
+        }
+        @keyframes fill {
+            100% { box-shadow: inset 0 0 0 30px var(--color-background-light); } 
         }
     </style>
 </head>
 <body>
     <div id="app" class="max-w-xl mx-auto min-h-screen relative p-4 pb-32">
-        <!-- 1. Header (Thanh điều hướng) -->
         <header class="flex justify-center items-center py-4 sticky top-0 z-30 header-bg">
             <div class="flex-1 text-center">
                 <span class="text-3xl font-extrabold tracking-wider display-font" style="color: var(--color-text-dark);">The </span>
@@ -136,19 +175,14 @@
             </div>
         </header>
 
-        <!-- 2. Danh mục (Tabs) -->
         <div class="sticky top-16 z-20 pb-4 header-bg">
             <div id="category-tabs" class="flex overflow-x-scroll no-scrollbar space-x-6 pb-2">
-                <!-- Tabs được tạo bởi JS -->
-            </div>
+                </div>
         </div>
 
-        <!-- 3. Danh sách món ăn -->
         <div id="menu-list" class="grid grid-cols-2 gap-4 mt-2">
-            <!-- Menu Cards được tạo bởi JS hoặc Skeleton Loader -->
-        </div>
+            </div>
 
-        <!-- Nút Giỏ Hàng Nổi (FAB) -->
         <button id="floating-cart-bubble" 
                 class="fixed bottom-6 right-6 z-50 p-4 rounded-full text-white shadow-xl flex items-center space-x-2 transition-all duration-300 scale-0 origin-bottom-right" 
                 style="background-color: var(--color-primary-wood);"
@@ -159,11 +193,9 @@
             <span id="bubble-item-count" class="font-bold text-sm">0</span>
         </button>
 
-        <!-- Animation Clone (Bay vào giỏ hàng) -->
         <div id="fly-clone" class="fixed rounded-full z-50 transition-all duration-500 ease-out pointer-events-none opacity-0" 
              style="background-color: var(--color-primary-wood); width: 0; height: 0;"></div>
 
-        <!-- 4. Giỏ hàng (Cart Drawer) -->
         <div id="cart-drawer" class="cart-drawer fixed inset-x-0 bottom-0 z-40 rounded-t-3xl shadow-2xl max-h-[85vh] flex flex-col"
              style="background-color: var(--color-background-light);">
             <div class="p-4 border-b border-gray-100 relative">
@@ -173,13 +205,10 @@
                 <h2 class="text-xl font-bold text-center" style="color: var(--color-text-dark);">Giỏ Hàng Của Bạn</h2>
             </div>
             
-            <!-- Danh sách món trong giỏ -->
             <div id="cart-items-list" class="flex-1 overflow-y-auto p-4 space-y-4">
                 <p id="empty-cart-message" class="text-center mt-10" style="color: var(--color-text-muted);">Giỏ hàng trống.</p>
-                <!-- Items -->
-            </div>
+                </div>
 
-            <!-- Thanh tổng kết cố định -->
             <div id="cart-summary" class="p-4 border-t-2 border-gray-200 shadow-inner" style="background-color: var(--color-card-bg-light);">
                 <div class="flex justify-between items-center mb-4">
                     <span class="text-lg font-semibold" style="color: var(--color-text-dark);">Tổng cộng:</span>
@@ -188,71 +217,53 @@
                 <button id="checkout-button" class="cta-button w-full text-white font-bold py-3 px-4 rounded-full text-lg shadow-lg opacity-50 cursor-not-allowed" 
                         style="background-color: var(--color-primary-wood);"
                         disabled
-                        onclick="openCheckoutModal()">
+                        onclick="handleCheckout()">
                     Đặt món ngay
                 </button>
             </div>
         </div>
-
-        <!-- 5. Checkout Modal -->
-        <div id="checkout-modal" class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-end justify-center transition-opacity duration-300 opacity-0 pointer-events-none">
-            <div id="checkout-drawer" class="w-full max-w-xl rounded-t-3xl p-6 transform translate-y-full transition-transform duration-300 ease-in-out"
-                 style="background-color: var(--color-background-light);">
-                <h2 class="text-2xl font-bold text-center mb-6" style="color: var(--color-text-dark);">Thông Tin Đặt Món</h2>
-                <form id="checkout-form" onsubmit="handleCheckout(event)">
-                    <div class="space-y-4">
-                        <!-- Input fields -->
-                        <input type="text" id="customer-name" placeholder="Tên khách hàng" required 
-                               class="w-full p-3 border-2 border-gray-300 rounded-xl focus:border-[var(--color-primary-wood)] transition duration-200 focus:outline-none"
-                               style="color: var(--color-text-dark); background-color: var(--color-card-bg-light);">
-                        <input type="tel" id="customer-phone" placeholder="Số điện thoại" required 
-                               class="w-full p-3 border-2 border-gray-300 rounded-xl focus:border-[var(--color-primary-wood)] transition duration-200 focus:outline-none"
-                               style="color: var(--color-text-dark); background-color: var(--color-card-bg-light);">
-                        <textarea id="customer-note" placeholder="Ghi chú (Ví dụ: Số bàn, yêu cầu đặc biệt)" 
-                                  class="w-full p-3 border-2 border-gray-300 rounded-xl focus:border-[var(--color-primary-wood)] transition duration-200 focus:outline-none h-24"
-                                  style="color: var(--color-text-dark); background-color: var(--color-card-bg-light);"></textarea>
-                    </div>
-                    <!-- Checkout Button -->
-                    <button type="submit" class="cta-button mt-6 w-full text-white font-bold py-4 rounded-full text-lg shadow-xl"
-                            style="background-color: var(--color-primary-wood);">
-                        Xác nhận Đặt Món (Tổng: <span id="checkout-summary-total">0đ</span>)
-                    </button>
-                    <button type="button" onclick="closeCheckoutModal()" class="w-full mt-2 p-2 transition hover:text-[var(--color-primary-wood)]"
-                            style="color: var(--color-text-muted);">Hủy</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- 6. Success Popup -->
+        
         <div id="success-popup" class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
-            <div class="p-8 rounded-3xl text-center shadow-2xl transform scale-90 transition-transform duration-300" 
-                 style="width: 300px; background-color: var(--color-card-bg-light);">
-                <div id="lottie-checkmark" class="w-32 h-32 mx-auto"></div>
-                <h3 class="text-2xl font-extrabold mt-4" style="color: var(--color-primary-wood);">Đặt Món Thành Công!</h3>
-                <p class="mt-2" style="color: var(--color-text-muted);">Đơn hàng của quý khách đang được chuẩn bị. Xin cảm ơn!</p>
+            <div class="p-8 rounded-xl shadow-2xl w-11/12 max-w-xs transform scale-90 transition-transform duration-300" 
+                 style="background-color: var(--color-card-bg-light);">
+                <div id="lottie-success-container" class="w-24 h-24 mx-auto mb-4"></div>
+                <h3 class="text-xl font-extrabold mb-2 text-center" style="color: var(--color-primary-wood);">Đặt Món Thành Công!</h3>
+                <p class="text-center text-sm" style="color: var(--color-text-muted);">Đơn hàng của bạn đã được gửi.</p>
                 <button onclick="closeSuccessPopup()" class="cta-button mt-6 w-full py-3 rounded-full text-white font-semibold" 
                         style="background-color: var(--color-primary-wood);">
-                    Hoàn tất
+                    Tiếp tục gọi món
                 </button>
             </div>
         </div>
+
+        <div id="error-popup" class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+            <div class="p-8 rounded-xl shadow-2xl w-11/12 max-w-lg transform scale-90 transition-transform duration-300" 
+                 style="background-color: var(--color-card-bg-light); border: 2px solid red;">
+                <h3 class="text-xl font-extrabold mb-2 text-center text-red-600">Lỗi Đặt Món!</h3>
+                <div class="max-h-[60vh] overflow-y-auto p-3 rounded-lg border-2 border-gray-300 mt-3" style="background-color: #f8f8f8;">
+                    <pre id="error-message" class="whitespace-pre-wrap text-sm text-red-700"></pre>
+                </div>
+                <button onclick="closeErrorPopup()" class="cta-button mt-6 w-full py-3 rounded-full text-white font-semibold" 
+                        style="background-color: red;">
+                    Đóng
+                </button>
+            </div>
+        </div>
+
     </div>
     
-    <!-- Firebase SDK & Script -->
     <script type="module">
-        // Import Firebase SDK
+        // Import Firebase SDK (Dù không dùng set, vẫn cần onValue để tải menu)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
         // --- Cấu hình và Khởi tạo Firebase ---
-        // Vui lòng thay thế cấu hình dưới đây bằng cấu hình Firebase của bạn
         const firebaseConfig = {
-            // SỬ DỤNG CẤU HÌNH MẪU - VUI LÒNG THAY THẾ BẰNG CẤU HÌNH THỰC TẾ
             apiKey: "AIzaSyAV7r-rjXo6U62LX1AA7c7DAHb8GhOOOsg",
             authDomain: "saigon-dalat.firebaseapp.com",
             databaseURL: "https://saigon-dalat-default-rtdb.firebaseio.com",
             projectId: "saigon-dalat",
-            storageBucket: "saigon-dalat.firebasestorage.app",
+            storageBucket: "saigon-dalat-test.appspot.com",
             messagingSenderId: "339735183485",
             appId: "1:339735183485:web:bc23cd740104d272577114",
             measurementId: "G-FDLZXR2X8P"
@@ -260,11 +271,17 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // --- Cấu hình Telegram ---
+        const TELEGRAM_BOT_TOKEN = "7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI";
+        const TELEGRAM_CHAT_ID = "-4954039835";
+        const API_ENDPOINT = 'https://ordermenu-qtc50vgo5-thanhduy.vercel.app/api/server';
+
+
         // --- Biến State Cần Thiết ---
-        let menuData = {};    // Dữ liệu thô từ Firebase
-        let flatMenuData = {}; // Dữ liệu phẳng để tra cứu nhanh bằng ID
-        let cartItems = {};    // { itemId: { item, quantity } }
-        let categories = {};   // Danh mục động 
+        let menuData = {};    
+        let flatMenuData = {}; 
+        let cartItems = {};    
+        let categories = {};   
         let activeCategory = '';
 
         // --- Helpers ---
@@ -275,52 +292,51 @@
         const getCartTotal = () => {
             return Object.values(cartItems).reduce((sum, item) => sum + item.item.price * item.quantity, 0);
         };
-
-        const sendOrderToDB = (order) => {
-            const ordersRef = ref(db, 'orders/' + Date.now());
-            set(ordersRef, order)
-                .then(() => console.log("✅ Order đã được ghi lên Realtime DB."))
-                .catch(error => console.error("❌ Lỗi ghi Order:", error));
+        
+        const generateOrderId = () => {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let id = '-';
+            for (let i = 0; i < 20; i++) {
+                id += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return id;
         };
         
-        // Dữ liệu mẫu (sẽ bị ghi đè nếu Firebase có data)
-         const sampleData = {
+        const generateTableId = () => {
+             return '-OaGqKwtZ3S4gzRY14ai';
+        };
+
+        const sampleData = {
             drink: {
-              "-Lw-R-M-aWb-0lI-7H2g": { name: "Cà phê đen đá Ý", price: 65000, img: "https://placehold.co/1000x800/F0E8E1/6B4423?text=Ca+Phe" },
+              "-O_rTJ0wxPOh3vwzVBkf": { name: "pepsi", price: 30000, img: "https://placehold.co/1000x800/F0E8E1/6B4423?text=Pepsi" },
               "-Oa403XF8CuYwOfIK2lh": { name: "Trà đào cam sả đặc biệt", price: 85000, img: "https://placehold.co/1000x800/F0E8E1/6B4423?text=Tra+Dao" }
             },
             food: {
-              "-Lw-R-M-aWb-0lI-7H2f": { name: "Thăn nội bò nướng than", price: 1250000, img: "https://placehold.co/1000x800/F0E8E1/6B4423?text=Bo+Nuong" },
-              "-Oa403XF8CuYwOfIK2lj": { name: "Súp bào ngư vi cá", price: 850000, img: "https://placehold.co/1000x800/F0E8E1/6B4423?text=Sup+Cao+Cap" }
+              "-O_rTEe0SYGEcdvjBkNk": { name: "Mẹc 6 người", price: 500000, img: "https://placehold.co/1000x800/F0E8E1/6B4423?text=Mec+6" },
+              "-Lw-R-M-aWb-0lI-7H2f": { name: "Thăn nội bò nướng than", price: 1250000, img: "https://placehold.co/1000x800/F0E8E1/6B4423?text=Bo+Nuong" }
             }
           };
 
-        // Hàm ghi dữ liệu mẫu vào Firebase (chỉ ghi nếu chưa có)
         async function initData() {
             const menuRef = ref(db, "menu");
             onValue(menuRef, (snapshot) => {
                 let data = snapshot.val();
                 
-                // Ghi dữ liệu mẫu nếu DB trống
                 if (!data || (Object.keys(data).length === 0)) {
                     console.log("⚡ Chưa có dữ liệu → Ghi dữ liệu mẫu");
-                    data = sampleData; // Sử dụng dữ liệu mẫu cho lần tải đầu
+                    data = sampleData;
                     set(menuRef, sampleData)
                         .then(() => console.log("Đã ghi dữ liệu mẫu."))
                         .catch(err => console.error("Lỗi ghi dữ liệu mẫu:", err));
                 }
                 
-                // Luôn tải và render dữ liệu hiện tại
                 loadAndRenderMenu(data);
             }, {
-                onlyOnce: false // Giữ listener để cập nhật Realtime
+                onlyOnce: false 
             });
         }
         
-        // Hàm xử lý data và render UI
         function loadAndRenderMenu(data) {
-            
-            // 1. Chỉ lấy data và ánh xạ sang key chuẩn
             menuData = {};
             if (data?.food && Object.keys(data.food).length > 0) {
                 menuData.foods = data.food;
@@ -329,23 +345,20 @@
                 menuData.drinks = data.drink;
             }
 
-            // 2. Tạo categories động
             categories = {};
             if (menuData.foods) categories.foods = { label: ' Món ăn chính' };
             if (menuData.drinks) categories.drinks = { label: ' Thức uống' };
             
-            // 3. Chuẩn hóa và gộp data (Flattening)
             flatMenuData = {};
             let firstCategory = '';
             Object.keys(menuData).forEach(catKey => {
                 if (!firstCategory) firstCategory = catKey;
                 const items = menuData[catKey];
                 Object.keys(items).forEach(id => {
-                    flatMenuData[id] = { id: id, ...items[id], categoryKey: catKey };
+                    flatMenuData[id] = { id: id, ...items[id], categoryKey: catKey, type: catKey === 'foods' ? 'food' : 'drink' }; 
                 });
             });
             
-            // 4. Thiết lập category active đầu tiên
             if (!activeCategory || !categories[activeCategory]) {
                  activeCategory = firstCategory || '';
             }
@@ -353,16 +366,10 @@
             renderTabs();
             renderMenu();
             renderCart(); 
-
-            // Loại bỏ trạng thái loading/skeleton nếu có
-            const appElement = document.getElementById('app');
-            if (appElement) {
-                appElement.classList.remove('loading-state');
-            }
         }
 
 
-        // --- Render Functions ---
+        // --- Render Functions (Giữ nguyên) ---
 
         window.renderMenu = () => {
             const menuList = document.getElementById('menu-list');
@@ -378,7 +385,6 @@
 
             Object.keys(items).forEach(id => {
                 const item = flatMenuData[id];
-                // Placeholder ảnh vẫn giữ màu trung tính/tối để bạn dễ thay thế ảnh đồ ăn sáng màu
                 const imageUrl = item.img && item.img.startsWith('http') 
                                  ? item.img 
                                  : `https://placehold.co/1000x800/F0E8E1/6B4423?text=FOOD+IMAGE`;
@@ -388,14 +394,11 @@
                          onclick="addItemToCart('${id}')" 
                          ontouchstart="this.classList.add('active-tap')" ontouchend="this.classList.remove('active-tap')" 
                          onmouseleave="this.classList.remove('active-tap')">
-                        <!-- Ảnh món ăn -->
                         <div class="w-full h-[60%] overflow-hidden rounded-t-2xl">
                              <img src="${imageUrl}" 
                                   onerror="this.onerror=null;this.src='https://placehold.co/1000x800/F0E8E1/6B4423?text=FOOD+IMAGE';" 
                                   class="w-full h-full object-cover transition duration-300 transform hover:scale-105" alt="${item.name}">
                         </div>
-                        
-                        <!-- Thông tin món ăn (Chữ màu tối trên nền card sáng) -->
                         <div class="p-4 flex flex-col justify-between flex-1">
                             <h3 class="text-base font-extrabold line-clamp-2 leading-snug" style="color: var(--color-text-dark);">${item.name}</h3>
                             <div class="flex justify-between items-center mt-2">
@@ -403,7 +406,6 @@
                                 <button onclick="event.stopPropagation(); addItemToCart('${id}')" 
                                         class="stepper-btn w-10 h-10 flex items-center justify-center rounded-full text-white shadow-md transition duration-150"
                                         style="background-color: var(--color-primary-wood);">
-                                    <!-- Icon Plus -->
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                                     </svg>
@@ -450,7 +452,6 @@
             try {
                 const cartList = document.getElementById('cart-items-list');
                 const cartTotalElement = document.getElementById('cart-total');
-                const checkoutSummaryTotal = document.getElementById('checkout-summary-total');
                 const emptyMessage = document.getElementById('empty-cart-message');
                 const checkoutButton = document.getElementById('checkout-button');
                 
@@ -463,26 +464,20 @@
                 const total = getCartTotal();
                 const itemCount = Object.values(cartItems).reduce((sum, item) => sum + item.quantity, 0);
 
-                // Cập nhật Floating Bubble
                 if (floatingBubble && bubbleCount) {
                     bubbleCount.textContent = itemCount;
                     floatingBubble.classList.toggle('scale-100', itemCount > 0);
                     floatingBubble.classList.toggle('scale-0', itemCount === 0);
                 }
                 
-                // Cập nhật Tổng tiền
                 if (cartTotalElement) {
                     cartTotalElement.textContent = formatCurrency(total);
-                }
-                if (checkoutSummaryTotal) {
-                    checkoutSummaryTotal.textContent = formatCurrency(total);
                 }
 
                 if (emptyMessage) {
                     emptyMessage.classList.toggle('hidden', itemCount > 0);
                 }
                 
-                // Cập nhật nút Checkout
                 if (checkoutButton) {
                     if (itemCount === 0) {
                         checkoutButton.disabled = true;
@@ -503,18 +498,13 @@
                     
                     const itemHtml = `
                         <div class="flex items-center p-3 rounded-xl shadow-sm transition duration-300 border" style="background-color: var(--color-card-bg-light); border-color: #EBE4D9;">
-                            <!-- Ảnh nhỏ -->
                             <img src="${imageUrl}" 
                                  class="w-16 h-16 object-cover rounded-lg mr-4"
                                  onerror="this.onerror=null;this.src='https://placehold.co/100x100/F0E8E1/6B4423?text=FOOD';">
-                            
-                            <!-- Chi tiết -->
                             <div class="flex-1 min-w-0">
                                 <p class="font-bold truncate text-sm" style="color: var(--color-text-dark);">${item.name}</p>
                                 <p class="text-sm font-semibold" style="color: var(--color-secondary-gold);">${formatCurrency(item.price)} x ${cartItem.quantity}</p>
                             </div>
-
-                            <!-- Stepper -->
                             <div class="flex items-center space-x-2 border border-gray-200 rounded-full p-1 ml-4 shadow-sm" style="background-color: var(--color-card-bg-light);">
                                 <button class="stepper-btn w-6 h-6 flex items-center justify-center rounded-full bg-white text-gray-500" 
                                         onclick="updateCartQuantity('${id}', -1)">
@@ -536,7 +526,7 @@
             }
         };
 
-        // --- Cart Actions ---
+        // --- Cart Actions (Giữ nguyên) ---
         
         window.addItemToCart = (id) => {
             const item = flatMenuData[id];
@@ -553,18 +543,15 @@
                 setTimeout(() => floatingBubble.classList.remove('bubble-shake'), 500);
             }
 
-            // Fly-to-cart animation (Bay vào giỏ hàng)
             const itemCard = document.getElementById(`item-${id}`);
             if (itemCard) {
-                // SỬ DỤNG ID CỦA THẺ CARD ĐỂ LÀM START POINT
                 const startRect = itemCard.getBoundingClientRect();
                 const cartIcon = document.getElementById('floating-cart-bubble'); 
                 const flyClone = document.getElementById('fly-clone');
 
                 if (cartIcon && flyClone) {
-                    const buttonSize = 40; // Kích thước giả định cho điểm xuất phát
+                    const buttonSize = 40; 
                     
-                    // Khởi tạo vị trí clone từ tâm của thẻ món ăn
                     flyClone.style.top = `${startRect.top + startRect.height / 2 - buttonSize / 2}px`;
                     flyClone.style.left = `${startRect.left + startRect.width / 2 - buttonSize / 2}px`;
                     flyClone.style.width = `${buttonSize}px`;
@@ -572,9 +559,7 @@
                     flyClone.style.opacity = 1;
                     flyClone.style.transform = 'scale(1)';
 
-                    // Bắt đầu bay về giỏ hàng
                     setTimeout(() => {
-                        // Vị trí tâm của FAB
                         flyClone.style.top = `${cartIcon.getBoundingClientRect().top + cartIcon.getBoundingClientRect().height / 2 - 10}px`;
                         flyClone.style.left = `${cartIcon.getBoundingClientRect().left + cartIcon.getBoundingClientRect().width / 2 - 10}px`;
                         flyClone.style.width = '20px';
@@ -583,13 +568,12 @@
                         flyClone.style.transform = 'scale(0.5)';
                     }, 50);
 
-                    // Hoàn tất bay
                     setTimeout(() => {
                         flyClone.style.opacity = 0;
                         flyClone.style.transform = 'scale(1)';
                         flyClone.style.width = '0px';
                         flyClone.style.height = '0px';
-                        renderCart(); // Cập nhật giỏ hàng sau khi animation kết thúc
+                        renderCart(); 
                     }, 750);
                 } else {
                      renderCart();
@@ -626,130 +610,215 @@
             }
         };
 
-        // --- Checkout & Success Logic ---
-
-        window.openCheckoutModal = () => {
-            toggleCart(false);
-            const modal = document.getElementById('checkout-modal');
-            const drawer = document.getElementById('checkout-drawer');
-            
-            if (!modal || !drawer) return;
-
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            setTimeout(() => {
-                drawer.classList.remove('translate-y-full');
-                modal.classList.add('opacity-100');
-            }, 10);
-        };
+        // --- Popup Functions (Sử dụng SVG/CSS Checkmark) ---
         
-        window.closeCheckoutModal = () => {
-            const modal = document.getElementById('checkout-modal');
-            const drawer = document.getElementById('checkout-drawer');
-            
-            if (!modal || !drawer) return;
-
-            drawer.classList.add('translate-y-full');
-            modal.classList.remove('opacity-100');
-            setTimeout(() => {
-                modal.classList.add('opacity-0', 'pointer-events-none');
-            }, 300);
-        };
-
-        window.handleCheckout = (event) => {
-            event.preventDefault();
-            
-            const customerName = document.getElementById('customer-name')?.value;
-            const customerPhone = document.getElementById('customer-phone')?.value;
-            const customerNote = document.getElementById('customer-note')?.value;
-            const orderTotal = getCartTotal();
-
-            const orderDetails = Object.values(cartItems).map(ci => ({
-                id: ci.item.id,
-                name: ci.item.name,
-                price: ci.item.price,
-                quantity: ci.quantity
-            }));
-            
-            const finalOrder = {
-                customer: {
-                    name: customerName,
-                    phone: customerPhone,
-                    note: customerNote
-                },
-                items: orderDetails,
-                total: orderTotal,
-                timestamp: new Date().toISOString()
-            };
-            
-            console.log("Đang gửi Order:", finalOrder);
-            sendOrderToDB(finalOrder);
-
-            // Reset state
-            cartItems = {};
-            const checkoutForm = document.getElementById('checkout-form');
-            if (checkoutForm) {
-                 checkoutForm.reset();
-            }
-            closeCheckoutModal();
-            renderCart();
-
-            showSuccessPopup();
-        };
-
         window.showSuccessPopup = () => {
-            const popup = document.getElementById('success-popup');
-            const lottieContainer = document.getElementById('lottie-checkmark');
-            
-            if (!popup || !lottieContainer) return;
+             const popup = document.getElementById('success-popup');
+             const svgContainer = document.getElementById('lottie-success-container');
+             if (!popup || !svgContainer) return;
 
-            popup.classList.remove('opacity-0', 'pointer-events-none');
-            popup.querySelector('div')?.classList.remove('scale-90');
-            
-            // Lottie Animation (Mock Checkmark)
-            const anim = lottie.loadAnimation({
-                container: lottieContainer,
-                renderer: 'svg',
-                loop: false,
-                autoplay: true,
-                animationData: {
-                    v: "5.7.4",
-                    nm: "Check",
-                    assets: [],
-                    layers: [
-                        {
-                            ddd: 0, ind: 0, ty: 4, nm: "Check", sr: 1,
-                            ks: {
-                                o: { a: 0, k: 100 },
-                                p: { a: 0, k: [100, 100, 0] },
-                                s: { a: 0, k: [100, 100, 100] }
-                            },
-                            shapes: [
-                                { ty: "gr", nm: "Group 1", it: [
-                                    { d: 1, ty: "sh", path: { k: { i: [[0, 0], [0, 0], [0, 0]], o: [[0, 0], [0, 0], [0, 0]], v: [[50, 50], [70, 70], [90, 30]] } } },
-                                    // Sửa: Sử dụng màu gỗ đậm cho checkmark (RGB của #6B4423)
-                                    { ty: "st", c: { a: 0, k: [107/255, 68/255, 35/255, 1] }, w: { a: 0, k: 8 }, lc: 2, lj: 1 },
-                                    { ty: "tr", a: { a: 0, k: [0, 0] }, p: { a: 0, k: [0, 0] }, s: { a: 0, k: [100, 100] } }
-                                ]}
-                            ]
-                        }
-                    ],
-                    w: 200, h: 200, fr: 30, ip: 0, op: 60
-                }
-            });
+             // THAY THẾ Lottie bằng SVG Checkmark và animation qua CSS
+             svgContainer.innerHTML = `
+                 <div class="checkmark-container">
+                     <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                         <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                         <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                     </svg>
+                 </div>
+             `;
 
-            // Tự động đóng sau 3 giây
-            setTimeout(() => {
+             popup.classList.remove('opacity-0', 'pointer-events-none');
+             popup.querySelector('div')?.classList.remove('scale-90');
+             
+             // Tự động đóng sau 3 giây
+             setTimeout(() => {
                 closeSuccessPopup();
-                anim.destroy();
-            }, 3000);
+             }, 3000); 
         };
 
         window.closeSuccessPopup = () => {
              const popup = document.getElementById('success-popup');
+             const svgContainer = document.getElementById('lottie-success-container');
              if (!popup) return;
              popup.classList.add('opacity-0', 'pointer-events-none');
              popup.querySelector('div')?.classList.add('scale-90');
+             
+             // Dọn dẹp SVG checkmark
+             if (svgContainer) svgContainer.innerHTML = '';
+
+             // Reset giỏ hàng sau khi đặt món thành công
+             cartItems = {};
+             renderCart();
         };
+
+        window.showErrorPopup = (message) => {
+            const popup = document.getElementById('error-popup');
+            const errorMessage = document.getElementById('error-message');
+            if (!popup || !errorMessage) return;
+
+            errorMessage.textContent = message;
+            popup.classList.remove('opacity-0', 'pointer-events-none');
+            popup.querySelector('div')?.classList.remove('scale-90');
+        };
+
+        window.closeErrorPopup = () => {
+            const popup = document.getElementById('error-popup');
+            if (!popup) return;
+            popup.classList.add('opacity-0', 'pointer-events-none');
+            popup.querySelector('div')?.classList.add('scale-90');
+        };
+
+
+        // --- Telegram & Checkout Logic ---
+
+        async function sendTelegramNotification(message) {
+            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+            
+            const params = {
+                chat_id: TELEGRAM_CHAT_ID,
+                text: message,
+                parse_mode: 'Markdown'
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(params)
+                });
+
+                if (!response.ok) {
+                    console.error("Lỗi Telegram API:", await response.text());
+                } else {
+                    console.log("Thông báo Telegram đã gửi thành công.");
+                }
+            } catch (err) {
+                console.error("Lỗi kết nối Telegram:", err);
+            }
+        }
+        
+        window.handleCheckout = async () => {
+            
+            toggleCart(false);
+
+            if (Object.keys(cartItems).length === 0) {
+                 showErrorPopup("Giỏ hàng trống. Vui lòng chọn món trước khi đặt.");
+                 return;
+            }
+            
+            const tableName = "B1"; 
+            const totalAmount = getCartTotal(); // Lấy tổng tiền
+
+            const itemsObject = {};
+            let foodItems = [];
+            let drinkItems = [];
+            let hasFood = false;
+            let hasDrink = false;
+
+            // 1. Phân loại và định dạng món ăn/thức uống cho Telegram
+            Object.keys(cartItems).forEach(id => {
+                const ci = cartItems[id];
+                const itemType = ci.item.type;
+                
+                // Định dạng cho tin nhắn Telegram (dùng Markdown: *bold*)
+                const itemString = `- ${ci.item.name} x *${ci.quantity}* (${formatCurrency(ci.item.price)})`;
+
+                if (itemType === 'food') {
+                    hasFood = true;
+                    foodItems.push(itemString);
+                } else if (itemType === 'drink') {
+                    hasDrink = true;
+                    drinkItems.push(itemString);
+                }
+                
+                itemsObject[id] = { 
+                    itemName: ci.item.name,
+                    price: ci.item.price,
+                    quantity: ci.quantity,
+                    status: "pending", 
+                    type: itemType 
+                };
+            });
+            
+            // 2. Xây dựng nội dung tin nhắn Telegram
+            let message = `*🧾 ĐƠN HÀNG MỚI (Bàn ${tableName})* \n`;
+            message += `--------------------------------------\n`;
+
+            if (hasFood) {
+                message += `\n*🍽️ BẾP (MÓN ĂN)*\n`;
+                message += foodItems.join('\n');
+                message += `\n`;
+            }
+
+            if (hasDrink) {
+                message += `\n*🍹 BAR (THỨC UỐNG)*\n`;
+                message += drinkItems.join('\n');
+                message += `\n`;
+            }
+
+            message += `\n*💵 TỔNG CỘNG: ${formatCurrency(totalAmount)}*`;
+            
+            // 3. Chuẩn bị Order cho API backend
+            let orderType = 'misc'; 
+            if (hasFood && hasDrink) {
+                orderType = 'food_and_drink';
+            } else if (hasFood) {
+                orderType = 'food';
+            } else if (hasDrink) {
+                orderType = 'drink';
+            }
+
+            const finalOrder = {
+                orderId: generateOrderId(), 
+                tableId: generateTableId(), 
+                tableName: tableName, 
+                type: orderType, 
+                items: itemsObject
+            };
+            
+            console.log("JSON Đặt Món Sẽ Gửi:", finalOrder);
+            
+            
+            try {
+                // Tạm thời vô hiệu hóa nút và hiển thị trạng thái gửi
+                const checkoutButton = document.getElementById('checkout-button');
+                if(checkoutButton) {
+                    checkoutButton.disabled = true;
+                    checkoutButton.innerHTML = 'Đang gửi...';
+                }
+
+                // Gửi API backend
+                const resp = await fetch(API_ENDPOINT, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(finalOrder)
+                });
+
+                const text = await resp.text();
+                let bodyStr = text;
+                try {
+                    const j = JSON.parse(text);
+                    bodyStr = JSON.stringify(j, null, 2);
+                } catch (e) {}
+
+                if (resp.ok) {
+                    console.log("✅ Thành công:", bodyStr);
+                    // Gửi Telegram sau khi API backend thành công
+                    await sendTelegramNotification(message); 
+                    showSuccessPopup(); 
+                } else {
+                    console.error(`❌ Lỗi (HTTP ${resp.status}):\n`, bodyStr);
+                    showErrorPopup(`❌ Lỗi (HTTP ${resp.status}):\n` + bodyStr);
+                }
+            } catch (err) {
+                console.error("❌ Lỗi khi gửi: " + err.message, err);
+                showErrorPopup("❌ Lỗi kết nối API: " + err.message + "\n\nKiểm tra console để biết chi tiết.");
+            } finally {
+                 // Cập nhật lại trạng thái nút sau khi gửi xong
+                 renderCart(); 
+            }
+        };
+
 
         // --- Khởi chạy Ứng dụng ---
         document.addEventListener('DOMContentLoaded', initData);
