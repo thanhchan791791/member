@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -58,6 +59,18 @@
             transform: translateY(-4px); 
             box-shadow: 0 8px 18px var(--color-shadow-wood-heavy);
         }
+        
+        /* --- Style cho Featured Card (Đã bỏ, giữ lại phòng trường hợp cần thiết) --- */
+        .featured-card {
+             background-color: var(--color-card-bg-light); 
+             box-shadow: 0 6px 16px var(--color-shadow-wood-heavy);
+             border: 2px solid var(--color-secondary-gold);
+             transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+        .featured-card:hover {
+            transform: scale(1.02);
+        }
+
 
         .drawer-bg, .header-bg {
             background-color: var(--color-background-light);
@@ -70,9 +83,14 @@
             transform: translateY(0);
         }
         
+        /* --- Cập nhật Style cho Tab Item --- */
         .tab-item {
             position: relative;
-            transition: color 0.3s ease-in-out;
+            transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+            font-weight: 700 !important; /* Luôn đậm */
+        }
+        .tab-item.active {
+             transform: scale(1.05); /* Hiệu ứng nổi bật khi active */
         }
         .tab-item::after {
             content: '';
@@ -80,13 +98,14 @@
             bottom: -8px;
             left: 0;
             width: 100%;
-            height: 2px;
+            height: 3px; /* Tăng độ dày underline */
             background-color: transparent;
             transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
             transform: scaleX(0);
+            border-radius: 2px;
         }
         .tab-item.active::after {
-            background-color: var(--color-secondary-gold);
+            background-color: var(--color-primary-wood); /* Đổi màu underline sang Primary Wood */
             transform: scaleX(1);
         }
         
@@ -112,7 +131,7 @@
             scrollbar-width: none;
         }
 
-        /* --- CSS cho SVG Checkmark Animation (Thay thế Lottie) --- */
+        /* --- CSS cho SVG Checkmark Animation --- */
         .checkmark-container {
             width: 100%;
             height: 100%;
@@ -128,7 +147,6 @@
             stroke-width: 2;
             stroke: var(--color-primary-wood); 
             stroke-miterlimit: 10;
-            /* Thêm hiệu ứng fill màu nền để có cảm giác vẽ */
             box-shadow: inset 0 0 0 var(--color-primary-wood); 
             animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
         }
@@ -139,7 +157,6 @@
             stroke-miterlimit: 10;
             stroke: var(--color-primary-wood);
             fill: none;
-            /* Animation vẽ hình tròn */
             animation: stroke .6s cubic-bezier(0.65, 0, 0.45, 1) forwards; 
         }
         .checkmark__check {
@@ -151,7 +168,6 @@
             stroke-linejoin: round;
             stroke: var(--color-primary-wood);
             fill: none;
-            /* Animation vẽ dấu tích */
             animation: stroke .3s cubic-bezier(0.65, 0, 0.45, 1) .8s forwards; 
         }
         @keyframes stroke {
@@ -164,6 +180,63 @@
         @keyframes fill {
             100% { box-shadow: inset 0 0 0 30px var(--color-background-light); } 
         }
+
+        /* --- CSS cho Loading Spinner Ấn Tượng --- */
+        .loading-spinner {
+            display: inline-block;
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            -webkit-animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { -webkit-transform: rotate(360deg); }
+        }
+        @-webkit-keyframes spin {
+            to { -webkit-transform: rotate(360deg); }
+        }
+        
+        .loading-message {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 60; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .loading-message.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .loading-box {
+            background-color: var(--color-card-bg-light);
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            color: var(--color-text-dark);
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s ease-in-out;
+        }
+        .loading-message.show .loading-box {
+            transform: scale(1);
+        }
+        .loading-title {
+            color: var(--color-primary-wood);
+            font-family: 'Playfair Display', serif;
+        }
+        
     </style>
 </head>
 <body>
@@ -174,8 +247,9 @@
                 <span class="text-3xl font-extrabold display-font italic" style="color: var(--color-secondary-gold);">Menu</span>
             </div>
         </header>
-
+        
         <div class="sticky top-16 z-20 pb-4 header-bg">
+            <h2 class="text-2xl display-font font-bold mb-4 pt-2" style="color: var(--color-text-dark);">🍽️ Danh Mục Món Ăn Chính</h2>
             <div id="category-tabs" class="flex overflow-x-scroll no-scrollbar space-x-6 pb-2">
                 </div>
         </div>
@@ -249,6 +323,15 @@
                 </button>
             </div>
         </div>
+        
+        <div id="loading-overlay" class="loading-message">
+            <div class="loading-box">
+                 <div class="loading-spinner mx-auto" style="border-top-color: var(--color-primary-wood); border-width: 5px; width: 40px; height: 40px;"></div>
+                 <h3 class="text-xl loading-title font-extrabold mt-4">Đang Gửi Đơn Hàng...</h3>
+                 <p class="text-sm mt-1" style="color: var(--color-text-muted);">Vui lòng đợi trong giây lát.</p>
+            </div>
+        </div>
+
 
     </div>
     
@@ -283,6 +366,9 @@
         let cartItems = {};    
         let categories = {};   
         let activeCategory = '';
+        
+        // --- DỮ LIỆU MÓN NỔI BẬT (Featured) - ĐÃ BỎ SỬ DỤNG ---
+        // const featuredItemIds = ["-O_rTEe0SYGEcdvjBkNk", "-Lw-R-M-aWb-0lI-7H2f"]; 
 
         // --- Helpers ---
         const formatCurrency = (amount) => {
@@ -313,7 +399,8 @@
             },
             food: {
               "-O_rTEe0SYGEcdvjBkNk": { name: "Mẹc 6 người", price: 500000, img: "https://placehold.co/1000x800/F0E8E1/6B4423?text=Mec+6" },
-              "-Lw-R-M-aWb-0lI-7H2f": { name: "Thăn nội bò nướng than", price: 1250000, img: "https://placehold.co/1000x800/F0E8E1/6B4423?text=Bo+Nuong" }
+              "-Lw-R-M-aWb-0lI-7H2f": { name: "Thăn nội bò nướng than", price: 1250000, img: "https://placehold.co/1000x800/F0E8E1/6B4423?text=Bo+Nuong" },
+              "-Oa403XF8CuYwOfIK2lh-2": { name: "Lẩu Tứ Xuyên", price: 450000, img: "https://placehold.co/1000x800/F0E8E1/6B4423?text=Lau+Tu+Xuyen" }
             }
           };
 
@@ -346,8 +433,8 @@
             }
 
             categories = {};
-            if (menuData.foods) categories.foods = { label: ' Món ăn chính' };
-            if (menuData.drinks) categories.drinks = { label: ' Thức uống' };
+            if (menuData.foods) categories.foods = { label: ' Món Ăn Chính' }; /* Cập nhật nhãn */
+            if (menuData.drinks) categories.drinks = { label: ' Thức Uống' };  /* Cập nhật nhãn */
             
             flatMenuData = {};
             let firstCategory = '';
@@ -363,13 +450,16 @@
                  activeCategory = firstCategory || '';
             }
 
+            // renderFeaturedMenu(); // Đã XÓA
             renderTabs();
             renderMenu();
             renderCart(); 
         }
 
+        // --- ĐÃ XÓA: renderFeaturedMenu ---
 
-        // --- Render Functions (Giữ nguyên) ---
+
+        // --- Render Functions ---
 
         window.renderMenu = () => {
             const menuList = document.getElementById('menu-list');
@@ -428,8 +518,8 @@
                 const isActive = key === activeCategory;
                 const tabHtml = `
                     <button data-category="${key}" onclick="setActiveCategory('${key}')" 
-                            class="tab-item px-1 py-2 text-lg font-semibold whitespace-nowrap ${isActive ? 'active font-bold' : 'text-gray-500 font-medium'}"
-                            style="transition: all 0.3s; color: ${isActive ? 'var(--color-text-dark)' : 'var(--color-text-muted)'};">
+                            class="tab-item px-1 py-2 text-xl font-extrabold whitespace-nowrap ${isActive ? 'active' : ''}"
+                            style="transition: all 0.3s; color: ${isActive ? 'var(--color-primary-wood)' : 'var(--color-text-muted)'};">
                         ${categories[key].label}
                     </button>
                 `;
@@ -448,6 +538,7 @@
             renderMenu();
         };
 
+        // window.renderCart 
         window.renderCart = () => {
             try {
                 const cartList = document.getElementById('cart-items-list');
@@ -479,12 +570,15 @@
                 }
                 
                 if (checkoutButton) {
-                    if (itemCount === 0) {
+                    const isSending = checkoutButton.dataset.sending === 'true'; // Kiểm tra trạng thái đang gửi
+                    if (itemCount === 0 || isSending) {
                         checkoutButton.disabled = true;
                         checkoutButton.classList.add('opacity-50', 'cursor-not-allowed');
+                        if(!isSending) checkoutButton.innerHTML = 'Đặt món ngay'; // Đảm bảo không ghi đè nếu đang gửi
                     } else {
                         checkoutButton.disabled = false;
                         checkoutButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                        checkoutButton.innerHTML = 'Đặt món ngay';
                     }
                 }
 
@@ -543,7 +637,7 @@
                 setTimeout(() => floatingBubble.classList.remove('bubble-shake'), 500);
             }
 
-            const itemCard = document.getElementById(`item-${id}`);
+            const itemCard = document.getElementById(`item-${id}`) || document.querySelector(`.featured-card[onclick*='${id}']`);
             if (itemCard) {
                 const startRect = itemCard.getBoundingClientRect();
                 const cartIcon = document.getElementById('floating-cart-bubble'); 
@@ -612,6 +706,7 @@
 
         // --- Popup Functions (Sử dụng SVG/CSS Checkmark) ---
         
+        // window.showSuccessPopup 
         window.showSuccessPopup = () => {
              const popup = document.getElementById('success-popup');
              const svgContainer = document.getElementById('lottie-success-container');
@@ -636,6 +731,7 @@
              }, 3000); 
         };
 
+        // window.closeSuccessPopup 
         window.closeSuccessPopup = () => {
              const popup = document.getElementById('success-popup');
              const svgContainer = document.getElementById('lottie-success-container');
@@ -651,6 +747,7 @@
              renderCart();
         };
 
+        // window.showErrorPopup 
         window.showErrorPopup = (message) => {
             const popup = document.getElementById('error-popup');
             const errorMessage = document.getElementById('error-message');
@@ -661,6 +758,7 @@
             popup.querySelector('div')?.classList.remove('scale-90');
         };
 
+        // window.closeErrorPopup 
         window.closeErrorPopup = () => {
             const popup = document.getElementById('error-popup');
             if (!popup) return;
@@ -668,8 +766,20 @@
             popup.querySelector('div')?.classList.add('scale-90');
         };
 
+        // --- Loading Overlay Functions MỚI ---
+        const showLoading = () => {
+             document.getElementById('loading-overlay')?.classList.add('show');
+             document.getElementById('checkout-button')?.setAttribute('data-sending', 'true');
+             document.getElementById('checkout-button').innerHTML = '<span class="loading-spinner"></span> Đang gửi...';
+        };
 
-        // --- Telegram & Checkout Logic ---
+        const hideLoading = () => {
+             document.getElementById('loading-overlay')?.classList.remove('show');
+             document.getElementById('checkout-button')?.removeAttribute('data-sending');
+        };
+
+
+        // --- Telegram & Checkout Logic (Cập nhật) ---
 
         async function sendTelegramNotification(message) {
             const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
@@ -706,6 +816,8 @@
                  return;
             }
             
+            showLoading(); // HIỂN THỊ LOADING
+
             const tableName = "B1"; 
             const totalAmount = getCartTotal(); // Lấy tổng tiền
 
@@ -780,13 +892,6 @@
             
             
             try {
-                // Tạm thời vô hiệu hóa nút và hiển thị trạng thái gửi
-                const checkoutButton = document.getElementById('checkout-button');
-                if(checkoutButton) {
-                    checkoutButton.disabled = true;
-                    checkoutButton.innerHTML = 'Đang gửi...';
-                }
-
                 // Gửi API backend
                 const resp = await fetch(API_ENDPOINT, {
                     method: "POST",
@@ -814,7 +919,7 @@
                 console.error("❌ Lỗi khi gửi: " + err.message, err);
                 showErrorPopup("❌ Lỗi kết nối API: " + err.message + "\n\nKiểm tra console để biết chi tiết.");
             } finally {
-                 // Cập nhật lại trạng thái nút sau khi gửi xong
+                 hideLoading(); // ẨN LOADING
                  renderCart(); 
             }
         };
