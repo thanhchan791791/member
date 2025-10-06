@@ -371,7 +371,7 @@
 
     </div>
     
-    <script type="module">
+   <script type="module">
         // Import Firebase SDK (Dù không dùng set, vẫn cần onValue để tải menu)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -394,6 +394,10 @@
         const TELEGRAM_BOT_TOKEN = "7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI";
         const TELEGRAM_CHAT_ID = "-4954039835";
         const API_ENDPOINT = 'https://ordermenu-n2a3twwsr-thanhduy.vercel.app/api/server.js';
+        
+        // --- Cấu hình API In Hóa Đơn MỚI ---
+        const API_URL_PRINTER = "http://192.168.156.102:5000/print"; // Địa chỉ API In Hóa Đơn
+        const DEFAULT_PRINTER = "BP-T3"; // Tên máy in mặc định
 
 
         // --- Biến State Cần Thiết ---
@@ -402,7 +406,7 @@
         let cartItems = {};    
         let categories = {};   
         let activeCategory = '';
-        let previousCategory = ''; // *Bổ sung: Biến lưu danh mục trước đó*
+        let previousCategory = ''; 
         
         // --- DỮ LIỆU MÓN NỔI BẬT (Featured) - ĐÃ BỎ SỬ DỤNG ---
         // const featuredItemIds = ["-O_rTEe0SYGEcdvjBkNk", "-Lw-R-M-aWb-0lI-7H2f"]; 
@@ -470,8 +474,8 @@
             }
 
             categories = {};
-            if (menuData.foods) categories.foods = { label: ' Món Ăn Chính', index: 0 }; /* Cập nhật nhãn và index */
-            if (menuData.drinks) categories.drinks = { label: ' Thức Uống', index: 1 };  /* Cập nhật nhãn và index */
+            if (menuData.foods) categories.foods = { label: ' Món Ăn Chính', index: 0 }; 
+            if (menuData.drinks) categories.drinks = { label: ' Thức Uống', index: 1 };  
             
             flatMenuData = {};
             let firstCategory = '';
@@ -487,45 +491,36 @@
                  activeCategory = firstCategory || '';
             }
 
-            // renderFeaturedMenu(); // Đã XÓA
             renderTabs();
-            renderMenu(false); // Gọi lần đầu không cần animation
+            renderMenu(false); 
             renderCart(); 
         }
-
-        // --- ĐÃ XÓA: renderFeaturedMenu ---
 
 
         // --- Render Functions ---
 
-        // *Cập nhật hàm renderMenu để hỗ trợ animation*
         window.renderMenu = (animate = true) => {
             const menuList = document.getElementById('menu-list');
             if (!menuList) return;
 
-            // 1. Nếu có animation, ẩn danh sách món hiện tại với hiệu ứng trượt
             if (animate) {
                  const currentCatIndex = categories[activeCategory]?.index || 0;
                  const prevCatIndex = categories[previousCategory]?.index || 0;
                  
                  menuList.classList.remove('fade-in');
                  
-                 // Quyết định hướng trượt (Trái: danh mục mới có index nhỏ hơn; Phải: danh mục mới có index lớn hơn)
                  const directionClass = currentCatIndex > prevCatIndex ? 'fade-out-right' : 'fade-out-left';
                  
                  menuList.classList.add(directionClass);
                  
-                 // Đợi animation fade out kết thúc (0.35s) rồi render nội dung mới
                  setTimeout(() => {
                       updateMenuListContent(menuList);
                       
-                      // 3. Hiển thị nội dung mới với hiệu ứng trượt vào
                       menuList.classList.remove('fade-out-right', 'fade-out-left');
                       menuList.classList.add('fade-in');
 
                  }, 350);
             } else {
-                 // Không animation, render ngay lập tức
                  updateMenuListContent(menuList);
                  menuList.classList.add('fade-in');
             }
@@ -600,7 +595,6 @@
             }
         };
 
-        // *Cập nhật hàm setActiveCategory để lưu trữ danh mục cũ và gọi renderMenu có animation*
         window.setActiveCategory = (key) => {
             if (key === activeCategory) return;
 
@@ -608,10 +602,9 @@
             activeCategory = key;
             
             renderTabs();
-            renderMenu(true); // Kích hoạt animation
+            renderMenu(true); 
         };
 
-        // window.renderCart 
         window.renderCart = () => {
             try {
                 const cartList = document.getElementById('cart-items-list');
@@ -643,11 +636,11 @@
                 }
                 
                 if (checkoutButton) {
-                    const isSending = checkoutButton.dataset.sending === 'true'; // Kiểm tra trạng thái đang gửi
+                    const isSending = checkoutButton.dataset.sending === 'true'; 
                     if (itemCount === 0 || isSending) {
                         checkoutButton.disabled = true;
                         checkoutButton.classList.add('opacity-50', 'cursor-not-allowed');
-                        if(!isSending) checkoutButton.innerHTML = 'Đặt món ngay'; // Đảm bảo không ghi đè nếu đang gửi
+                        if(!isSending) checkoutButton.innerHTML = 'Đặt món ngay'; 
                     } else {
                         checkoutButton.disabled = false;
                         checkoutButton.classList.remove('opacity-50', 'cursor-not-allowed');
@@ -779,13 +772,11 @@
 
         // --- Popup Functions (Sử dụng SVG/CSS Checkmark) ---
         
-        // window.showSuccessPopup 
         window.showSuccessPopup = () => {
              const popup = document.getElementById('success-popup');
              const svgContainer = document.getElementById('lottie-success-container');
              if (!popup || !svgContainer) return;
 
-             // THAY THẾ Lottie bằng SVG Checkmark và animation qua CSS
              svgContainer.innerHTML = `
                  <div class="checkmark-container">
                      <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
@@ -798,13 +789,11 @@
              popup.classList.remove('opacity-0', 'pointer-events-none');
              popup.querySelector('div')?.classList.remove('scale-90');
              
-             // Tự động đóng sau 3 giây
              setTimeout(() => {
                 closeSuccessPopup();
              }, 3000); 
         };
 
-        // window.closeSuccessPopup 
         window.closeSuccessPopup = () => {
              const popup = document.getElementById('success-popup');
              const svgContainer = document.getElementById('lottie-success-container');
@@ -812,15 +801,12 @@
              popup.classList.add('opacity-0', 'pointer-events-none');
              popup.querySelector('div')?.classList.add('scale-90');
              
-             // Dọn dẹp SVG checkmark
              if (svgContainer) svgContainer.innerHTML = '';
 
-             // Reset giỏ hàng sau khi đặt món thành công
              cartItems = {};
              renderCart();
         };
 
-        // window.showErrorPopup 
         window.showErrorPopup = (message) => {
             const popup = document.getElementById('error-popup');
             const errorMessage = document.getElementById('error-message');
@@ -831,7 +817,6 @@
             popup.querySelector('div')?.classList.remove('scale-90');
         };
 
-        // window.closeErrorPopup 
         window.closeErrorPopup = () => {
             const popup = document.getElementById('error-popup');
             if (!popup) return;
@@ -849,10 +834,68 @@
         const hideLoading = () => {
              document.getElementById('loading-overlay')?.classList.remove('show');
              document.getElementById('checkout-button')?.removeAttribute('data-sending');
+             document.getElementById('checkout-button').innerHTML = 'Đặt món ngay';
         };
 
 
-        // --- Telegram & Checkout Logic (Cập nhật) ---
+        // --- Telegram & Checkout Logic (FIXED) ---
+        
+       /**
+         * Gửi yêu cầu in hóa đơn/báo chế biến (KOT) đến API nội bộ 192.168.156.102:5000/print.
+         * @param {object} orderData - Dữ liệu đơn hàng đã chuẩn hóa (chứa finalOrder).
+         * @param {number} totalAmount - Tổng tiền đơn hàng.
+         */
+        async function sendPrintRequest(orderData, totalAmount) {
+            console.log("Gửi yêu cầu in hóa đơn đến:", API_URL_PRINTER);
+            
+            // --- BƯỚC 1: CHUẨN HÓA DANH SÁCH MÓN ĂN CHO PRINTER API ---
+            const itemsList = Object.keys(orderData.items).map(id => {
+                const itemData = orderData.items[id]; 
+                
+                // *** ĐÂY LÀ PHẦN SỬA LỖI QUAN TRỌNG NHẤT ***
+                // Đảm bảo truy cập đúng các thuộc tính đã được tạo trong handleCheckout: itemName, quantity, price
+                return {
+                    name: itemData.itemName,     // Tên món (đã được lưu là itemName trong handleCheckout)
+                    quantity: itemData.quantity, // Số lượng
+                    price: itemData.price        // Giá
+                };
+            }).filter(item => item.quantity > 0); // Loại bỏ những món có số lượng bằng 0 (chắc chắn hơn)
+            
+            
+            if (itemsList.length === 0) {
+                 console.warn("Không có món nào hợp lệ để in. Hủy yêu cầu in.");
+                 return;
+            }
+
+
+            // --- BƯỚC 2: TẠO PAYLOAD VÀ GỬI YÊU CẦU ---
+            const printPayload = {
+                printer: DEFAULT_PRINTER,
+                order: {
+                    table: orderData.tableName, 
+                    total: totalAmount, 
+                    items: itemsList // Sử dụng danh sách món ăn đã chuẩn hóa
+                }
+            };
+            
+            try {
+                const resp = await fetch(API_URL_PRINTER, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(printPayload)
+                });
+                
+                if (resp.ok) {
+                    console.log("✅ Yêu cầu in thành công!");
+                } else {
+                    const text = await resp.text();
+                    console.error(`❌ Lỗi API In (HTTP ${resp.status}):\n`, text);
+                }
+            } catch (err) {
+                console.error("❌ Lỗi kết nối API In: " + err.message, err);
+            }
+        }
+
 
         async function sendTelegramNotification(message) {
             const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
@@ -889,10 +932,10 @@
                  return;
             }
             
-            showLoading(); // HIỂN THỊ LOADING
+            showLoading(); 
 
             const tableName = "B1"; 
-            const totalAmount = getCartTotal(); // Lấy tổng tiền
+            const totalAmount = getCartTotal(); 
 
             const itemsObject = {};
             let foodItems = [];
@@ -900,12 +943,10 @@
             let hasFood = false;
             let hasDrink = false;
 
-            // 1. Phân loại và định dạng món ăn/thức uống cho Telegram
             Object.keys(cartItems).forEach(id => {
                 const ci = cartItems[id];
                 const itemType = ci.item.type;
                 
-                // Định dạng cho tin nhắn Telegram (dùng Markdown: *bold*)
                 const itemString = `- ${ci.item.name} x *${ci.quantity}* (${formatCurrency(ci.item.price)})`;
 
                 if (itemType === 'food') {
@@ -925,7 +966,6 @@
                 };
             });
             
-            // 2. Xây dựng nội dung tin nhắn Telegram
             let message = `*🧾 ĐƠN HÀNG MỚI (Bàn ${tableName})* \n`;
             message += `--------------------------------------\n`;
 
@@ -943,7 +983,6 @@
 
             message += `\n*💵 TỔNG CỘNG: ${formatCurrency(totalAmount)}*`;
             
-            // 3. Chuẩn bị Order cho API backend
             let orderType = 'misc'; 
             if (hasFood && hasDrink) {
                 orderType = 'food_and_drink';
@@ -965,7 +1004,7 @@
             
             
             try {
-                // Gửi API backend
+                // 1. Gửi API backend (Lưu DB/Gửi Telegram)
                 const resp = await fetch(API_ENDPOINT, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -983,6 +1022,10 @@
                     console.log("✅ Thành công:", bodyStr);
                     // Gửi Telegram sau khi API backend thành công
                     await sendTelegramNotification(message); 
+                    
+                    // 2. Gửi yêu cầu in hóa đơn/KOT đến API nội bộ
+                    await sendPrintRequest(finalOrder, totalAmount); 
+                    
                     showSuccessPopup(); 
                 } else {
                     console.error(`❌ Lỗi (HTTP ${resp.status}):\n`, bodyStr);
@@ -992,8 +1035,11 @@
                 console.error("❌ Lỗi khi gửi: " + err.message, err);
                 showErrorPopup("❌ Lỗi kết nối API: " + err.message + "\n\nKiểm tra console để biết chi tiết.");
             } finally {
-                 hideLoading(); // ẨN LOADING
-                 renderCart(); 
+                 hideLoading(); 
+                 // Đảm bảo giỏ hàng được làm mới nếu popup thành công chưa bị đóng
+                 if(!document.getElementById('success-popup').classList.contains('opacity-0')) {
+                    renderCart(); 
+                 }
             }
         };
 
