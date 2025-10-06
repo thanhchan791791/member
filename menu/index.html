@@ -390,13 +390,11 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- Cấu hình Telegram & API ---
+        // --- Cấu hình Telegram ---
         const TELEGRAM_BOT_TOKEN = "7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI";
         const TELEGRAM_CHAT_ID = "-4954039835";
-        const API_ENDPOINT = 'https://ordermenu-n2a3twwsr-thanhduy.vercel.app/api/server.js';
-        // --- CẤU HÌNH IN ẤN MỚI ---
-        const PRINT_API_URL = 'http://192.168.156.102:5000/print'; 
-        const PRINTER_NAME = 'BP-T3';
+        const API_ENDPOINT = 'https://ordermenu-cp5t2kbgx-thanhduy.vercel.app/api/server.js';
+
 
         // --- Biến State Cần Thiết ---
         let menuData = {};    
@@ -882,44 +880,6 @@
             }
         }
         
-        /**
-         * Hàm mới để gửi yêu cầu in ấn tới máy chủ cục bộ.
-         */
-        async function sendPrintRequest(tableName, items) {
-             const printPayload = {
-                 printer: PRINTER_NAME,
-                 order: {
-                     table: tableName,
-                     items: items // items đã được chuẩn hóa [{name, quantity}, ...]
-                 }
-             };
-
-             console.log("JSON In Ấn Sẽ Gửi:", printPayload);
-
-             try {
-                 const response = await fetch(PRINT_API_URL, {
-                     method: 'POST',
-                     headers: { 'Content-Type': 'application/json' },
-                     body: JSON.stringify(printPayload)
-                 });
-
-                 const text = await response.text();
-                 
-                 if (!response.ok) {
-                     console.error(`❌ Lỗi In Ấn (HTTP ${response.status}):\n`, text);
-                     // Không chặn quy trình nếu in ấn thất bại, chỉ ghi log
-                 } else {
-                     console.log("✅ Yêu cầu In Ấn đã gửi thành công:", text);
-                 }
-                 return response.ok; // Trả về trạng thái thành công/thất bại của yêu cầu in
-             } catch (err) {
-                 console.error("❌ Lỗi kết nối máy chủ in: " + err.message, err);
-                 // Không chặn quy trình nếu kết nối thất bại, chỉ ghi log
-                 return false;
-             }
-        }
-
-
         window.handleCheckout = async () => {
             
             toggleCart(false);
@@ -939,12 +899,8 @@
             let drinkItems = [];
             let hasFood = false;
             let hasDrink = false;
-            
-            // MẢNG ITEMS CHO IN ẤN (chỉ cần name và quantity)
-            const printItems = []; 
 
-
-            // 1. Phân loại và định dạng món ăn/thức uống cho Telegram VÀ Chuẩn bị cho In Ấn
+            // 1. Phân loại và định dạng món ăn/thức uống cho Telegram
             Object.keys(cartItems).forEach(id => {
                 const ci = cartItems[id];
                 const itemType = ci.item.type;
@@ -960,14 +916,6 @@
                     drinkItems.push(itemString);
                 }
                 
-                // Chuẩn bị cho In Ấn
-                printItems.push({
-                    name: ci.item.name,
-                    quantity: ci.quantity
-                    // Thêm 'note' nếu có, nhưng hiện tại menu không có trường này
-                });
-
-                // Chuẩn bị cho API backend
                 itemsObject[id] = { 
                     itemName: ci.item.name,
                     price: ci.item.price,
@@ -1017,7 +965,7 @@
             
             
             try {
-                // Gửi API backend (Bước 1: Lưu đơn hàng)
+                // Gửi API backend
                 const resp = await fetch(API_ENDPOINT, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -1032,22 +980,17 @@
                 } catch (e) {}
 
                 if (resp.ok) {
-                    console.log("✅ Thành công (API Backend):", bodyStr);
-
-                    // Gửi YÊU CẦU IN ẤN (Bước 2: In Bill/Order)
-                    await sendPrintRequest(`Bàn ${tableName}`, printItems); 
-                    
-                    // Gửi Telegram (Bước 3: Thông báo cho quản lý)
+                    console.log("✅ Thành công:", bodyStr);
+                    // Gửi Telegram sau khi API backend thành công
                     await sendTelegramNotification(message); 
-                    
                     showSuccessPopup(); 
                 } else {
-                    console.error(`❌ Lỗi (HTTP ${resp.status} - API Backend):\n`, bodyStr);
-                    showErrorPopup(`❌ Lỗi (HTTP ${resp.status} - API Backend):\n` + bodyStr);
+                    console.error(`❌ Lỗi (HTTP ${resp.status}):\n`, bodyStr);
+                    showErrorPopup(`❌ Lỗi (HTTP ${resp.status}):\n` + bodyStr);
                 }
             } catch (err) {
-                console.error("❌ Lỗi khi gửi API backend: " + err.message, err);
-                showErrorPopup("❌ Lỗi kết nối API backend: " + err.message + "\n\nKiểm tra console để biết chi tiết.");
+                console.error("❌ Lỗi khi gửi: " + err.message, err);
+                showErrorPopup("❌ Lỗi kết nối API: " + err.message + "\n\nKiểm tra console để biết chi tiết.");
             } finally {
                  hideLoading(); // ẨN LOADING
                  renderCart(); 
