@@ -2,44 +2,66 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Test Print</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>In đơn hàng</title>
   <style>
-    body { font-family: Arial; padding: 20px; }
-    button { padding: 10px 20px; font-size: 16px; }
-    #log { margin-top: 20px; white-space: pre-wrap; }
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    button { padding: 10px 15px; margin-top: 10px; cursor: pointer; }
+    pre { background: #f0f0f0; padding: 10px; }
   </style>
 </head>
 <body>
-  <h2>Test gửi yêu cầu in tới Flask</h2>
-  <button id="printBtn">Gửi yêu cầu in</button>
-  <div id="log"></div>
+  <h2>In đơn hàng qua Flask Server</h2>
+
+  <button id="printBtn">In Bàn 08</button>
+
+  <h3>Phản hồi server:</h3>
+  <pre id="response"></pre>
 
   <script>
-    const log = document.getElementById('log');
-    const printBtn = document.getElementById('printBtn');
+    const API_URL = "https://192.168.156.102:5000/print"; // Server Flask đã cài SSL
 
-    printBtn.addEventListener('click', () => {
-      log.textContent = 'Đang gửi yêu cầu...';
+    const orderData = {
+      printer: "BP-T3",
+      order: {
+        table: "Bàn 08",
+        items: [
+          { name: "Mẹt 5 người", quantity: 1 },
+          { name: "Canh cà đắng", quantity: 1 },
+          { name: "Gà nướng cơm lam", quantity: 2 },
+          { name: "Canh khổ qua", quantity: 1 },
+          { name: "Pepsi", quantity: 4, note: "Uong kem da" }
+        ]
+      }
+    };
 
-      fetch('http://192.168.156.102:5000/print', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          orderId: 123,
-          items: [
-            { name: "Món 1", quantity: 2 },
-            { name: "Món 2", quantity: 1 }
-          ]
-        })
-      })
-      .then(response => response.json())
-      .then(data => {
-        log.textContent = 'Server trả về:\n' + JSON.stringify(data, null, 2);
-      })
-      .catch(err => {
-        log.textContent = 'Lỗi khi gửi request:\n' + err;
-      });
-    });
+    async function printOrder() {
+      const respEl = document.getElementById("response");
+      respEl.textContent = "Đang gửi yêu cầu...";
+
+      try {
+        const resp = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(orderData)
+        });
+
+        const json = await resp.json();
+        respEl.textContent = JSON.stringify(json, null, 2);
+
+        if (!resp.ok) {
+          console.error("Lỗi khi in:", json);
+        } else {
+          console.log("In thành công:", json);
+        }
+
+      } catch (err) {
+        respEl.textContent = "❌ Lỗi kết nối: " + err;
+        console.error(err);
+      }
+    }
+
+    document.getElementById("printBtn").addEventListener("click", printOrder);
   </script>
 </body>
 </html>
