@@ -82,7 +82,7 @@
             transform: translateY(0);
         }
         
-        /* --- Cập nhật Style cho Tab Item --- */
+        /* --- Cập nhật Style cho Tab Item (Dành cho tabs ngang Món Ăn/Thức Uống) --- */
         .tab-item {
             position: relative;
             transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
@@ -106,6 +106,36 @@
         .tab-item.active::after {
             background-color: var(--color-primary-wood); /* Đổi màu underline sang Primary Wood */
             transform: scaleX(1);
+        }
+        
+        /* --- Style cho Vertical Tab Item (Danh mục con dọc) --- */
+        .vertical-tab-item {
+            position: relative;
+            padding: 10px 0;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 700 !important;
+            transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+            border-radius: 8px; /* Bo góc nhẹ */
+            user-select: none;
+        }
+        .vertical-tab-item.active {
+             background-color: var(--color-placeholder); /* Nền nhẹ khi active */
+             color: var(--color-primary-wood) !important;
+        }
+        .vertical-tab-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px; /* Độ dày border trái */
+            height: 100%;
+            background-color: transparent;
+            transition: background-color 0.3s ease-in-out;
+            border-radius: 2px;
+        }
+        .vertical-tab-item.active::before {
+            background-color: var(--color-primary-wood); /* Đổi màu border sang Primary Wood */
         }
         
         #floating-cart-bubble {
@@ -239,23 +269,23 @@
         /* ------------------------------------- */
         /* --- HIỆU ỨNG CHUYỂN TAB MỚI (iOS) --- */
         /* ------------------------------------- */
-        #menu-list {
-            position: relative; /* Quan trọng cho việc tạo layer */
+        #menu-list-container { /* Đã đổi từ #menu-list */
+            position: relative; 
             transition: opacity 0.35s ease-in-out, transform 0.35s ease-in-out; 
         }
         
         /* Trạng thái chuẩn bị chuyển (ẩn) */
-        #menu-list.fade-out-right {
+        #menu-list-container.fade-out-right {
              opacity: 0;
              transform: translateX(10px); /* Bắt đầu trượt từ phải */
         }
-        #menu-list.fade-out-left {
+        #menu-list-container.fade-out-left {
              opacity: 0;
              transform: translateX(-10px); /* Bắt đầu trượt từ trái */
         }
         
         /* Trạng thái sau khi chuyển (hiện) */
-        #menu-list.fade-in {
+        #menu-list-container.fade-in {
              opacity: 1;
              transform: translateX(0);
         }
@@ -285,13 +315,20 @@
             <div class="w-[64px] h-16"></div> 
         </header>
         
-        <div class="sticky top-20 z-20 pb-4 header-bg">
-            <div id="category-tabs" class="flex overflow-x-scroll no-scrollbar space-x-6 pb-2">
-                </div>
-        </div>
-
-        <div id="menu-list" class="grid grid-cols-2 gap-4 mt-2">
+        <div class="sticky top-[100px] z-20 pb-4 header-bg">
+            <div id="main-category-tabs" class="flex overflow-x-scroll no-scrollbar space-x-6 pb-2 border-b border-gray-200 mb-4">
+                 </div>
             </div>
+
+        <div class="flex">
+             <div id="sub-category-list" 
+                 class="w-1/4 max-w-[120px] pr-2 flex flex-col space-y-2 overflow-y-auto no-scrollbar sticky top-[160px] max-h-[calc(100vh-180px)]">
+                 </div>
+             <div id="menu-list-container" class="flex-1 pl-2">
+                 <div id="menu-list" class="grid grid-cols-2 gap-4">
+                    </div>
+            </div>
+        </div>
 
         <button id="floating-cart-bubble" 
                 class="fixed bottom-6 right-6 z-50 p-4 rounded-full text-white shadow-xl flex items-center space-x-2 transition-all duration-300 scale-0 origin-bottom-right" 
@@ -359,7 +396,61 @@
                 </button>
             </div>
         </div>
-        
+
+        <div id="item-config-modal" class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+            <div id="item-config-box" class="p-6 rounded-xl shadow-2xl w-11/12 max-w-md transform scale-90 transition-transform duration-300" 
+                 style="background-color: var(--color-card-bg-light);">
+                
+                <button onclick="closeItemConfigModal()" class="absolute right-4 top-4 p-2 rounded-full hover:bg-gray-200 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color: var(--color-text-dark);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+
+                <h3 class="text-2xl font-extrabold mb-4 text-center display-font" style="color: var(--color-primary-wood);" id="config-item-name">Chọn món trong Mẹt</h3>
+                
+                <div class="flex items-center space-x-4 mb-4 p-3 rounded-lg" style="background-color: var(--color-placeholder);">
+                     <img id="config-item-image" src="img/pepsi.png" class="w-16 h-16 object-cover rounded-lg">
+                     <div>
+                         <p class="font-bold text-lg" style="color: var(--color-text-dark);" id="config-item-display-name">Tên Món</p>
+                         <p class="font-semibold text-xl" style="color: var(--color-secondary-gold);" id="config-item-price">Giá</p>
+                     </div>
+                </div>
+
+                <div class="max-h-[50vh] overflow-y-auto pr-2 mb-4">
+                    <div id="config-rules" class="p-3 mb-4 rounded-lg text-sm font-medium border" style="background-color: #fcf6f0; border-color: var(--color-primary-wood);">
+                        </div>
+                    
+                    <h4 class="font-bold text-lg mt-4 mb-2" style="color: var(--color-primary-wood);">Chọn Món Thịt (<span id="meat-limit-text">0</span>)</h4>
+                    <div id="meat-options-container" class="space-y-2">
+                        </div>
+
+                    <h4 class="font-bold text-lg mt-4 mb-2" style="color: var(--color-primary-wood);">Chọn Món Rau (<span id="veg-limit-text">0</span>)</h4>
+                    <div id="veg-options-container" class="space-y-2">
+                        </div>
+                </div>
+                <div class="flex items-center justify-center space-x-4 mb-6">
+                    <label class="font-semibold" style="color: var(--color-text-dark);">Số lượng:</label>
+                    <div class="flex items-center space-x-2 border border-gray-200 rounded-full p-1 shadow-sm" style="background-color: var(--color-card-bg-light);">
+                        <button class="stepper-btn w-8 h-8 flex items-center justify-center rounded-full bg-white text-gray-500" 
+                                onclick="updateConfigQuantity(-1)">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" /></svg>
+                        </button>
+                        <span id="config-quantity" class="font-bold text-lg w-4 text-center" style="color: var(--color-text-dark);">1</span>
+                        <button class="stepper-btn w-8 h-8 flex items-center justify-center rounded-full text-white" 
+                                style="background-color: var(--color-primary-wood);"
+                                onclick="updateConfigQuantity(1)">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <button id="config-add-to-cart-btn" class="cta-button mt-4 w-full py-3 rounded-full text-white font-semibold text-lg" 
+                        style="background-color: var(--color-primary-wood);"
+                        data-item-id="" 
+                        onclick="confirmConfigAndAddToCart()">
+                    Thêm vào Giỏ Hàng
+                </button>
+            </div>
+        </div>
         <div id="loading-overlay" class="loading-message">
             <div class="loading-box">
                  <div class="loading-spinner mx-auto" style="border-top-color: var(--color-primary-wood); border-width: 5px; width: 40px; height: 40px;"></div>
@@ -390,30 +481,251 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- Cấu hình Telegram ---
-        const TELEGRAM_BOT_TOKEN = "7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI";
+      const TELEGRAM_BOT_TOKEN = "7807531189:AAGhMQ9jjew7Q9ywMDSTaGDy4Ns6XtPQUrI";
         const TELEGRAM_CHAT_ID = "-4954039835";
         const API_ENDPOINT = 'https://ordermenu-cp5t2kbgx-thanhduy.vercel.app/api/server.js';
+        
+        // --- Cấu hình API In ấn ---
+        const PRINT_API_ENDPOINT = "http://192.168.156.210:5000/print";
 
 
         // --- Biến State Cần Thiết ---
-        let menuData = {};    
-        let flatMenuData = {}; 
+        let menuData = {};    // Dữ liệu menu gốc: { food: { id: item, ...}, drink: {...} }
+        let menuGroupsData = {}; // Dữ liệu menu nhóm: { food: { groupKey: { id: item, ... }, ... }, drink: {...} }
+        let flatMenuData = {}; // Dữ liệu phẳng: { id: {item, categoryKey, groupKey, ...} }
         let cartItems = {};    
-        let categories = {};   
-        let activeCategory = '';
-        let previousCategory = ''; // *Bổ sung: Biến lưu danh mục trước đó*
         
-        // --- DỮ LIỆU MÓN NỔI BẬT (Featured) - ĐÃ BỎ SỬ DỤNG ---
-        // const featuredItemIds = ["-O_rTEe0SYGEcdvjBkNk", "-Lw-R-M-aWb-0lI-7H2f"]; 
+        // Cập nhật cấu trúc: categories là danh mục lớn (food, drink)
+        // 🔑 SỬA ĐỔI: Thêm mảng keyGroups để kiểm soát thứ tự hiển thị của các nhóm con
+        const categories = {
+            food: { label: 'Món Ăn', index: 0, groupData: {}, keyGroups: [] }, 
+            drink: { label: 'Thức Uống', index: 1, groupData: {}, keyGroups: [] }   
+        };
+        
+        // activeCategoryKey: Key danh mục lớn đang hoạt động (food/drink)
+        let activeCategoryKey = 'food'; 
+        // activeGroupKey: Key nhóm con đang hoạt động (monLau/nuocEp/...)
+        let activeGroupKey = ''; 
+        
+        let previousGroupKey = ''; // Biến lưu nhóm con trước đó
+
+        // 🚨 THÊM BIẾN VÀ HÀM CHO POPUP TÙY CHỈNH (MÓN MẸT) 🚨
+        
+        // State for the modal
+        let activeConfigItemId = null;
+        let activeConfigQuantity = 1;
+        let meatLimit = 0; // Giới hạn chọn món thịt
+        let vegLimit = 0;  // Giới hạn chọn món rau
+
+        // Constants for customization (theo yêu cầu mới)
+        const MEAT_OPTIONS = [
+            "Heo nướng",
+            "Cá khô xóc muối",
+            "Gà xào xả ớt",
+            "Cá nướng giã muối ớt",
+            "Măng xào thịt ba chỉ"
+        ];
+
+        const VEGETABLE_OPTIONS = [
+            "Đu đủ đâm",
+            "Rau bí xào tỏi",
+            "Cà dã",
+            "Lá mì xào"
+        ];
+
+        // Function to check item name and set limits
+        const getMekItemLimits = (itemName) => {
+            if (!itemName) return null;
+            // Chuyển sang chữ thường, loại bỏ dấu và khoảng trắng để chuẩn hóa kiểm tra
+            const normalizedName = itemName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s/g, ''); 
+            
+            if (normalizedName.includes('met4mon')) {
+                // Mẹt 4 món: 1 Thịt, 2 Rau
+                return { meat: 1, veg: 2, type: '4mon' };
+            }
+            if (normalizedName.includes('met5mon')) {
+                // Mẹt 5 món: 2 Thịt, 2 Rau
+                return { meat: 2, veg: 2, type: '5mon' };
+            }
+            return null;
+        };
+        
+        // Helper to generate checkboxes
+        const generateCheckboxOptions = (options, type, limit) => {
+            return options.map((name, index) => `
+                <label class="flex items-center p-2 rounded-lg transition duration-150 cursor-pointer hover:shadow-md" style="background-color: var(--color-placeholder);">
+                    <input type="checkbox" name="${type}" value="${name}" 
+                           data-type="${type}" class="config-checkbox-${type} w-5 h-5 text-lg rounded"
+                           style="color: var(--color-primary-wood); border-color: var(--color-text-dark); accent-color: var(--color-primary-wood);">
+                    <span class="ml-3 font-medium text-base" style="color: var(--color-text-dark);">${name}</span>
+                </label>
+            `).join('');
+        };
+        
+        // Validation logic
+        const validateSelection = (type, limit) => {
+            const selector = `.config-checkbox-${type}`;
+            const checkboxes = document.querySelectorAll(selector);
+            const selected = document.querySelectorAll(`${selector}:checked`).length;
+            
+            checkboxes.forEach(checkbox => {
+                if (!checkbox.checked && selected >= limit) {
+                    checkbox.disabled = true;
+                    checkbox.parentNode.classList.add('opacity-50');
+                    checkbox.parentNode.classList.remove('cursor-pointer');
+                } else {
+                    checkbox.disabled = false;
+                    checkbox.parentNode.classList.remove('opacity-50');
+                    checkbox.parentNode.classList.add('cursor-pointer');
+                }
+            });
+        };
+
+        window.showItemConfigModal = (id, item) => {
+            activeConfigItemId = id;
+            activeConfigQuantity = 1; // Luôn reset số lượng về 1 khi mở
+            
+            const limits = getMekItemLimits(item.name);
+            if (!limits) {
+                // Không phải món mẹt, không nên gọi hàm này.
+                return; 
+            }
+            
+            meatLimit = limits.meat;
+            vegLimit = limits.veg;
+
+            const modal = document.getElementById('item-config-modal');
+            if (!modal) return;
+            
+            // Update content
+            document.getElementById('config-item-name').textContent = item.name;
+            document.getElementById('config-item-display-name').textContent = item.name;
+            document.getElementById('config-item-price').textContent = formatCurrency(item.price);
+            document.getElementById('config-quantity').textContent = activeConfigQuantity;
+            document.getElementById('config-add-to-cart-btn').setAttribute('data-item-id', id);
+
+            const imageUrl = item.img && item.img.startsWith('http') 
+                             ? item.img 
+                             : `https://placehold.co/100x100/F0E8E1/6B4423?text=${item.name.toUpperCase().replace(/\s/g, '+') || 'MEC+IMAGE'}`;
+            document.getElementById('config-item-image').src = imageUrl;
+            document.getElementById('config-item-image').onerror=null;
+            document.getElementById('config-item-image').src = imageUrl;
+
+            // Render Rules
+            const rulesEl = document.getElementById('config-rules');
+            rulesEl.innerHTML = `
+                <p>Món *<span class="font-bold">${item.name}</span>* cho phép bạn chọn tối đa:</p>
+                <ul class="list-disc list-inside mt-1 ml-2">
+                    <li><span class="font-bold text-red-600">${limits.meat}</span> Món Thịt.</li>
+                    <li><span class="font-bold text-red-600">${limits.veg}</span> Món Rau.</li>
+                </ul>
+            `;
+            
+            // Render Meat Options
+            const meatContainer = document.getElementById('meat-options-container');
+            meatContainer.innerHTML = generateCheckboxOptions(MEAT_OPTIONS, 'meat', meatLimit);
+            document.getElementById('meat-limit-text').textContent = `Tối đa ${limits.meat} món`;
+
+            // Render Vegetable Options
+            const vegContainer = document.getElementById('veg-options-container');
+            vegContainer.innerHTML = generateCheckboxOptions(VEGETABLE_OPTIONS, 'veg', vegLimit);
+            document.getElementById('veg-limit-text').textContent = `Tối đa ${limits.veg} món`;
+
+            // Attach event listeners for validation (Cần gọi lại mỗi lần mở modal)
+            document.querySelectorAll('.config-checkbox-meat').forEach(checkbox => {
+                checkbox.onchange = () => validateSelection('meat', meatLimit);
+            });
+            document.querySelectorAll('.config-checkbox-veg').forEach(checkbox => {
+                checkbox.onchange = () => validateSelection('veg', vegLimit);
+            });
+
+
+            // Show modal
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            document.getElementById('item-config-box')?.classList.remove('scale-90');
+        };
+
+        window.closeItemConfigModal = () => {
+            const modal = document.getElementById('item-config-modal');
+            if (!modal) return;
+
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            document.getElementById('item-config-box')?.classList.add('scale-90');
+            activeConfigItemId = null;
+            activeConfigQuantity = 1;
+            meatLimit = 0;
+            vegLimit = 0;
+        };
+
+        window.updateConfigQuantity = (change) => {
+            const newQuantity = activeConfigQuantity + change;
+            if (newQuantity >= 1) {
+                activeConfigQuantity = newQuantity;
+                document.getElementById('config-quantity').textContent = activeConfigQuantity;
+            }
+        };
+
+        window.confirmConfigAndAddToCart = () => {
+            const id = activeConfigItemId;
+            const quantity = activeConfigQuantity;
+            
+            if (!id || quantity < 1) return;
+            
+            // Gather selected options
+            const selectedMeat = Array.from(document.querySelectorAll('.config-checkbox-meat:checked')).map(cb => cb.value);
+            const selectedVeg = Array.from(document.querySelectorAll('.config-checkbox-veg:checked')).map(cb => cb.value);
+
+            // Final Validation check before adding
+            if (selectedMeat.length > meatLimit || selectedVeg.length > vegLimit) {
+                alert(`Lỗi: Vui lòng không chọn quá giới hạn cho phép. Thịt: ${meatLimit}, Rau: ${vegLimit}.`);
+                return;
+            }
+            
+            if (selectedMeat.length === 0 && selectedVeg.length === 0) {
+                alert("Vui lòng chọn ít nhất một món (thịt hoặc rau) cho Mẹt.");
+                return;
+            }
+
+            closeItemConfigModal();
+
+            const item = flatMenuData[id];
+            
+            // Create a unique identifier for this customization instance (để tránh bị gộp món)
+            const customKey = `${id}-${Date.now()}`;
+            
+            // Create a custom item object including the selections
+            const customItem = {
+                item: item, 
+                quantity: quantity,
+                customizations: {
+                    meat: selectedMeat,
+                    veg: selectedVeg
+                }
+            };
+            
+            // Add to cart using the custom key
+            cartItems[customKey] = customItem;
+
+
+            // Kích hoạt hiệu ứng lắc và render giỏ hàng
+            const floatingBubble = document.getElementById('floating-cart-bubble');
+            if (floatingBubble) {
+                floatingBubble.classList.add('bubble-shake');
+                setTimeout(() => floatingBubble.classList.remove('bubble-shake'), 500);
+            }
+            renderCart(); // Gọi render cart ngay lập tức
+        };
+
+        // 🚨 KẾT THÚC THÊM BIẾN VÀ HÀM CHO POPUP TÙY CHỈNH 🚨
+
 
         // --- Helpers ---
         const formatCurrency = (amount) => {
             return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount).replace('₫', 'đ');
         };
 
-        const getCartTotal = () => {
-            return Object.values(cartItems).reduce((sum, item) => sum + item.item.price * item.quantity, 0);
+        const getCartTotal = (items = cartItems) => {
+            return Object.values(items).reduce((sum, item) => sum + item.item.price * item.quantity, 0);
         };
         
         const generateOrderId = () => {
@@ -429,27 +741,100 @@
              return '-OaGqKwtZ3S4gzRY14ai';
         };
 
-        const sampleData = {
-            drink: {
-              "-O_rTJ0wxPOh3vwzVBkf": { name: "pepsi", price: 30000, img: "https://placehold.co/1000x800/F0E8E1/6B4423?text=Pepsi" },
-              "-Oa403XF8CuYwOfIK2lh": { name: "Trà đào cam sả đặc biệt", price: 85000, img: "https://placehold.co/1000x800/F0E8E1/6B4423?text=Tra+Dao" }
-            },
-            food: {
-              "-O_rTEe0SYGEcdvjBkNk": { name: "Mẹc 6 người", price: 500000, img: "https://placehold.co/1000x800/F0E8E1/6B4423?text=Mec+6" },
-              "-Lw-R-M-aWb-0lI-7H2f": { name: "Thăn nội bò nướng than", price: 1250000, img: "https://placehold.co/1000x800/F0E8E1/6B4423?text=Bo+Nuong" },
-              "-Oa403XF8CuYwOfIK2lh-2": { name: "Lẩu Tứ Xuyên", price: 450000, img: "https://placehold.co/1000x800/F0E8E1/6B4423?text=Lau+Tu+Xuyen" }
+        // 🚨 THÊM HÀM LẤY TÊN BÀN TỪ URL 🚨
+        const getTableNameFromUrl = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            let tableName = urlParams.get('table'); 
+            
+            if (tableName && tableName.trim() !== '') {
+                // Chuyển sang chữ hoa và cắt khoảng trắng để chuẩn hóa
+                return tableName.toUpperCase().trim();
             }
-          };
+            
+            // Tên bàn mặc định nếu không có tham số 'table'
+            return 'B1'; 
+        };
+        // 🚨 KẾT THÚC THÊM HÀM LẤY TÊN BÀN 🚨
+        
+        // Lấy thời gian hiện tại theo định dạng YYYY-MM-DD HH:MM:SS
+        const getCurrentDateTime = () => {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        };
+
+        const sampleData = {
+            menu: {
+                drink: {
+                  "-O_rTJ0wxPOh3vwzVBkf": { name: "pepsi", price: 30000, img: "https://placehold.co/1000x800/F0E8E1/6B4423?text=Pepsi" },
+                  "-Oa403XF8CuYwOfIK2lh": { name: "Trà đào cam sả đặc biệt", price: 85000, img: "https://placehold.co/1000x800/F0E8E1/6B4423?text=Tra+Dao" }
+                },
+                food: {
+                  "-O_rTEe0SYGEcdvjBkNk": { name: "Mẹt 6 người", price: 500000, img: "https://placehold.co/1000x800/F0E8E1/6B4423?text=Mec+6" },
+                  "-Lw-R-M-aWb-0lI-7H2f": { name: "Thăn nội bò nướng than", price: 1250000, img: "https://placehold.co/1000x800/F0E8E1/6B4423?text=Bo+Nuong" },
+                  "-Oa403XF8CuYwOfIK2lh-2": { name: "Lẩu Tứ Xuyên", price: 450000, img: "https://placehold.co/1000x800/F0E8E1/6B4423?text=Lau+Tu+Xuyen" }
+                }
+            },
+            menuGroups: {
+                drink: {
+                    coCon: { "-O_rTJ0wxPOh3vwzVBkf": { name: "pepsi", price: 30000 } },
+                    nuocEp: { "-Oa403XF8CuYwOfIK2lh": { name: "Trà đào", price: 85000 } }
+                },
+                food: {
+                    monLau: { "-Oa403XF8CuYwOfIK2lh-2": { name: "Lẩu Tứ Xuyên", price: 450000 } },
+                    monNuong: { "-Lw-R-M-aWb-0lI-7H2f": { name: "Thăn nội bò nướng than", price: 1250000 } }
+                }
+            }
+        };
+        
+        // 🔑 SỬA ĐỔI: Thêm GROUP_ORDER để định nghĩa thứ tự ưu tiên
+        const GROUP_ORDER = {
+            // Thứ tự Món Ăn
+            food: [
+                "7mon",
+                "4mon",
+                "metTongHop",
+                "monCanh",
+                "monChinh",
+                "monLau",
+                "monRau",
+            ],
+            // Thứ tự Thức Uống
+            drink: [
+                "nuocEp",
+                "coCon",
+                "giaiKhat"
+            ]
+        };
+
+        // Ánh xạ key group Firebase sang tên hiển thị (Có thể mở rộng)
+        const GROUP_NAME_MAP = {
+             "7mon": "7 Món Nên Trải Nghiệm",
+            "4mon": "4 Món Phải Thử",
+            "metTongHop": "Mẹt Món Tổng Hợp",
+            "monCanh": "Món Canh",
+            "monChinh": "Món Chính",
+            "monLau": "Món Lẩu",
+            "monRau": "Món Rau",
+            "coCon": "Đồ Uống Có Cồn",
+            "giaiKhat": "Giải Khát",
+            "nuocEp": "Nước Ép & Khác"
+        };
 
         async function initData() {
-            const menuRef = ref(db, "menu");
-            onValue(menuRef, (snapshot) => {
+            const rootRef = ref(db, "/");
+            onValue(rootRef, (snapshot) => {
                 let data = snapshot.val();
                 
-                if (!data || (Object.keys(data).length === 0)) {
-                    console.log("⚡ Chưa có dữ liệu → Ghi dữ liệu mẫu");
+                if (!data || !data.menuGroups || (Object.keys(data.menuGroups).length === 0)) {
+                    console.log("⚡ Chưa có dữ liệu nhóm menu → Ghi dữ liệu mẫu");
                     data = sampleData;
-                    set(menuRef, sampleData)
+                    set(rootRef, sampleData)
                         .then(() => console.log("Đã ghi dữ liệu mẫu."))
                         .catch(err => console.error("Lỗi ghi dữ liệu mẫu:", err));
                 }
@@ -461,112 +846,250 @@
         }
         
         function loadAndRenderMenu(data) {
-            menuData = {};
-            if (data?.food && Object.keys(data.food).length > 0) {
-                menuData.foods = data.food;
-            }
-            if (data?.drink && Object.keys(data.drink).length > 0) {
-                menuData.drinks = data.drink;
-            }
+            menuData = data.menu || {};
+            menuGroupsData = data.menuGroups || {};
 
-            categories = {};
-            if (menuData.foods) categories.foods = { label: ' Món Ăn Chính', index: 0 }; /* Cập nhật nhãn và index */
-            if (menuData.drinks) categories.drinks = { label: ' Thức Uống', index: 1 };  /* Cập nhật nhãn và index */
-            
             flatMenuData = {};
-            let firstCategory = '';
-            Object.keys(menuData).forEach(catKey => {
-                if (!firstCategory) firstCategory = catKey;
-                const items = menuData[catKey];
-                Object.keys(items).forEach(id => {
-                    flatMenuData[id] = { id: id, ...items[id], categoryKey: catKey, type: catKey === 'foods' ? 'food' : 'drink' }; 
+            let firstGroupKey = '';
+            
+            // Xử lý dữ liệu và làm phẳng
+            Object.keys(menuGroupsData).forEach(catKey => { // catKey: food/drink
+                const catGroups = menuGroupsData[catKey];
+                
+                if (!categories[catKey]) {
+                     console.warn(`Lỗi: Không tìm thấy định nghĩa cho category key: ${catKey}`);
+                     return; 
+                }
+                
+                categories[catKey].groupData = {}; 
+                categories[catKey].keyGroups = []; // Reset mảng keyGroups
+                
+                // 🔑 SỬA ĐỔI: Lặp qua GROUP_ORDER để đảm bảo thứ tự
+                const orderedKeys = GROUP_ORDER[catKey] || [];
+                const allGroupKeys = new Set([...orderedKeys, ...Object.keys(catGroups)]);
+                
+                allGroupKeys.forEach(groupKey => { // groupKey: 4mon/monLau/...
+                    const items = catGroups[groupKey];
+
+                    if (!items) return; // Bỏ qua nếu groupKey có trong ORDER nhưng không có data
+
+                    // Thêm group vào category object
+                    categories[catKey].groupData[groupKey] = {
+                        label: GROUP_NAME_MAP[groupKey] || groupKey.toUpperCase(),
+                        items: items
+                    };
+                    
+                    // Thêm key vào danh sách đã sắp xếp
+                    categories[catKey].keyGroups.push(groupKey);
+
+                    // Gán groupKey cho flatMenuData 
+                    Object.keys(items).forEach(id => {
+                        const itemDetails = menuData[catKey]?.[id] || items[id]; 
+                        
+                        flatMenuData[id] = { 
+                            id: id, 
+                            ...itemDetails, 
+                            categoryKey: catKey, 
+                            groupKey: groupKey,
+                            type: catKey === 'food' ? 'food' : 'drink' 
+                        }; 
+
+                        if (!firstGroupKey) firstGroupKey = groupKey;
+                    });
                 });
             });
             
-            if (!activeCategory || !categories[activeCategory]) {
-                 activeCategory = firstCategory || '';
+            // 2. Thiết lập active Category và Group ban đầu
+            if (!categories[activeCategoryKey] || categories[activeCategoryKey].keyGroups.length === 0) {
+                 activeCategoryKey = Object.keys(categories).find(key => categories[key].keyGroups.length > 0) || 'food';
             }
-
-            // renderFeaturedMenu(); // Đã XÓA
-            renderTabs();
-            renderMenu(false); // Gọi lần đầu không cần animation
+            
+            const currentGroups = categories[activeCategoryKey]?.groupData || {};
+            if (!activeGroupKey || !currentGroups[activeGroupKey]) {
+                 activeGroupKey = categories[activeCategoryKey].keyGroups[0] || ''; // Lấy groupKey đầu tiên theo thứ tự mới
+            }
+            
+            renderMainCategoryTabs(); 
+            renderSubCategoryTabs();  
+            renderMenu(false); 
             renderCart(); 
         }
 
-        // --- ĐÃ XÓA: renderFeaturedMenu ---
-
-
         // --- Render Functions ---
+
+        // Hàm render tabs Danh mục chính (Foods/Drinks)
+        window.renderMainCategoryTabs = () => {
+            const tabsContainer = document.getElementById('main-category-tabs');
+            if (!tabsContainer) return;
+            
+            tabsContainer.innerHTML = '';
+            
+            // Lặp qua keys của categories (food, drink)
+            Object.keys(categories).forEach(key => { 
+                // Chỉ hiển thị tab nếu có dữ liệu nhóm
+                if (categories[key].keyGroups.length > 0) {
+                    const isActive = key === activeCategoryKey;
+                    const tabHtml = `
+                        <button data-main-category="${key}" onclick="setActiveMainCategory('${key}')" 
+                                class="tab-item px-1 py-2 text-xl font-extrabold whitespace-nowrap ${isActive ? 'active' : ''}"
+                                style="transition: all 0.3s; color: ${isActive ? 'var(--color-primary-wood)' : 'var(--color-text-muted)'};">
+                            ${categories[key].label}
+                        </button>
+                    `;
+                    tabsContainer.innerHTML += tabHtml;
+                }
+            });
+            
+            const activeTab = tabsContainer.querySelector(`.tab-item[data-main-category="${activeCategoryKey}"]`);
+            if (activeTab) {
+                 activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        };
+
+        // Hàm render tabs Nhóm con (CẬP NHẬT CHO HIỂN THỊ DỌC)
+        window.renderSubCategoryTabs = () => {
+            // Target container mới: #sub-category-list
+            const tabsContainer = document.getElementById('sub-category-list');
+            if (!tabsContainer) return;
+            
+            tabsContainer.innerHTML = '';
+            
+            const currentCat = categories[activeCategoryKey];
+            const currentGroups = currentCat?.groupData || {};
+            
+            // Lặp qua mảng keyGroups đã được sắp xếp
+            currentCat?.keyGroups.forEach(key => {
+                const group = currentGroups[key];
+                if (!group) return; 
+
+                const isActive = key === activeGroupKey;
+                
+                // SỬA: Dùng class `vertical-tab-item` và cấu trúc button mới
+                const tabHtml = `
+                    <button data-sub-category="${key}" onclick="setActiveGroup('${key}')" 
+                            class="vertical-tab-item text-sm font-semibold whitespace-normal leading-tight ${isActive ? 'active' : ''}"
+                            style="color: ${isActive ? 'var(--color-primary-wood)' : 'var(--color-text-dark)'};">
+                        ${group.label}
+                    </button>
+                `;
+                tabsContainer.innerHTML += tabHtml;
+            });
+            
+            // Tự động cuộn đến nhóm đang active
+            const activeTab = tabsContainer.querySelector(`.vertical-tab-item[data-sub-category="${activeGroupKey}"]`);
+            if (activeTab) {
+                 activeTab.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        };
+
+        // *Hàm chuyển đổi Danh mục chính*
+        window.setActiveMainCategory = (key) => {
+            if (key === activeCategoryKey) return;
+
+            // Lấy groupKey đầu tiên của danh mục mới theo thứ tự đã định nghĩa
+            const newGroupsKeys = categories[key]?.keyGroups || [];
+            const newFirstGroupKey = newGroupsKeys[0] || '';
+            
+            if (newFirstGroupKey) {
+                activeCategoryKey = key;
+                previousGroupKey = activeGroupKey; // Lưu groupKey cũ
+                activeGroupKey = newFirstGroupKey; // Thiết lập groupKey mới
+                
+                renderMainCategoryTabs();
+                renderSubCategoryTabs();
+                renderMenu(true); // Kích hoạt animation
+            }
+        };
+
+
+        // *Cập nhật hàm setActiveGroup để lưu trữ nhóm cũ và gọi renderMenu có animation*
+        window.setActiveGroup = (key) => {
+            if (key === activeGroupKey) return;
+
+            previousGroupKey = activeGroupKey; 
+            activeGroupKey = key;
+            
+            renderSubCategoryTabs();
+            renderMenu(true); // Kích hoạt animation
+        };
 
         // *Cập nhật hàm renderMenu để hỗ trợ animation*
         window.renderMenu = (animate = true) => {
-            const menuList = document.getElementById('menu-list');
-            if (!menuList) return;
+            // Target container mới: #menu-list-container
+            const menuListContainer = document.getElementById('menu-list-container');
+            if (!menuListContainer) return;
 
             // 1. Nếu có animation, ẩn danh sách món hiện tại với hiệu ứng trượt
             if (animate) {
-                 const currentCatIndex = categories[activeCategory]?.index || 0;
-                 const prevCatIndex = categories[previousCategory]?.index || 0;
+                 const currentGroupKeys = categories[activeCategoryKey].keyGroups;
+                 const currentGroupIndex = currentGroupKeys.indexOf(activeGroupKey);
+                 const prevGroupIndex = currentGroupKeys.indexOf(previousGroupKey);
                  
-                 menuList.classList.remove('fade-in');
+                 menuListContainer.classList.remove('fade-in');
                  
                  // Quyết định hướng trượt (Trái: danh mục mới có index nhỏ hơn; Phải: danh mục mới có index lớn hơn)
-                 const directionClass = currentCatIndex > prevCatIndex ? 'fade-out-right' : 'fade-out-left';
+                 const directionClass = currentGroupIndex > prevGroupIndex ? 'fade-out-right' : 'fade-out-left';
                  
-                 menuList.classList.add(directionClass);
+                 menuListContainer.classList.add(directionClass);
                  
                  // Đợi animation fade out kết thúc (0.35s) rồi render nội dung mới
                  setTimeout(() => {
-                      updateMenuListContent(menuList);
+                      updateMenuListContent();
                       
                       // 3. Hiển thị nội dung mới với hiệu ứng trượt vào
-                      menuList.classList.remove('fade-out-right', 'fade-out-left');
-                      menuList.classList.add('fade-in');
+                      menuListContainer.classList.remove('fade-out-right', 'fade-out-left');
+                      menuListContainer.classList.add('fade-in');
 
                  }, 350);
             } else {
                  // Không animation, render ngay lập tức
-                 updateMenuListContent(menuList);
-                 menuList.classList.add('fade-in');
+                 updateMenuListContent();
+                 menuListContainer.classList.add('fade-in');
             }
         };
 
-        const updateMenuListContent = (menuList) => {
+        const updateMenuListContent = () => {
+             const menuList = document.getElementById('menu-list');
+             if (!menuList) return;
+             
              menuList.innerHTML = '';
-             const items = menuData[activeCategory] || {};
+             
+             // Lấy danh sách ID món ăn/thức uống của nhóm đang hoạt động
+             const groupItems = menuGroupsData[activeCategoryKey]?.[activeGroupKey] || {};
             
-            if (Object.keys(items).length === 0) {
-                 menuList.innerHTML = `<p class="col-span-2 text-center py-10" style="color: var(--color-text-muted);">Hiện tại không có món nào trong danh mục này.</p>`;
+            if (Object.keys(groupItems).length === 0) {
+                 menuList.innerHTML = `<p class="col-span-2 text-center py-10" style="color: var(--color-text-muted);">Hiện tại không có món nào trong nhóm này.</p>`;
                  return;
             }
 
-            Object.keys(items).forEach(id => {
-                const item = flatMenuData[id];
+            Object.keys(groupItems).forEach(id => {
+                // Sử dụng flatMenuData để lấy thông tin chi tiết đầy đủ
+                const item = flatMenuData[id]; 
+                
+                // Nếu item không tồn tại trong flatMenuData (dữ liệu lỗi/mất mát), bỏ qua
+                if (!item) return; 
+
                 const imageUrl = item.img && item.img.startsWith('http') 
                                  ? item.img 
-                                 : `https://placehold.co/1000x800/F0E8E1/6B4423?text=FOOD+IMAGE`;
+                                 : `img/pepsi.png`;
 
                 const cardHtml = `
                     <div id="item-${id}" class="ios-card overflow-hidden flex flex-col cursor-pointer" 
                          onclick="addItemToCart('${id}')" 
                          ontouchstart="this.classList.add('active-tap')" ontouchend="this.classList.remove('active-tap')" 
                          onmouseleave="this.classList.remove('active-tap')">
-                        <div class="w-full h-[60%] overflow-hidden rounded-t-2xl">
-                             <img src="${imageUrl}" 
-                                  onerror="this.onerror=null;this.src='https://placehold.co/1000x800/F0E8E1/6B4423?text=FOOD+IMAGE';" 
-                                  class="w-full h-full object-cover transition duration-300 transform hover:scale-105" alt="${item.name}">
-                        </div>
+               
+<div class="w-full h-40 overflow-hidden rounded-t-2xl flex items-center justify-center" 
+     style="background-color: var(--color-placeholder);">
+    <img src="${imageUrl}" 
+         onerror="this.onerror=null;this.src='https://placehold.co/1000x800/F0E8E1/6B4423?text=${item.name.toUpperCase().replace(/\s/g, '+') || 'FOOD+IMAGE'}';" 
+         class="w-full h-full object-contain transition duration-300 transform hover:scale-105" alt="${item.name}">
+</div>
                         <div class="p-4 flex flex-col justify-between flex-1">
                             <h3 class="text-base font-extrabold line-clamp-2 leading-snug" style="color: var(--color-text-dark);">${item.name}</h3>
                             <div class="flex justify-between items-center mt-2">
                                 <span class="text-xl font-bold" style="color: var(--color-secondary-gold);">${formatCurrency(item.price)}</span>
-                                <button onclick="event.stopPropagation(); addItemToCart('${id}')" 
-                                        class="stepper-btn w-10 h-10 flex items-center justify-center rounded-full text-white shadow-md transition duration-150"
-                                        style="background-color: var(--color-primary-wood);">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                                    </svg>
-                                </button>
+                                
                             </div>
                         </div>
                     </div>
@@ -576,131 +1099,120 @@
         }
 
 
-        const renderTabs = () => {
-            const tabsContainer = document.getElementById('category-tabs');
-            if (!tabsContainer) return;
-            
-            tabsContainer.innerHTML = '';
-            
-            Object.keys(categories).forEach(key => {
-                const isActive = key === activeCategory;
-                const tabHtml = `
-                    <button data-category="${key}" onclick="setActiveCategory('${key}')" 
-                            class="tab-item px-1 py-2 text-xl font-extrabold whitespace-nowrap ${isActive ? 'active' : ''}"
-                            style="transition: all 0.3s; color: ${isActive ? 'var(--color-primary-wood)' : 'var(--color-text-muted)'};">
-                        ${categories[key].label}
-                    </button>
-                `;
-                tabsContainer.innerHTML += tabHtml;
-            });
-            
-            const activeTab = tabsContainer.querySelector(`.tab-item[data-category="${activeCategory}"]`);
-            if (activeTab) {
-                 activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      // window.renderCart
+window.renderCart = () => {
+    try {
+        const cartList = document.getElementById('cart-items-list');
+        const cartTotalElement = document.getElementById('cart-total');
+        const emptyMessage = document.getElementById('empty-cart-message');
+        const checkoutButton = document.getElementById('checkout-button');
+        
+        const floatingBubble = document.getElementById('floating-cart-bubble');
+        const bubbleCount = document.getElementById('bubble-item-count');
+
+        if (!cartList) return; 
+
+        cartList.innerHTML = '';
+        const total = getCartTotal();
+        const itemCount = Object.values(cartItems).reduce((sum, item) => sum + item.quantity, 0);
+
+        if (floatingBubble && bubbleCount) {
+            bubbleCount.textContent = itemCount;
+            floatingBubble.classList.toggle('scale-100', itemCount > 0);
+            floatingBubble.classList.toggle('scale-0', itemCount === 0);
+        }
+        
+        if (cartTotalElement) {
+            cartTotalElement.textContent = formatCurrency(total);
+        }
+
+        if (emptyMessage) {
+            emptyMessage.classList.toggle('hidden', itemCount > 0);
+        }
+        
+        if (checkoutButton) {
+            const isSending = checkoutButton.dataset.sending === 'true'; // Kiểm tra trạng thái đang gửi
+            if (itemCount === 0 || isSending) {
+                checkoutButton.disabled = true;
+                checkoutButton.classList.add('opacity-50', 'cursor-not-allowed');
+                if(!isSending) checkoutButton.innerHTML = 'Đặt món ngay'; // Đảm bảo không ghi đè nếu đang gửi
+            } else {
+                checkoutButton.disabled = false;
+                checkoutButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                checkoutButton.innerHTML = 'Đặt món ngay';
             }
-        };
+        }
 
-        // *Cập nhật hàm setActiveCategory để lưu trữ danh mục cũ và gọi renderMenu có animation*
-        window.setActiveCategory = (key) => {
-            if (key === activeCategory) return;
-
-            previousCategory = activeCategory; 
-            activeCategory = key;
+        Object.keys(cartItems).forEach(id => {
+            const cartItem = cartItems[id];
+            const item = cartItem.item;
             
-            renderTabs();
-            renderMenu(true); // Kích hoạt animation
-        };
-
-        // window.renderCart 
-        window.renderCart = () => {
-            try {
-                const cartList = document.getElementById('cart-items-list');
-                const cartTotalElement = document.getElementById('cart-total');
-                const emptyMessage = document.getElementById('empty-cart-message');
-                const checkoutButton = document.getElementById('checkout-button');
-                
-                const floatingBubble = document.getElementById('floating-cart-bubble');
-                const bubbleCount = document.getElementById('bubble-item-count');
-
-                if (!cartList) return; 
-
-                cartList.innerHTML = '';
-                const total = getCartTotal();
-                const itemCount = Object.values(cartItems).reduce((sum, item) => sum + item.quantity, 0);
-
-                if (floatingBubble && bubbleCount) {
-                    bubbleCount.textContent = itemCount;
-                    floatingBubble.classList.toggle('scale-100', itemCount > 0);
-                    floatingBubble.classList.toggle('scale-0', itemCount === 0);
-                }
-                
-                if (cartTotalElement) {
-                    cartTotalElement.textContent = formatCurrency(total);
-                }
-
-                if (emptyMessage) {
-                    emptyMessage.classList.toggle('hidden', itemCount > 0);
-                }
-                
-                if (checkoutButton) {
-                    const isSending = checkoutButton.dataset.sending === 'true'; // Kiểm tra trạng thái đang gửi
-                    if (itemCount === 0 || isSending) {
-                        checkoutButton.disabled = true;
-                        checkoutButton.classList.add('opacity-50', 'cursor-not-allowed');
-                        if(!isSending) checkoutButton.innerHTML = 'Đặt món ngay'; // Đảm bảo không ghi đè nếu đang gửi
-                    } else {
-                        checkoutButton.disabled = false;
-                        checkoutButton.classList.remove('opacity-50', 'cursor-not-allowed');
-                        checkoutButton.innerHTML = 'Đặt món ngay';
-                    }
-                }
-
-                Object.keys(cartItems).forEach(id => {
-                    const cartItem = cartItems[id];
-                    const item = cartItem.item;
-                    
-                    const imageUrl = item.img && item.img.startsWith('http') 
+            const imageUrl = item.img && item.img.startsWith('http') 
                                      ? item.img 
-                                     : 'https://placehold.co/100x100/F0E8E1/6B4423?text=FOOD';
-                    
-                    const itemHtml = `
-                        <div class="flex items-center p-3 rounded-xl shadow-sm transition duration-300 border" style="background-color: var(--color-card-bg-light); border-color: #EBE4D9;">
-                            <img src="${imageUrl}" 
-                                 class="w-16 h-16 object-cover rounded-lg mr-4"
-                                 onerror="this.onerror=null;this.src='https://placehold.co/100x100/F0E8E1/6B4423?text=FOOD';">
-                            <div class="flex-1 min-w-0">
-                                <p class="font-bold truncate text-sm" style="color: var(--color-text-dark);">${item.name}</p>
-                                <p class="text-sm font-semibold" style="color: var(--color-secondary-gold);">${formatCurrency(item.price)} x ${cartItem.quantity}</p>
-                            </div>
-                            <div class="flex items-center space-x-2 border border-gray-200 rounded-full p-1 ml-4 shadow-sm" style="background-color: var(--color-card-bg-light);">
-                                <button class="stepper-btn w-6 h-6 flex items-center justify-center rounded-full bg-white text-gray-500" 
-                                        onclick="updateCartQuantity('${id}', -1)">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" /></svg>
-                                </button>
-                                <span class="font-medium text-sm w-4 text-center" style="color: var(--color-text-dark);">${cartItem.quantity}</span>
-                                <button class="stepper-btn w-6 h-6 flex items-center justify-center rounded-full text-white" 
-                                        style="background-color: var(--color-primary-wood);"
-                                        onclick="updateCartQuantity('${id}', 1)">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    cartList.innerHTML += itemHtml;
-                });
-            } catch (error) {
-                console.error("Lỗi khi render Cart:", error);
+                                     : 'img/pepsi.png';
+            
+            // Lấy chi tiết tùy chỉnh (nếu có)
+            const customizations = cartItem.customizations;
+            let customizationDetails = '';
+            if (customizations && (customizations.meat.length > 0 || customizations.veg.length > 0)) {
+                const meatStr = customizations.meat.length > 0 ? `<span class="font-medium text-xs block mt-1" style="color: var(--color-text-muted);">Thịt: ${customizations.meat.join(', ')}</span>` : '';
+                const vegStr = customizations.veg.length > 0 ? `<span class="font-medium text-xs block" style="color: var(--color-text-muted);">Rau: ${customizations.veg.join(', ')}</span>` : '';
+                customizationDetails = `<div class="mt-1">${meatStr}${vegStr}</div>`;
             }
-        };
+            
+            const itemHtml = `
+                <div class="flex items-center p-3 rounded-xl shadow-sm transition duration-300 border" style="background-color: var(--color-card-bg-light); border-color: #EBE4D9;">
+                    <div class="w-16 h-16 rounded-lg mr-4 overflow-hidden flex items-center justify-center flex-shrink-0" 
+                         style="background-color: var(--color-placeholder); border: 1px solid #EBE4D9;">
+                        <img src="${imageUrl}" 
+                             class="w-full h-full object-contain" // **ĐÃ SỬA TẠI ĐÂY**
+                             onerror="this.onerror=null;this.src='img/pepsi.png';">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold truncate text-sm" style="color: var(--color-text-dark);">${item.name}</p>
+                        <p class="text-sm font-semibold" style="color: var(--color-secondary-gold);">${formatCurrency(item.price)} x ${cartItem.quantity}</p>
+                        ${customizationDetails}
+                    </div>
+                    <div class="flex items-center space-x-2 border border-gray-200 rounded-full p-1 ml-4 shadow-sm" style="background-color: var(--color-card-bg-light);">
+                        <button class="stepper-btn w-6 h-6 flex items-center justify-center rounded-full bg-white text-gray-500" 
+                                onclick="updateCartQuantity('${id}', -1)">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" /></svg>
+                        </button>
+                        <span class="font-medium text-sm w-4 text-center" style="color: var(--color-text-dark);">${cartItem.quantity}</span>
+                        <button class="stepper-btn w-6 h-6 flex items-center justify-center rounded-full text-white" 
+                                style="background-color: var(--color-primary-wood);"
+                                onclick="updateCartQuantity('${id}', 1)">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                        </button>
+                    </div>
+                </div>
+            `;
+            cartList.innerHTML += itemHtml;
+        });
+    } catch (error) {
+        console.error("Lỗi khi render Cart:", error);
+    }
+};
 
-        // --- Cart Actions (Giữ nguyên) ---
+        // --- Cart Actions (ĐÃ CẬP NHẬT LOGIC KIỂM TRA MÓN MẸT) ---
         
         window.addItemToCart = (id) => {
             const item = flatMenuData[id];
             
+            if (!item) return;
+
+            // 🚨 LOGIC MỚI: KIỂM TRA MÓN MẸT ĐỂ HIỆN POPUP TÙY CHỈNH 🚨
+            if (getMekItemLimits(item.name)) {
+                showItemConfigModal(id, item); 
+                return; // Dừng, không thêm vào giỏ hàng ngay lập tức
+            }
+            // 🚨 KẾT THÚC LOGIC MỚI 🚨
+
+            // Logic cũ: Thêm thẳng vào giỏ hàng (số lượng 1)
             if (cartItems[id]) {
                 cartItems[id].quantity += 1;
             } else {
+                // Đối với các món không tùy chỉnh, item id = cart key
                 cartItems[id] = { item: item, quantity: 1 };
             }
 
@@ -828,7 +1340,7 @@
 
             errorMessage.textContent = message;
             popup.classList.remove('opacity-0', 'pointer-events-none');
-            popup.querySelector('div')?.classList.remove('scale-90');
+            popup.querySelector('div')?.classList.add('scale-90');
         };
 
         // window.closeErrorPopup 
@@ -880,123 +1392,199 @@
             }
         }
         
-        window.handleCheckout = async () => {
+        // ** CẬP NHẬT HÀM handleCheckout **
+window.handleCheckout = async () => {
+    
+    toggleCart(false);
+    const currentCartItems = { ...cartItems }; // Tạo bản sao để sử dụng sau khi xóa cart
+    if (Object.keys(currentCartItems).length === 0) {
+        showErrorPopup("Giỏ hàng trống. Vui lòng chọn món trước khi đặt.");
+        return;
+    }
+    
+    showLoading(); // HIỂN THỊ LOADING
+
+    // 🚨 DÒNG ĐÃ THAY ĐỔI: LẤY TÊN BÀN TỪ URL
+    const tableName = getTableNameFromUrl(); 
+    const totalAmount = getCartTotal(currentCartItems); 
+    // const currentTime = getCurrentDateTime(); // Giữ nguyên, không dùng cho printData mới
+
+    const itemsObject = {};
+    let foodItems = [];
+    let drinkItems = [];
+    let printItemsForTelegram = []; // Danh sách món cho máy in cũ (chuỗi cho Telegram/Log)
+    
+    // ** DỮ LIỆU MỚI CHO API IN ẤN THEO YÊU CẦU **
+    const printItemsForPrinter = []; 
+    // **********************************************
+    
+    let hasFood = false;
+    let hasDrink = false;
+
+    // 1. Phân loại và định dạng món ăn/thức uống cho Telegram và In ấn
+    Object.keys(currentCartItems).forEach(id => {
+        const ci = currentCartItems[id];
+        const itemType = ci.item.type;
+        const customizations = ci.customizations;
+        
+        let customizationStr = '';
+        let apiCustomization = {};
+
+        if (customizations) {
+            // Format for Telegram message
+            const meatSel = customizations.meat.length > 0 ? ` [Thịt: ${customizations.meat.join(', ')}]` : '';
+            const vegSel = customizations.veg.length > 0 ? ` [Rau: ${customizations.veg.join(', ')}]` : '';
+            customizationStr = `${meatSel}${vegSel}`;
             
-            toggleCart(false);
+            // Format for API backend
+            apiCustomization = customizations;
+        }
 
-            if (Object.keys(cartItems).length === 0) {
-                 showErrorPopup("Giỏ hàng trống. Vui lòng chọn món trước khi đặt.");
-                 return;
-            }
-            
-            showLoading(); // HIỂN THỊ LOADING
+        // Định dạng cho tin nhắn Telegram (dùng Markdown: *bold*)
+        const itemString = `- ${ci.item.name} ${customizationStr} x *${ci.quantity}* (${formatCurrency(ci.item.price)})`;
+        
+        // Định dạng cho log/print cũ (vd: Phở bò x4)
+        const printStringForLog = `${ci.item.name}${customizationStr} x${ci.quantity}`;
+        printItemsForTelegram.push(printStringForLog); 
 
-            const tableName = "B1"; 
-            const totalAmount = getCartTotal(); // Lấy tổng tiền
+        // ** TẠO DỮ LIỆU CHO API IN ẤN MỚI **
+        printItemsForPrinter.push({ 
+            name: `${ci.item.name}${customizationStr}`, // Concatenate for printer name
+            qty: ci.quantity 
+        });
+        // **********************************
 
-            const itemsObject = {};
-            let foodItems = [];
-            let drinkItems = [];
-            let hasFood = false;
-            let hasDrink = false;
-
-            // 1. Phân loại và định dạng món ăn/thức uống cho Telegram
-            Object.keys(cartItems).forEach(id => {
-                const ci = cartItems[id];
-                const itemType = ci.item.type;
-                
-                // Định dạng cho tin nhắn Telegram (dùng Markdown: *bold*)
-                const itemString = `- ${ci.item.name} x *${ci.quantity}* (${formatCurrency(ci.item.price)})`;
-
-                if (itemType === 'food') {
-                    hasFood = true;
-                    foodItems.push(itemString);
-                } else if (itemType === 'drink') {
-                    hasDrink = true;
-                    drinkItems.push(itemString);
-                }
-                
-                itemsObject[id] = { 
-                    itemName: ci.item.name,
-                    price: ci.item.price,
-                    quantity: ci.quantity,
-                    status: "pending", 
-                    type: itemType 
-                };
-            });
-            
-            // 2. Xây dựng nội dung tin nhắn Telegram
-            let message = `*🧾 ĐƠN HÀNG MỚI (Bàn ${tableName})* \n`;
-            message += `--------------------------------------\n`;
-
-            if (hasFood) {
-                message += `\n*🍽️ BẾP (MÓN ĂN)*\n`;
-                message += foodItems.join('\n');
-                message += `\n`;
-            }
-
-            if (hasDrink) {
-                message += `\n*🍹 BAR (THỨC UỐNG)*\n`;
-                message += drinkItems.join('\n');
-                message += `\n`;
-            }
-
-            message += `\n*💵 TỔNG CỘNG: ${formatCurrency(totalAmount)}*`;
-            
-            // 3. Chuẩn bị Order cho API backend
-            let orderType = 'misc'; 
-            if (hasFood && hasDrink) {
-                orderType = 'food_and_drink';
-            } else if (hasFood) {
-                orderType = 'food';
-            } else if (hasDrink) {
-                orderType = 'drink';
-            }
-
-            const finalOrder = {
-                orderId: generateOrderId(), 
-                tableId: generateTableId(), 
-                tableName: tableName, 
-                type: orderType, 
-                items: itemsObject
-            };
-            
-            console.log("JSON Đặt Món Sẽ Gửi:", finalOrder);
-            
-            
-            try {
-                // Gửi API backend
-                const resp = await fetch(API_ENDPOINT, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(finalOrder)
-                });
-
-                const text = await resp.text();
-                let bodyStr = text;
-                try {
-                    const j = JSON.parse(text);
-                    bodyStr = JSON.stringify(j, null, 2);
-                } catch (e) {}
-
-                if (resp.ok) {
-                    console.log("✅ Thành công:", bodyStr);
-                    // Gửi Telegram sau khi API backend thành công
-                    await sendTelegramNotification(message); 
-                    showSuccessPopup(); 
-                } else {
-                    console.error(`❌ Lỗi (HTTP ${resp.status}):\n`, bodyStr);
-                    showErrorPopup(`❌ Lỗi (HTTP ${resp.status}):\n` + bodyStr);
-                }
-            } catch (err) {
-                console.error("❌ Lỗi khi gửi: " + err.message, err);
-                showErrorPopup("❌ Lỗi kết nối API: " + err.message + "\n\nKiểm tra console để biết chi tiết.");
-            } finally {
-                 hideLoading(); // ẨN LOADING
-                 renderCart(); 
-            }
+        if (itemType === 'food') {
+            hasFood = true;
+            foodItems.push(itemString);
+        } else if (itemType === 'drink') {
+            hasDrink = true;
+            drinkItems.push(itemString);
+        }
+        
+        itemsObject[id] = { // Note: id here is the customKey now if it's a Mẹt
+            itemName: ci.item.name,
+            price: ci.item.price,
+            quantity: ci.quantity,
+            status: "pending", 
+            type: itemType,
+            customizations: apiCustomization // Added customization data
         };
+    });
+    
+    // 2. Xây dựng nội dung tin nhắn Telegram
+    let message = `*🧾 ĐƠN HÀNG MỚI (Bàn ${tableName})* \n`;
+    message += `--------------------------------------\n`;
 
+    if (hasFood) {
+        message += `\n*🍽️ BẾP (MÓN ĂN)*\n`;
+        message += foodItems.join('\n');
+        message += `\n`;
+    }
+
+    if (hasDrink) {
+        message += `\n*🍹 BAR (THỨC UỐNG)*\n`;
+        message += drinkItems.join('\n');
+        message += `\n`;
+    }
+
+    message += `\n*💵 TỔNG CỘNG: ${formatCurrency(totalAmount)}*`;
+    
+    // 3. Chuẩn bị Order cho API backend
+    let orderType = 'misc'; 
+    if (hasFood && hasDrink) {
+        orderType = 'food_and_drink';
+    } else if (hasFood) {
+        orderType = 'food';
+    } else if (hasDrink) {
+        orderType = 'drink';
+    }
+
+    const finalOrder = {
+        orderId: generateOrderId(), 
+        tableId: generateTableId(), 
+        tableName: tableName, 
+        type: orderType, 
+        items: itemsObject
+    };
+    
+    console.log("JSON Đặt Món Sẽ Gửi (API Backend):", finalOrder);
+    
+    // 4. Chuẩn bị dữ liệu cho API in ấn (ĐÃ CẬP NHẬT THEO YÊU CẦU)
+    const printData = {
+        table: tableName, 
+        items: printItemsForPrinter // Gửi MẢNG OBJECT MỚI
+    };
+
+    console.log("Dữ liệu in ấn sẽ gửi (API Print):", printData);
+    
+    let backendSuccess = false;
+    let printSuccess = false;
+
+    try {
+        // 5. Gửi API backend (Ưu tiên)
+        const resp = await fetch(API_ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(finalOrder)
+        });
+
+        const text = await resp.text();
+        let bodyStr = text;
+        try {
+            const j = JSON.parse(text);
+            bodyStr = JSON.stringify(j, null, 2);
+        } catch (e) {}
+
+        if (resp.ok) {
+            console.log("✅ Thành công (API Backend):", bodyStr);
+            backendSuccess = true;
+        } else {
+            console.error(`❌ Lỗi (HTTP ${resp.status}) từ API Backend:\n`, bodyStr);
+            showErrorPopup(`❌ Lỗi (HTTP ${resp.status}) từ API Backend:\n` + bodyStr);
+        }
+
+        // 6. Nếu API backend thành công, tiến hành gửi lệnh in và Telegram
+        if (backendSuccess) {
+            // Gửi lệnh in (Dùng printData MỚI)
+            try {
+                const printResp = await fetch(PRINT_API_ENDPOINT, {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(printData)
+                });
+                
+                if (printResp.ok) {
+                    console.log("✅ Thành công (API Print).");
+                    printSuccess = true;
+                } else {
+                    console.error(`❌ Lỗi (HTTP ${printResp.status}) từ API Print.`, await printResp.text());
+                    // Không show popup lỗi in ấn cho khách, chỉ ghi log console
+                }
+            } catch (printErr) {
+                 console.error("❌ Lỗi kết nối API Print: " + printErr.message, printErr);
+                 // Không show popup lỗi in ấn cho khách, chỉ ghi log console
+            }
+            
+            // Gửi Telegram 
+            await sendTelegramNotification(message); 
+            
+            // Hiển thị thành công cuối cùng
+            showSuccessPopup(); 
+        }
+
+    } catch (err) {
+        console.error("❌ Lỗi khi gửi API Backend: " + err.message, err);
+        showErrorPopup("❌ Lỗi kết nối API Backend: " + err.message + "\n\nKiểm tra console để biết chi tiết.");
+    } finally {
+         hideLoading(); // ẨN LOADING
+         // Lưu ý: renderCart() được gọi trong closeSuccessPopup() nếu thành công. 
+         // Nếu thất bại (backendSuccess=false), cartItems vẫn giữ nguyên, cần gọi lại renderCart để cập nhật trạng thái nút.
+         if (!backendSuccess) {
+             renderCart();
+         }
+    }
+};
 
         // --- Khởi chạy Ứng dụng ---
         document.addEventListener('DOMContentLoaded', initData);
