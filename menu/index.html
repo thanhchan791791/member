@@ -408,7 +408,7 @@
                 <h3 class="text-2xl font-extrabold mb-4 text-center display-font" style="color: var(--color-primary-wood);" id="config-item-name">Chọn món trong Mẹt</h3>
                 
                 <div class="flex items-center space-x-4 mb-4 p-3 rounded-lg" style="background-color: var(--color-placeholder);">
-                     <img id="config-item-image" src="img/pepsi.png" class="w-16 h-16 object-cover rounded-lg">
+                     <img id="config-item-image" src="img/psepsi.png" class="w-16 h-16 object-cover rounded-lg">
                      <div>
                          <p class="font-bold text-lg" style="color: var(--color-text-dark);" id="config-item-display-name">Tên Món</p>
                          <p class="font-semibold text-xl" style="color: var(--color-secondary-gold);" id="config-item-price">Giá</p>
@@ -1048,55 +1048,62 @@
             }
         };
 
-        const updateMenuListContent = () => {
-             const menuList = document.getElementById('menu-list');
-             if (!menuList) return;
-             
-             menuList.innerHTML = '';
-             
-             // Lấy danh sách ID món ăn/thức uống của nhóm đang hoạt động
-             const groupItems = menuGroupsData[activeCategoryKey]?.[activeGroupKey] || {};
+       const updateMenuListContent = () => {
+    const menuList = document.getElementById('menu-list');
+    if (!menuList) return;
+
+    menuList.innerHTML = '';
+
+    // Lấy danh sách ID món ăn/thức uống của nhóm đang hoạt động
+    // Giả định menuGroupsData, activeCategoryKey, và activeGroupKey đã được định nghĩa
+    const groupItems = menuGroupsData[activeCategoryKey]?.[activeGroupKey] || {};
+    
+    if (Object.keys(groupItems).length === 0) {
+        menuList.innerHTML = `<p class="col-span-2 text-center py-10" style="color: var(--color-text-muted);">Hiện tại không có món nào trong nhóm này.</p>`;
+        return;
+    }
+
+    Object.keys(groupItems).forEach(id => {
+        // Sử dụng flatMenuData để lấy thông tin chi tiết đầy đủ
+        // Giả định flatMenuData đã được định nghĩa
+        const item = flatMenuData[id]; 
+        
+        // Nếu item không tồn tại trong flatMenuData (dữ liệu lỗi/mất mát), bỏ qua
+        if (!item) return; 
+
+        // 🟢 CẬP NHẬT Ở ĐÂY: Ưu tiên item.imageUrl, sau đó là item.img, và cuối cùng là ảnh mặc định
+        let primaryImageSource = item.imageUrl || item.img;
+
+        const imageUrl = primaryImageSource && primaryImageSource.startsWith('http') 
+                                 ? primaryImageSource 
+                                 : primaryImageSource // Dùng đường dẫn cục bộ nếu không phải URL đầy đủ
+                                     ? primaryImageSource 
+                                     : `img/pepsi.png`; // Ảnh mặc định nếu cả hai đều không có hoặc rỗng
+
+        const cardHtml = `
+            <div id="item-${id}" class="ios-card overflow-hidden flex flex-col cursor-pointer" 
+                 onclick="addItemToCart('${id}')" 
+                 ontouchstart="this.classList.add('active-tap')" ontouchend="this.classList.remove('active-tap')" 
+                 onmouseleave="this.classList.remove('active-tap')">
             
-            if (Object.keys(groupItems).length === 0) {
-                 menuList.innerHTML = `<p class="col-span-2 text-center py-10" style="color: var(--color-text-muted);">Hiện tại không có món nào trong nhóm này.</p>`;
-                 return;
-            }
-
-            Object.keys(groupItems).forEach(id => {
-                // Sử dụng flatMenuData để lấy thông tin chi tiết đầy đủ
-                const item = flatMenuData[id]; 
-                
-                // Nếu item không tồn tại trong flatMenuData (dữ liệu lỗi/mất mát), bỏ qua
-                if (!item) return; 
-
-                const imageUrl = item.img && item.img.startsWith('http') 
-                                 ? item.img 
-                                 : `img/pepsi.png`;
-
-                const cardHtml = `
-                    <div id="item-${id}" class="ios-card overflow-hidden flex flex-col cursor-pointer" 
-                         onclick="addItemToCart('${id}')" 
-                         ontouchstart="this.classList.add('active-tap')" ontouchend="this.classList.remove('active-tap')" 
-                         onmouseleave="this.classList.remove('active-tap')">
-               
-<div class="w-full h-40 overflow-hidden rounded-t-2xl flex items-center justify-center" 
-     style="background-color: var(--color-placeholder);">
-    <img src="${imageUrl}" 
-         onerror="this.onerror=null;this.src='https://placehold.co/1000x800/F0E8E1/6B4423?text=${item.name.toUpperCase().replace(/\s/g, '+') || 'FOOD+IMAGE'}';" 
-         class="w-full h-full object-contain transition duration-300 transform hover:scale-105" alt="${item.name}">
-</div>
-                        <div class="p-4 flex flex-col justify-between flex-1">
-                            <h3 class="text-base font-extrabold line-clamp-2 leading-snug" style="color: var(--color-text-dark);">${item.name}</h3>
-                            <div class="flex justify-between items-center mt-2">
-                                <span class="text-xl font-bold" style="color: var(--color-secondary-gold);">${formatCurrency(item.price)}</span>
-                                
-                            </div>
-                        </div>
+                <div class="w-full h-40 overflow-hidden rounded-t-2xl flex items-center justify-center" 
+                     style="background-color: var(--color-placeholder);">
+                    <img src="${imageUrl}" 
+                         onerror="this.onerror=null;this.src='https://placehold.co/1000x800/F0E8E1/6B4423?text=${item.name.toUpperCase().replace(/\s/g, '+') || 'FOOD+IMAGE'}';" 
+                         class="w-full h-full object-contain transition duration-300 transform hover:scale-105" alt="${item.name}">
+                </div>
+                <div class="p-4 flex flex-col justify-between flex-1">
+                    <h3 class="text-base font-extrabold line-clamp-2 leading-snug" style="color: var(--color-text-dark);">${item.name}</h3>
+                    <div class="flex justify-between items-center mt-2">
+                        <span class="text-xl font-bold" style="color: var(--color-secondary-gold);">${formatCurrency(item.price)}</span>
+                        
                     </div>
-                `;
-                menuList.innerHTML += cardHtml;
-            });
-        }
+                </div>
+            </div>
+        `;
+        menuList.innerHTML += cardHtml;
+    });
+}
 
 
       // window.renderCart
@@ -1113,6 +1120,7 @@ window.renderCart = () => {
         if (!cartList) return; 
 
         cartList.innerHTML = '';
+        // Giả định cartItems, getCartTotal(), và formatCurrency() đã được định nghĩa
         const total = getCartTotal();
         const itemCount = Object.values(cartItems).reduce((sum, item) => sum + item.quantity, 0);
 
@@ -1147,14 +1155,19 @@ window.renderCart = () => {
             const cartItem = cartItems[id];
             const item = cartItem.item;
             
-            const imageUrl = item.img && item.img.startsWith('http') 
-                                     ? item.img 
-                                     : 'img/pepsi.png';
+            // 🟢 CẬP NHẬT Ở ĐÂY: Ưu tiên item.imageUrl, sau đó là item.img
+            const primaryImageSource = item.imageUrl || item.img;
+            
+            const imageUrl = primaryImageSource && primaryImageSource.startsWith('http') 
+                                     ? primaryImageSource 
+                                     : primaryImageSource 
+                                         ? primaryImageSource // Dùng đường dẫn cục bộ
+                                         : 'img/pepsi.png'; // Ảnh mặc định
             
             // Lấy chi tiết tùy chỉnh (nếu có)
             const customizations = cartItem.customizations;
             let customizationDetails = '';
-            if (customizations && (customizations.meat.length > 0 || customizations.veg.length > 0)) {
+            if (customizations && (customizations.meat?.length > 0 || customizations.veg?.length > 0)) {
                 const meatStr = customizations.meat.length > 0 ? `<span class="font-medium text-xs block mt-1" style="color: var(--color-text-muted);">Thịt: ${customizations.meat.join(', ')}</span>` : '';
                 const vegStr = customizations.veg.length > 0 ? `<span class="font-medium text-xs block" style="color: var(--color-text-muted);">Rau: ${customizations.veg.join(', ')}</span>` : '';
                 customizationDetails = `<div class="mt-1">${meatStr}${vegStr}</div>`;
@@ -1165,8 +1178,9 @@ window.renderCart = () => {
                     <div class="w-16 h-16 rounded-lg mr-4 overflow-hidden flex items-center justify-center flex-shrink-0" 
                          style="background-color: var(--color-placeholder); border: 1px solid #EBE4D9;">
                         <img src="${imageUrl}" 
-                             class="w-full h-full object-contain" // **ĐÃ SỬA TẠI ĐÂY**
-                             onerror="this.onerror=null;this.src='img/pepsi.png';">
+                             class="w-full h-full object-contain" 
+                             onerror="this.onerror=null;this.src='img/pepsi.png';"
+                             alt="${item.name}">
                     </div>
                     <div class="flex-1 min-w-0">
                         <p class="font-bold truncate text-sm" style="color: var(--color-text-dark);">${item.name}</p>
@@ -1175,13 +1189,13 @@ window.renderCart = () => {
                     </div>
                     <div class="flex items-center space-x-2 border border-gray-200 rounded-full p-1 ml-4 shadow-sm" style="background-color: var(--color-card-bg-light);">
                         <button class="stepper-btn w-6 h-6 flex items-center justify-center rounded-full bg-white text-gray-500" 
-                                onclick="updateCartQuantity('${id}', -1)">
+                                 onclick="updateCartQuantity('${id}', -1)">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" /></svg>
                         </button>
                         <span class="font-medium text-sm w-4 text-center" style="color: var(--color-text-dark);">${cartItem.quantity}</span>
                         <button class="stepper-btn w-6 h-6 flex items-center justify-center rounded-full text-white" 
-                                style="background-color: var(--color-primary-wood);"
-                                onclick="updateCartQuantity('${id}', 1)">
+                                 style="background-color: var(--color-primary-wood);"
+                                 onclick="updateCartQuantity('${id}', 1)">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
                         </button>
                     </div>
