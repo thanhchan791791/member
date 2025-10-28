@@ -486,7 +486,7 @@
         const API_ENDPOINT = 'https://ordermenu-cp5t2kbgx-thanhduy.vercel.app/api/server.js';
         
         // --- Cấu hình API In ấn ---
-        const PRINT_API_ENDPOINT = "http://192.168.156.210:5000/print";
+        const PRINT_API_ENDPOINT = "http://192.168.1.231:5000/print";
 
 
         // --- Biến State Cần Thiết ---
@@ -551,16 +551,48 @@
         };
         
         // Helper to generate checkboxes
-        const generateCheckboxOptions = (options, type, limit) => {
-            return options.map((name, index) => `
-                <label class="flex items-center p-2 rounded-lg transition duration-150 cursor-pointer hover:shadow-md" style="background-color: var(--color-placeholder);">
-                    <input type="checkbox" name="${type}" value="${name}" 
-                           data-type="${type}" class="config-checkbox-${type} w-5 h-5 text-lg rounded"
-                           style="color: var(--color-primary-wood); border-color: var(--color-text-dark); accent-color: var(--color-primary-wood);">
-                    <span class="ml-3 font-medium text-base" style="color: var(--color-text-dark);">${name}</span>
-                </label>
-            `).join('');
-        };
+       // Helper to generate checkboxes
+const generateCheckboxOptions = (options, type, limit) => {
+    // Đường dẫn ảnh mặc định (Fallback)
+    const DEFAULT_IMAGE_URL = 'img/montuchon.jpg';
+
+    return options.map((name, index) => {
+        // 1. Chuẩn hóa tên món thành tên file:
+        // Loại bỏ dấu, chuyển thành chữ thường, thay thế khoảng trắng bằng dấu gạch dưới, và thêm đuôi .png
+        // Ví dụ: "Heo nướng" -> "heo_nuong.png"
+        const normalizedName = name
+            .toLowerCase()
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Loại bỏ dấu tiếng Việt
+            .replace(/đ/g, "d").replace(/Đ/g, "D") // Xử lý chữ Đ/đ
+            .replace(/\s/g, '_'); // Thay khoảng trắng bằng gạch dưới
+
+        // 2. Tạo đường dẫn ảnh riêng: img/tenmon.png
+        const specificImageUrl = `img/${normalizedName}.png`;
+
+        // 3. Sử dụng ảnh riêng. Nếu ảnh riêng lỗi 404, trình duyệt sẽ tự hiển thị ảnh lỗi.
+        // Để triển khai đúng logic "nếu không có thì dùng mặc định", bạn cần dùng một thư viện/hàm 
+        // xử lý lỗi `onerror` trong thẻ <img> của HTML.
+        
+        return `
+            <label class="flex items-center p-2 rounded-lg transition duration-150 cursor-pointer hover:shadow-md justify-between" style="background-color: var(--color-placeholder);">
+                
+                <div class="flex items-center flex-1 min-w-0 pr-3">
+                    <img 
+                        src="${specificImageUrl}" 
+                        alt="${name}" 
+                        class="w-12 h-12 object-cover rounded-lg shadow-sm flex-shrink-0"
+                        onerror="this.onerror=null; this.src='${DEFAULT_IMAGE_URL}';"
+                    >
+                    <span class="ml-3 font-bold text-base whitespace-normal break-words" style="color: var(--color-text-dark);">${name}</span>
+                </div>
+
+                <input type="checkbox" name="${type}" value="${name}" 
+                       data-type="${type}" class="config-checkbox-${type} w-6 h-6 text-lg rounded flex-shrink-0"
+                       style="color: var(--color-primary-wood); border-color: var(--color-text-dark); accent-color: var(--color-primary-wood);">
+            </label>
+        `;
+    }).join('');
+};
         
         // Validation logic
         const validateSelection = (type, limit) => {
@@ -815,6 +847,7 @@
         // Ánh xạ key group Firebase sang tên hiển thị (Có thể mở rộng)
         const GROUP_NAME_MAP = {
              "7mon": "7 Món Nên Trải Nghiệm",
+             "monthemmet": "Món thêm cho mẹt",
             "4mon": "4 Món Phải Thử",
             "metTongHop": "Mẹt Món Tổng Hợp",
             "monCanh": "Món Canh",
@@ -1048,7 +1081,7 @@
             }
         };
 
-       const updateMenuListContent = () => {
+     const updateMenuListContent = () => {
     const menuList = document.getElementById('menu-list');
     if (!menuList) return;
 
@@ -1075,25 +1108,26 @@
         let primaryImageSource = item.imageUrl || item.img;
 
         const imageUrl = primaryImageSource && primaryImageSource.startsWith('http') 
-                                 ? primaryImageSource 
-                                 : primaryImageSource // Dùng đường dẫn cục bộ nếu không phải URL đầy đủ
-                                     ? primaryImageSource 
-                                     : `img/pepsi.png`; // Ảnh mặc định nếu cả hai đều không có hoặc rỗng
+                                            ? primaryImageSource 
+                                            : primaryImageSource // Dùng đường dẫn cục bộ nếu không phải URL đầy đủ
+                                                 ? primaryImageSource 
+                                                 : `img/pepsi.png`; // Ảnh mặc định nếu cả hai đều không có hoặc rỗng
 
         const cardHtml = `
             <div id="item-${id}" class="ios-card overflow-hidden flex flex-col cursor-pointer" 
-                 onclick="addItemToCart('${id}')" 
-                 ontouchstart="this.classList.add('active-tap')" ontouchend="this.classList.remove('active-tap')" 
-                 onmouseleave="this.classList.remove('active-tap')">
+                onclick="addItemToCart('${id}')" 
+                ontouchstart="this.classList.add('active-tap')" ontouchend="this.classList.remove('active-tap')" 
+                onmouseleave="this.classList.remove('active-tap')">
             
-                <div class="w-full h-40 overflow-hidden rounded-t-2xl flex items-center justify-center" 
-                     style="background-color: var(--color-placeholder);">
+                <div class="w-full h-56 overflow-hidden rounded-t-2xl flex items-center justify-center" 
+                    style="background-color: var(--color-placeholder);">
                     <img src="${imageUrl}" 
-                         onerror="this.onerror=null;this.src='https://placehold.co/1000x800/F0E8E1/6B4423?text=${item.name.toUpperCase().replace(/\s/g, '+') || 'FOOD+IMAGE'}';" 
-                         class="w-full h-full object-contain transition duration-300 transform hover:scale-105" alt="${item.name}">
+                        onerror="this.onerror=null;this.src='https://placehold.co/1000x800/F0E8E1/6B4423?text=${item.name?.toUpperCase().replace(/\s/g, '+') || 'FOOD+IMAGE'}';" 
+//                                                                ^^^^^^^^^^^ ĐÃ SỬA CHỖ NÀY
+                        class="w-full h-full object-cover transition duration-300 transform hover:scale-105" alt="${item.name}">
                 </div>
                 <div class="p-4 flex flex-col justify-between flex-1">
-                    <h3 class="text-base font-extrabold line-clamp-2 leading-snug" style="color: var(--color-text-dark);">${item.name}</h3>
+                    <h3 class="text-base font-extrabold line-clamp-2 leading-snug" style="color: var(--color-text-dark);">${item.name || 'Sản phẩm không tên'}</h3>
                     <div class="flex justify-between items-center mt-2">
                         <span class="text-xl font-bold" style="color: var(--color-secondary-gold);">${formatCurrency(item.price)}</span>
                         
@@ -1104,7 +1138,6 @@
         menuList.innerHTML += cardHtml;
     });
 }
-
 
       // window.renderCart
 window.renderCart = () => {
