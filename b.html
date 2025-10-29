@@ -245,7 +245,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="submit" form="transactionForm" class="btn btn-primary">Lưu giao dịch</button>
+                    <button type="submit" form="transactionForm" class="btn btn-primary" id="saveTransactionBtn">Lưu giao dịch</button>
                 </div>
             </div>
         </div>
@@ -274,7 +274,6 @@
         </div>
     </div>
 
-    <!-- Modal Thống Kê -->
     <div class="modal fade" id="statisticsModal" tabindex="-1" aria-labelledby="statisticsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content">
@@ -664,10 +663,24 @@
 
             document.getElementById('transactionForm').addEventListener('submit', async function(event) {
                 event.preventDefault();
+                
+                // --- BẮT ĐẦU PHẦN SỬA LỖI TRÙNG LẶP ---
+                const saveButton = document.getElementById('saveTransactionBtn');
+                saveButton.disabled = true; // Vô hiệu hóa nút để ngăn gửi trùng lặp
+
                 const type = document.getElementById('transactionType').value;
-                const amount = parseInt(document.getElementById('transactionAmount').value.replace(/\./g, ''));
+                // Lấy số tiền và loại bỏ dấu phân cách (dấu chấm)
+                const amountInput = document.getElementById('transactionAmount').value.replace(/\./g, '');
+                const amount = parseInt(amountInput); 
                 const description = document.getElementById('transactionDescription').value;
                 const date = document.getElementById('transactionDate').value;
+
+                // Kiểm tra validation cơ bản (ví dụ: số tiền phải là số hợp lệ)
+                if (isNaN(amount) || amount <= 0) {
+                    alert('Số tiền không hợp lệ.');
+                    saveButton.disabled = false;
+                    return;
+                }
 
                 try {
                     const transactionsRef = ref(db, `artifacts/${appId}/public/data/transactions`);
@@ -679,12 +692,18 @@
                         date: date,
                         timestamp: new Date().toISOString()
                     });
+                    
+                    // Chỉ đóng modal và reset form khi lưu thành công
                     bootstrap.Modal.getInstance(document.getElementById('addTransactionModal')).hide();
                     this.reset();
                     document.getElementById('transactionDate').value = todayFormatted;
                 } catch (e) {
                     console.error("Lỗi khi thêm giao dịch: ", e);
+                    alert("Lỗi khi lưu giao dịch. Vui lòng thử lại.");
+                } finally {
+                    saveButton.disabled = false; // Luôn kích hoạt lại nút sau khi hoàn tất
                 }
+                // --- KẾT THÚC PHẦN SỬA LỖI TRÙNG LẶP ---
             });
 
             document.getElementById('updateIncomeForm').addEventListener('submit', async function(event) {
